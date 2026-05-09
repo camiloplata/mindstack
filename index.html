@@ -176,8 +176,9 @@ function getCat(name){
 function driveUrl(url){
   if(!url)return null;
   var m=url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-  if(m)return 'https://drive.google.com/uc?export=open&id='+m[1];
-  if(url.indexOf('export=download')>=0)return url.replace('export=download','export=open');
+  if(m)return WORKER+'/audio?id='+m[1];
+  var m2=url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if(m2)return WORKER+'/audio?id='+m2[1];
   return url;
 }
 
