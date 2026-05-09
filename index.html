@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindStack — Biblioteca de Aprendizaje</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a; --bg2: #111111; --bg3: #181818;
+    --border: #222222; --border2: #2a2a2a;
+    --text: #f0f0f0; --text2: #aaaaaa; --text3: #666666;
+    --purple: #7F77DD; --purple2: #534AB7;
+    --teal: #5DCAA5; --coral: #F0997B; --amber: #EF9F27;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+  header { padding: 1.5rem 2rem; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: rgba(10,10,10,0.92); backdrop-filter: blur(12px); z-index: 100; }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-icon { width: 34px; height: 34px; background: var(--purple); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .logo-icon svg { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 2; }
+  .logo-name { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
+  .logo-sub { font-size: 11px; color: var(--text3); margin-top: 1px; }
+  .search-box { display: flex; align-items: center; gap: 8px; background: var(--bg3); border: 0.5px solid var(--border2); border-radius: 8px; padding: 7px 12px; }
+  .search-box input { background: none; border: none; outline: none; color: var(--text); font-size: 13px; font-family: 'DM Sans', sans-serif; width: 180px; }
+  .search-box input::placeholder { color: var(--text3); }
+  .stats-bar { display: flex; border-bottom: 0.5px solid var(--border); }
+  .stat-item { flex: 1; padding: 1.25rem 2rem; border-right: 0.5px solid var(--border); }
+  .stat-item:last-child { border-right: none; }
+  .stat-num { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 700; }
+  .stat-label { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .featured-section { padding: 2rem; border-bottom: 0.5px solid var(--border); }
+  .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text3); margin-bottom: 1rem; }
+  .featured-card { background: var(--bg2); border: 0.5px solid var(--border2); border-radius: 16px; padding: 1.75rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
+  .featured-tag { display: inline-block; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--purple); border: 0.5px solid var(--purple2); border-radius: 20px; padding: 3px 10px; margin-bottom: 10px; }
+  .featured-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 600; line-height: 1.3; margin-bottom: 10px; }
+  .featured-desc { font-size: 13px; color: var(--text2); line-height: 1.7; }
+  .featured-badges { display: flex; gap: 8px; margin-top: 14px; }
+  .badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; }
+  .badge-done { background: #1a1a2a; color: #AFA9EC; border: 0.5px solid var(--purple2); }
+  .badge-audio { background: #0d2018; color: var(--teal); border: 0.5px solid #0F6E56; }
+  .featured-actions { display: flex; gap: 8px; margin-top: 16px; }
+  .btn { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-family: 'DM Sans', sans-serif; cursor: pointer; border: none; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: opacity 0.15s; }
+  .btn:hover { opacity: 0.85; }
+  .btn-primary { background: var(--purple); color: #fff; }
+  .btn-ghost { background: transparent; color: var(--text2); border: 0.5px solid var(--border2); }
+  .player { background: var(--bg); border: 0.5px solid var(--border2); border-radius: 12px; padding: 14px 16px; }
+  .player-title { font-size: 11px; color: var(--text3); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+  .player-name { font-size: 13px; color: var(--text2); margin-bottom: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .player-bar { height: 3px; background: var(--border2); border-radius: 2px; margin-bottom: 10px; cursor: pointer; position: relative; }
+  .player-progress { height: 100%; background: var(--purple); border-radius: 2px; width: 0%; transition: width 0.1s; }
+  .player-controls { display: flex; align-items: center; gap: 10px; }
+  .play-btn { width: 32px; height: 32px; border-radius: 50%; background: var(--purple); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .play-btn svg { width: 14px; height: 14px; fill: #fff; }
+  .player-time { font-size: 11px; color: var(--text3); font-family: monospace; flex: 1; }
+  .vol-btn { background: none; border: none; cursor: pointer; color: var(--text3); }
+  audio { display: none; }
+  .filters { padding: 1.5rem 2rem; border-bottom: 0.5px solid var(--border); display: flex; gap: 8px; flex-wrap: wrap; }
+  .filter-btn { padding: 6px 16px; border-radius: 20px; font-size: 13px; font-family: 'DM Sans', sans-serif; border: 0.5px solid var(--border2); background: var(--bg2); color: #cccccc; cursor: pointer; transition: all 0.15s; }
+  .filter-btn:hover { border-color: var(--purple); color: var(--text); }
+  .filter-btn.active { background: var(--purple); border-color: var(--purple); color: #fff; }
+  .courses-wrap { padding: 0 2rem 3rem; }
+  .cat-section { margin-top: 2rem; }
+  .cat-header { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; padding-bottom: 10px; border-bottom: 0.5px solid var(--border); }
+  .cat-icon { font-size: 18px; }
+  .cat-name { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 600; color: var(--text); }
+  .cat-count { font-size: 12px; color: var(--text3); background: var(--bg3); border: 0.5px solid var(--border); border-radius: 12px; padding: 2px 8px; }
+  .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  .course-card { background: var(--bg2); border: 0.5px solid var(--border2); border-radius: 12px; padding: 1.1rem; cursor: pointer; transition: border-color 0.15s, transform 0.15s; }
+  .course-card:hover { border-color: var(--purple); transform: translateY(-2px); }
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+  .card-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+  .card-badges { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+  .card-title { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.4; margin-bottom: 6px; }
+  .card-desc { font-size: 11px; color: var(--text2); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .card-footer { margin-top: 10px; padding-top: 10px; border-top: 0.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .card-link { font-size: 11px; color: var(--purple); display: flex; align-items: center; gap: 4px; text-decoration: none; background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+  .detail-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; backdrop-filter: blur(4px); }
+  .detail-overlay.open { display: flex; align-items: flex-start; justify-content: flex-end; }
+  .detail-panel { width: min(600px, 95vw); height: 100vh; background: var(--bg2); border-left: 0.5px solid var(--border2); overflow-y: auto; padding: 2rem; animation: slideIn 0.25s ease; }
+  @keyframes slideIn { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  .detail-close { background: var(--bg3); border: 0.5px solid var(--border2); border-radius: 8px; padding: 6px 12px; color: var(--text2); cursor: pointer; font-size: 13px; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 6px; font-family: 'DM Sans', sans-serif; }
+  .detail-cat { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--purple); margin-bottom: 8px; }
+  .detail-title { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; line-height: 1.3; margin-bottom: 12px; }
+  .detail-desc { font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 1.5rem; }
+  .detail-section-title { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); margin-bottom: 10px; }
+  .subpage-list { display: flex; flex-direction: column; gap: 8px; }
+  .subpage-item { background: var(--bg3); border: 0.5px solid var(--border); border-radius: 10px; padding: 12px 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; color: var(--text2); font-size: 13px; transition: border-color 0.15s; }
+  .subpage-item:hover { border-color: var(--purple); color: var(--text); }
+  .subpage-title { font-size: 13px; color: var(--text); font-weight: 500; }
+  .detail-external { display: flex; gap: 8px; margin-top: 1rem; }
+  .loading { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4rem; gap: 16px; }
+  .spinner { width: 32px; height: 32px; border: 2px solid var(--border2); border-top-color: var(--purple); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 13px; color: var(--text3); }
+  .notion-content { font-size: 14px; color: var(--text2); line-height: 1.8; }
+  .notion-content h1, .notion-content h2, .notion-content h3 { font-family: 'Syne', sans-serif; color: var(--text); margin: 1.5rem 0 0.5rem; }
+  .notion-content p { margin-bottom: 0.75rem; }
+  .notion-content ul, .notion-content ol { margin: 0.5rem 0 0.5rem 1.5rem; }
+  .notion-content li { margin-bottom: 4px; }
+  .notion-content blockquote { border-left: 3px solid var(--purple); padding-left: 1rem; color: var(--text3); margin: 1rem 0; }
+  .empty { padding: 2rem; text-align: center; color: var(--text3); font-size: 13px; }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="#">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    </div>
+    <div>
+      <div class="logo-name">MindStack</div>
+      <div class="logo-sub">biblioteca de aprendizaje</div>
+    </div>
+  </a>
+  <div class="search-box">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="searchInput" placeholder="Buscar curso...">
+  </div>
+</header>
+
+<div class="stats-bar">
+  <div class="stat-item"><div class="stat-num" style="color:#AFA9EC;" id="totalCourses">—</div><div class="stat-label">cursos</div></div>
+  <div class="stat-item"><div class="stat-num" style="color:#5DCAA5;">4</div><div class="stat-label">categorías</div></div>
+  <div class="stat-item"><div class="stat-num" style="color:#7F77DD;" id="totalPodcasts">—</div><div class="stat-label">podcasts</div></div>
+</div>
+
+<div class="featured-section" id="featuredSection" style="display:none;">
+  <div class="section-label">destacado</div>
+  <div class="featured-card">
+    <div>
+      <div class="featured-tag" id="featuredCat">—</div>
+      <div class="featured-title" id="featuredTitle">—</div>
+      <div class="featured-desc" id="featuredDesc">—</div>
+      <div class="featured-badges" id="featuredBadges"></div>
+      <div class="featured-actions">
+        <button class="btn btn-primary" id="featuredOpenBtn">Ver curso</button>
+        <a class="btn btn-ghost" id="featuredCourseLink" href="#" target="_blank" style="display:none;">Ir a Platzi ↗</a>
+      </div>
+    </div>
+    <div>
+      <div class="player" id="featuredPlayer" style="display:none;">
+        <div class="player-title"><span style="color:var(--teal)">♪</span> podcast del curso</div>
+        <div class="player-name" id="featuredPlayerName">—</div>
+        <div class="player-bar" id="featuredBar"><div class="player-progress" id="featuredProgress"></div></div>
+        <div class="player-controls">
+          <button class="play-btn" id="featuredPlayBtn"><svg id="featuredPlayIcon" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+          <span class="player-time" id="featuredTime">0:00 / 0:00</span>
+          <button class="vol-btn" onclick="toggleMute('featured')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>
+        </div>
+        <audio id="featuredAudio"></audio>
+      </div>
+      <div id="featuredNoAudio" style="background:var(--bg3);border:0.5px solid var(--border);border-radius:12px;padding:2rem;text-align:center;color:var(--text3);font-size:13px;">Podcast no disponible aún</div>
+    </div>
+  </div>
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="filterCat('all',this)">todos</button>
+  <button class="filter-btn" onclick="filterCat('ia',this)">🤖 inteligencia artificial</button>
+  <button class="filter-btn" onclick="filterCat('tools',this)">🛠️ herramientas</button>
+  <button class="filter-btn" onclick="filterCat('pro',this)">💼 desarrollo profesional</button>
+  <button class="filter-btn" onclick="filterCat('tech',this)">💻 tecnología y datos</button>
+</div>
+
+<div class="courses-wrap" id="coursesWrap">
+  <div class="loading"><div class="spinner"></div><div class="loading-text">Cargando cursos desde Notion...</div></div>
+</div>
+
+<div class="detail-overlay" id="detailOverlay" onclick="closeDetail(event)">
+  <div class="detail-panel" id="detailPanel">
+    <button class="detail-close" onclick="closeDetailPanel()">← Volver</button>
+    <div class="detail-cat" id="detailCat"></div>
+    <div class="detail-title" id="detailTitle"></div>
+    <div class="detail-desc" id="detailDesc"></div>
+    <div id="detailPlayerWrap" style="display:none;margin-bottom:1.5rem;">
+      <div class="detail-section-title">🎧 podcast del curso</div>
+      <div class="player">
+        <div class="player-bar" id="detailBar"><div class="player-progress" id="detailProgress"></div></div>
+        <div class="player-controls">
+          <button class="play-btn" id="detailPlayBtn"><svg id="detailPlayIcon" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
+          <span class="player-time" id="detailTime">0:00 / 0:00</span>
+        </div>
+        <audio id="detailAudio"></audio>
+      </div>
+    </div>
+    <div id="detailSubpages" style="margin-bottom:1.5rem;display:none;">
+      <div class="detail-section-title">📄 contenido del curso</div>
+      <div class="subpage-list" id="subpageList"></div>
+    </div>
+    <div class="detail-external" id="detailExternal"></div>
+  </div>
+</div>
+
+<script>
+const WORKER = 'https://mindstack-api.skmiloplata.workers.dev';
+
+const CATEGORIES = {
+  ia: { label:'inteligencia artificial', icon:'🤖', color:'#AFA9EC', keywords:['ia','inteligencia artificial','claude','chatgpt','gemini','prompt','copilot','tips','trucos','pensamiento crítico','pensamiento critico'] },
+  tools: { label:'herramientas y productividad', icon:'🛠️', color:'#5DCAA5', keywords:['notion','teams','power apps','power automate','microsoft 365','office','gestión del tiempo','gestion del tiempo'] },
+  pro: { label:'desarrollo profesional', icon:'💼', color:'#F0997B', keywords:['linkedin','posicionamiento','profesional','optimización','optimizacion'] },
+  tech: { label:'tecnología y datos', icon:'💻', color:'#EF9F27', keywords:['estadística','estadistica','ingeniería de software','ingenieria de software','pensamiento lógico','pensamiento logico','fundamentos'] }
+};
+
+let allCourses = [], currentAudio = null, currentCourse = null;
+
+function getCat(name) {
+  const n = name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  for (const [key,cat] of Object.entries(CATEGORIES)) {
+    if (cat.keywords.some(k => n.includes(k.normalize('NFD').replace(/[\u0300-\u036f]/g,'')))) return key;
+  }
+  return 'tech';
+}
+
+function driveUrl(url) {
+  if (!url) return null;
+  const m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (m) return `https://drive.google.com/uc?export=download&id=${m[1]}`;
+  return url;
+}
+
+function fmt(s) {
+  if (isNaN(s)||!isFinite(s)) return '0:00';
+  return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`;
+}
+
+function setupPlayer(audioEl, playBtn, iconEl, barEl, progressEl, timeEl) {
+  playBtn.onclick = () => {
+    if (currentAudio && currentAudio !== audioEl) currentAudio.pause();
+    audioEl.paused ? audioEl.play() : audioEl.pause();
+    currentAudio = audioEl;
+  };
+  audioEl.ontimeupdate = () => {
+    const pct = audioEl.duration ? (audioEl.currentTime/audioEl.duration*100) : 0;
+    progressEl.style.width = pct + '%';
+    timeEl.textContent = fmt(audioEl.currentTime) + ' / ' + fmt(audioEl.duration);
+  };
+  audioEl.onplay = () => { iconEl.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>'; };
+  audioEl.onpause = () => { iconEl.innerHTML = '<polygon points="5,3 19,12 5,21"/>'; };
+  barEl.onclick = (e) => { const r = barEl.getBoundingClientRect(); audioEl.currentTime = ((e.clientX-r.left)/r.width) * audioEl.duration; };
+}
+
+function toggleMute(id) { const a = document.getElementById(id+'Audio'); if(a) a.muted = !a.muted; }
+
+const SKIP = ['libro','guía de referencia','plan estratégico','más allá','inteligencia artificial y pensamiento','manual de metodología','conceptos de ingeni'];
+
+async function fetchCourses() {
+  try {
+    const res = await fetch(WORKER + '/courses');
+    const data = await res.json();
+    allCourses = data.results
+      .filter(p => p.properties?.Name?.title?.length > 0)
+      .map(p => {
+        const props = p.properties;
+        return {
+          id: p.id,
+          title: props.Name?.title?.[0]?.plain_text || 'Sin título',
+          desc: props.Description?.rich_text?.[0]?.plain_text || '',
+          podcast: props.Podcast?.url || null,
+          curso: props.Curso?.url || null,
+          status: props.Status?.status?.name || '',
+          cat: getCat(props.Name?.title?.[0]?.plain_text || '')
+        };
+      })
+      .filter(c => !SKIP.some(s => c.title.toLowerCase().includes(s)));
+
+    document.getElementById('totalCourses').textContent = allCourses.length;
+    document.getElementById('totalPodcasts').textContent = allCourses.filter(c=>c.podcast).length;
+    renderFeatured();
+    renderCourses(allCourses);
+  } catch(e) {
+    document.getElementById('coursesWrap').innerHTML = '<div class="empty">No se pudieron cargar los cursos. Verifica la configuración del Worker.</div>';
+  }
+}
+
+function renderFeatured() {
+  const f = allCourses.find(c=>c.podcast) || allCourses[0];
+  if (!f) return;
+  document.getElementById('featuredSection').style.display = 'block';
+  const cat = CATEGORIES[f.cat];
+  document.getElementById('featuredCat').textContent = cat.icon + ' ' + cat.label;
+  document.getElementById('featuredTitle').textContent = f.title;
+  document.getElementById('featuredDesc').textContent = f.desc;
+  document.getElementById('featuredOpenBtn').onclick = () => openDetail(f);
+  const badges = document.getElementById('featuredBadges');
+  badges.innerHTML = (f.status==='Finished'?'<span class="badge badge-done">✓ finalizado</span>':'') + (f.podcast?'<span class="badge badge-audio">♪ podcast</span>':'');
+  if (f.curso) { const l=document.getElementById('featuredCourseLink'); l.href=f.curso; l.style.display='inline-flex'; }
+  if (f.podcast) {
+    document.getElementById('featuredPlayer').style.display='block';
+    document.getElementById('featuredNoAudio').style.display='none';
+    const audio=document.getElementById('featuredAudio');
+    audio.src=driveUrl(f.podcast);
+    document.getElementById('featuredPlayerName').textContent=f.title;
+    setupPlayer(audio,document.getElementById('featuredPlayBtn'),document.getElementById('featuredPlayIcon'),document.getElementById('featuredBar'),document.getElementById('featuredProgress'),document.getElementById('featuredTime'));
+  } else {
+    document.getElementById('featuredPlayer').style.display='none';
+  }
+}
+
+function renderCourses(courses) {
+  const wrap = document.getElementById('coursesWrap');
+  if (!courses.length) { wrap.innerHTML='<div class="empty">No se encontraron cursos.</div>'; return; }
+  const grouped = {};
+  courses.forEach(c => { if(!grouped[c.cat]) grouped[c.cat]=[]; grouped[c.cat].push(c); });
+  let html = '';
+  ['ia','tools','pro','tech'].forEach(key => {
+    if (!grouped[key]) return;
+    const cat = CATEGORIES[key];
+    html += `<div class="cat-section">
+      <div class="cat-header"><span class="cat-icon">${cat.icon}</span><span class="cat-name">${cat.label}</span><span class="cat-count">${grouped[key].length} cursos</span></div>
+      <div class="cards-grid">${grouped[key].map(c=>`
+        <div class="course-card" onclick="openDetail(allCourses.find(x=>x.id==='${c.id}'))">
+          <div class="card-top">
+            <div class="card-icon" style="background:${cat.color}22;">${cat.icon}</div>
+            <div class="card-badges">${c.podcast?'<span class="badge badge-audio">podcast</span>':''}${c.status==='Finished'?'<span class="badge badge-done">✓</span>':''}</div>
+          </div>
+          <div class="card-title">${c.title}</div>
+          <div class="card-desc">${c.desc||'Ver contenido del curso'}</div>
+          <div class="card-footer">
+            <button class="card-link" onclick="event.stopPropagation();openDetail(allCourses.find(x=>x.id==='${c.id}'))">📄 ver lecturas</button>
+            ${c.curso?`<a class="card-link" href="${c.curso}" target="_blank" onclick="event.stopPropagation()">Platzi ↗</a>`:''}
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  });
+  wrap.innerHTML = html;
+}
+
+function filterCat(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCourses(cat==='all' ? allCourses : allCourses.filter(c=>c.cat===cat));
+}
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  const q = e.target.value.toLowerCase();
+  renderCourses(!q ? allCourses : allCourses.filter(c=>c.title.toLowerCase().includes(q)||c.desc.toLowerCase().includes(q)));
+});
+
+async function openDetail(course) {
+  if (!course) return;
+  currentCourse = course;
+  const cat = CATEGORIES[course.cat];
+  document.getElementById('detailCat').textContent = cat.icon+' '+cat.label;
+  document.getElementById('detailTitle').textContent = course.title;
+  document.getElementById('detailDesc').textContent = course.desc;
+  const ext = document.getElementById('detailExternal');
+  ext.innerHTML = course.curso ? `<a class="btn btn-primary" href="${course.curso}" target="_blank">Ir al curso ↗</a>` : '';
+  if (course.podcast) {
+    document.getElementById('detailPlayerWrap').style.display='block';
+    const audio=document.getElementById('detailAudio');
+    audio.src=driveUrl(course.podcast);
+    setupPlayer(audio,document.getElementById('detailPlayBtn'),document.getElementById('detailPlayIcon'),document.getElementById('detailBar'),document.getElementById('detailProgress'),document.getElementById('detailTime'));
+  } else {
+    document.getElementById('detailPlayerWrap').style.display='none';
+  }
+  document.getElementById('detailSubpages').style.display='none';
+  document.getElementById('subpageList').innerHTML='<div class="loading"><div class="spinner"></div></div>';
+  document.getElementById('detailOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+  try {
+    const res = await fetch(WORKER+'/blocks/'+course.id.replace(/-/g,''));
+    const data = await res.json();
+    const subpages = (data.results||[]).filter(b=>b.type==='child_page');
+    if (subpages.length) {
+      document.getElementById('detailSubpages').style.display='block';
+      document.getElementById('subpageList').innerHTML=subpages.map(sp=>`
+        <div class="subpage-item" onclick="openSubpage('${sp.id}','${(sp.child_page?.title||'').replace(/'/g,"\\'")}')">
+          <span>📄</span>
+          <div class="subpage-content"><div class="subpage-title">${sp.child_page?.title||'Sin título'}</div></div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </div>`).join('');
+    } else {
+      document.getElementById('detailSubpages').style.display='none';
+    }
+  } catch(e) {}
+}
+
+async function openSubpage(pageId, title) {
+  const panel = document.getElementById('detailPanel');
+  panel.innerHTML = `<button class="detail-close" onclick="openDetail(currentCourse)">← Volver al curso</button><div class="detail-title" style="font-size:18px;margin-bottom:1.5rem;">${title}</div><div class="loading"><div class="spinner"></div><div class="loading-text">Cargando contenido...</div></div>`;
+  try {
+    const res = await fetch(WORKER+'/blocks/'+pageId.replace(/-/g,''));
+    const data = await res.json();
+    panel.innerHTML = `<button class="detail-close" onclick="openDetail(currentCourse)">← Volver al curso</button><div class="detail-title" style="font-size:18px;margin-bottom:1.5rem;">${title}</div><div class="notion-content">${renderBlocks(data.results||[])}</div>`;
+  } catch(e) { panel.innerHTML += '<div class="empty">No se pudo cargar el contenido.</div>'; }
+}
+
+function renderBlocks(blocks) {
+  return blocks.map(b => {
+    const txt = arr => (arr||[]).map(r => {
+      let t = r.plain_text||'';
+      if(r.annotations?.bold) t=`<strong>${t}</strong>`;
+      if(r.annotations?.italic) t=`<em>${t}</em>`;
+      if(r.annotations?.code) t=`<code style="background:var(--bg3);padding:1px 5px;border-radius:4px;font-size:12px;">${t}</code>`;
+      if(r.href) t=`<a href="${r.href}" target="_blank" style="color:var(--purple);">${t}</a>`;
+      return t;
+    }).join('');
+    switch(b.type) {
+      case 'heading_1': return `<h1>${txt(b.heading_1?.rich_text)}</h1>`;
+      case 'heading_2': return `<h2>${txt(b.heading_2?.rich_text)}</h2>`;
+      case 'heading_3': return `<h3>${txt(b.heading_3?.rich_text)}</h3>`;
+      case 'paragraph': return `<p>${txt(b.paragraph?.rich_text)}</p>`;
+      case 'bulleted_list_item': return `<ul><li>${txt(b.bulleted_list_item?.rich_text)}</li></ul>`;
+      case 'numbered_list_item': return `<ol><li>${txt(b.numbered_list_item?.rich_text)}</li></ol>`;
+      case 'quote': return `<blockquote>${txt(b.quote?.rich_text)}</blockquote>`;
+      case 'divider': return `<hr style="border:none;border-top:0.5px solid var(--border);margin:1rem 0;">`;
+      case 'callout': return `<div style="background:var(--bg3);border:0.5px solid var(--border);border-radius:8px;padding:12px;margin:8px 0;">${txt(b.callout?.rich_text)}</div>`;
+      case 'image': { const src=b.image?.file?.url||b.image?.external?.url||''; return src?`<img src="${src}" style="width:100%;border-radius:8px;margin:8px 0;">`:'';}
+      default: return '';
+    }
+  }).join('');
+}
+
+function closeDetail(e) { if(e.target===document.getElementById('detailOverlay')) closeDetailPanel(); }
+function closeDetailPanel() {
+  document.getElementById('detailOverlay').classList.remove('open');
+  document.body.style.overflow='';
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
+}
+
+fetchCourses();
+</script>
+</body>
+</html>
