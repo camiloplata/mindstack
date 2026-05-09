@@ -95,6 +95,8 @@ audio{display:none;}
 .notion-content li{margin-bottom:4px;}
 .notion-content blockquote{border-left:3px solid var(--purple);padding-left:1rem;color:var(--text3);margin:1rem 0;}
 .empty{padding:2rem;text-align:center;color:var(--text3);font-size:13px;}
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:8px 18px;font-size:13px;color:var(--text);z-index:400;opacity:0;transition:opacity 0.2s;pointer-events:none;}
+.toast.show{opacity:1;}
 @media(max-width:600px){
   header{padding:1rem;gap:8px;}
   .search-box input{width:120px;}
@@ -323,10 +325,11 @@ function renderCourses(courses){
       var badges='';
       if(c.podcast)badges+='<span class="badge badge-audio">podcast</span>';
       if(c.status==='Finished')badges+='<span class="badge badge-done">✓</span>';
-      card.innerHTML='<div class="card-top"><div class="card-icon" style="background:'+cat.color+'22;">'+(c.icon||cat.icon)+'</div><div class="card-badges">'+badges+'</div></div><div class="card-title">'+c.title+'</div><div class="card-desc">'+(c.desc||'Ver contenido')+'</div><div class="card-footer"><button class="card-link">ver lecturas</button>'+(c.curso?'<a class="card-link" href="'+c.curso+'" target="_blank" onclick="event.stopPropagation()">Platzi</a>':'')+'</div>';
+      card.innerHTML='<div class="card-top"><div class="card-icon" style="background:'+cat.color+'22;">'+(c.icon||cat.icon)+'</div><div class="card-badges">'+badges+'</div></div><div class="card-title">'+c.title+'</div><div class="card-desc">'+(c.desc||'Ver contenido')+'</div><div class="card-footer"><button class="card-link">ver lecturas</button>'+(c.curso?'<a class="card-link" href="'+c.curso+'" target="_blank" onclick="event.stopPropagation()">Platzi</a>':'')+'<button class="card-link card-share" title="Compartir" style="margin-left:auto;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button></div>';
       (function(course){
         card.onclick=function(){openDetail(course);};
         card.querySelector('button.card-link').onclick=function(e){e.stopPropagation();openDetail(course);};
+        card.querySelector('.card-share').onclick=function(e){e.stopPropagation();shareCourse(course);};
       })(c);
       grid.appendChild(card);
     });
@@ -527,7 +530,27 @@ function closeDetailPanel(){
   if(currentAudio){currentAudio.pause();currentAudio=null;}
 }
 
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},2000);
+}
+
+function shareCourse(course){
+  var url=course.curso||'https://camiloplata.github.io/mindstack/';
+  var data={title:course.title,text:course.desc||course.title,url:url};
+  if(navigator.share){
+    navigator.share(data).catch(function(){});
+  } else {
+    navigator.clipboard.writeText(url).then(function(){
+      showToast('¡Enlace copiado!');
+    }).catch(function(){showToast('No se pudo copiar');});
+  }
+}
+
 fetchCourses();
 </script>
+<div class="toast" id="toast"></div>
 </body>
 </html>
