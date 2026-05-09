@@ -538,7 +538,7 @@ function showToast(msg){
 }
 
 function shareCourse(course){
-  var url=course.curso||'https://camiloplata.github.io/mindstack/';
+  var url='https://camiloplata.github.io/mindstack/';
   var data={title:course.title,text:course.desc||course.title,url:url};
   if(navigator.share){
     navigator.share(data).catch(function(){});
