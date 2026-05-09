@@ -47,6 +47,8 @@ header{padding:1.5rem 2rem;border-bottom:0.5px solid var(--border);display:flex;
 .play-btn{width:32px;height:32px;border-radius:50%;background:var(--purple);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .play-btn svg{width:14px;height:14px;fill:#fff;}
 .player-time{font-size:11px;color:var(--text3);font-family:monospace;flex:1;}
+.speed-btn{background:var(--bg3);border:0.5px solid var(--border2);border-radius:6px;color:var(--text2);font-size:11px;font-family:'DM Sans',sans-serif;padding:3px 8px;cursor:pointer;transition:color 0.15s,border-color 0.15s;}
+.speed-btn:hover,.speed-btn.active{color:var(--purple);border-color:var(--purple);}
 audio{display:none;}
 .no-audio{background:var(--bg3);border:0.5px solid var(--border);border-radius:12px;padding:2rem;text-align:center;color:var(--text3);font-size:13px;}
 .filters{padding:1.5rem 2rem;border-bottom:0.5px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;}
@@ -133,6 +135,7 @@ audio{display:none;}
         <div class="player-controls">
           <button class="play-btn" id="featuredPlayBtn"><svg id="featuredPlayIcon" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
           <span class="player-time" id="featuredTime">0:00 / 0:00</span>
+          <button class="speed-btn" id="featuredSpeedBtn">1x</button>
         </div>
         <audio id="featuredAudio" preload="none" crossorigin="anonymous"></audio>
       </div>
@@ -187,7 +190,7 @@ function fmt(s){
   return Math.floor(s/60)+':'+(Math.floor(s%60)+'').padStart(2,'0');
 }
 
-function setupPlayer(audio,playBtn,iconEl,bar,prog,timeEl){
+function setupPlayer(audio,playBtn,iconEl,bar,prog,timeEl,speedBtn){
   playBtn.onclick=function(){
     if(currentAudio&&currentAudio!==audio)currentAudio.pause();
     if(audio.paused){
@@ -213,6 +216,16 @@ function setupPlayer(audio,playBtn,iconEl,bar,prog,timeEl){
     var r=bar.getBoundingClientRect();
     audio.currentTime=((e.clientX-r.left)/r.width)*audio.duration;
   };
+  if(speedBtn){
+    var speeds=[1,1.25,1.5,2];
+    var si=0;
+    speedBtn.onclick=function(){
+      si=(si+1)%speeds.length;
+      audio.playbackRate=speeds[si];
+      speedBtn.textContent=speeds[si]+'x';
+      speedBtn.classList.toggle('active',speeds[si]!==1);
+    };
+  }
 }
 
 function fetchCourses(){
@@ -265,7 +278,7 @@ function renderFeatured(){
     var audio=document.getElementById('featuredAudio');
     audio.src=driveUrl(f.podcast);
     document.getElementById('featuredPlayerName').textContent=f.title;
-    setupPlayer(audio,document.getElementById('featuredPlayBtn'),document.getElementById('featuredPlayIcon'),document.getElementById('featuredBar'),document.getElementById('featuredProg'),document.getElementById('featuredTime'));
+    setupPlayer(audio,document.getElementById('featuredPlayBtn'),document.getElementById('featuredPlayIcon'),document.getElementById('featuredBar'),document.getElementById('featuredProg'),document.getElementById('featuredTime'),document.getElementById('featuredSpeedBtn'));
   }
 }
 
@@ -346,11 +359,11 @@ function openDetail(course){
   if(course.podcast){
     var pw=document.createElement('div');
     pw.style.marginBottom='1.5rem';
-    pw.innerHTML='<div class="detail-section-title">podcast del curso</div><div class="player"><div class="player-bar" id="dBar"><div class="player-progress" id="dProg"></div></div><div class="player-controls"><button class="play-btn" id="dPlayBtn"><svg id="dPlayIcon" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button><span class="player-time" id="dTime">0:00 / 0:00</span></div><audio id="dAudio" preload="none" crossorigin="anonymous"></audio></div>';
+    pw.innerHTML='<div class="detail-section-title">podcast del curso</div><div class="player"><div class="player-bar" id="dBar"><div class="player-progress" id="dProg"></div></div><div class="player-controls"><button class="play-btn" id="dPlayBtn"><svg id="dPlayIcon" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button><span class="player-time" id="dTime">0:00 / 0:00</span><button class="speed-btn" id="dSpeedBtn">1x</button></div><audio id="dAudio" preload="none" crossorigin="anonymous"></audio></div>';
     panel.appendChild(pw);
     var da=document.getElementById('dAudio');
     da.src=driveUrl(course.podcast);
-    setupPlayer(da,document.getElementById('dPlayBtn'),document.getElementById('dPlayIcon'),document.getElementById('dBar'),document.getElementById('dProg'),document.getElementById('dTime'));
+    setupPlayer(da,document.getElementById('dPlayBtn'),document.getElementById('dPlayIcon'),document.getElementById('dBar'),document.getElementById('dProg'),document.getElementById('dTime'),document.getElementById('dSpeedBtn'));
   }
 
   var subWrap=document.createElement('div');
