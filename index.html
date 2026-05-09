@@ -95,6 +95,23 @@ audio{display:none;}
 .notion-content li{margin-bottom:4px;}
 .notion-content blockquote{border-left:3px solid var(--purple);padding-left:1rem;color:var(--text3);margin:1rem 0;}
 .empty{padding:2rem;text-align:center;color:var(--text3);font-size:13px;}
+@media(max-width:600px){
+  header{padding:1rem;gap:8px;}
+  .search-box input{width:120px;}
+  .stat-item{padding:1rem;}
+  .stat-num{font-size:22px;}
+  .featured-section{padding:1rem;}
+  .featured-card{grid-template-columns:1fr;gap:1rem;}
+  .filters{padding:1rem;gap:6px;}
+  .courses-wrap{padding:0 1rem 3rem;}
+  .detail-overlay{padding:0.75rem 0.5rem;}
+  .detail-panel{padding:1.5rem 1.25rem;}
+  .cards-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:400px){
+  .cards-grid{grid-template-columns:1fr;}
+  .search-box{display:none;}
+}
 </style>
 </head>
 <body>
