@@ -95,6 +95,9 @@ audio{display:none;}
 .notion-content li{margin-bottom:4px;}
 .notion-content blockquote{border-left:3px solid var(--purple);padding-left:1rem;color:var(--text3);margin:1rem 0;}
 .empty{padding:2rem;text-align:center;color:var(--text3);font-size:13px;}
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:500;align-items:center;justify-content:center;cursor:zoom-out;backdrop-filter:blur(6px);}
+.lightbox.open{display:flex;}
+.lightbox img{max-width:95vw;max-height:95vh;object-fit:contain;border-radius:8px;animation:fadeUp 0.2s ease;}
 </style>
 </head>
 <body>
@@ -152,6 +155,7 @@ audio{display:none;}
 <div class="courses-wrap" id="coursesWrap">
   <div class="loading"><div class="spinner"></div><div class="loading-text">Cargando cursos...</div></div>
 </div>
+<div class="lightbox" id="lightbox" onclick="closeLightbox()"><img id="lightboxImg" src=""></div>
 <div class="detail-overlay" id="detailOverlay">
   <div class="detail-panel" id="detailPanel"></div>
 </div>
@@ -477,7 +481,7 @@ async function renderBlocks(blocks){
       case 'callout':return '<div style="background:var(--bg3);border:0.5px solid var(--border);border-radius:8px;padding:12px;margin:8px 0;">'+txt(b.callout&&b.callout.rich_text)+'</div>';
       case 'image':
         var src=(b.image&&b.image.file&&b.image.file.url)||(b.image&&b.image.external&&b.image.external.url)||'';
-        return src?'<img src="'+src+'" style="width:100%;border-radius:8px;margin:8px 0;">':'';
+        return src?'<img src="'+src+'" style="width:100%;border-radius:8px;margin:8px 0;cursor:zoom-in;" onclick="openLightbox(this.src)">':'';
       case 'table':
         var hasHeader=b.table&&b.table.has_column_header;
         var rowData=await fetch(WORKER+'/blocks/'+b.id.replace(/-/g,'')).then(function(r){return r.json();});
@@ -508,6 +512,16 @@ function closeDetailPanel(){
   document.body.style.overflow='';
   if(currentAudio){currentAudio.pause();currentAudio=null;}
 }
+
+function openLightbox(src){
+  document.getElementById('lightboxImg').src=src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox(){
+  document.getElementById('lightbox').classList.remove('open');
+  document.getElementById('lightboxImg').src='';
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLightbox();});
 
 fetchCourses();
 </script>
