@@ -430,18 +430,18 @@ function openSubpage(pageId,title,courseId){
 
   fetch(WORKER+'/blocks/'+pageId.replace(/-/g,''))
     .then(function(r){return r.json();})
-    .then(function(data){
+    .then(async function(data){
       loading.remove();
       var content=document.createElement('div');
       content.className='notion-content';
-      content.innerHTML=renderBlocks(data.results||[]);
+      content.innerHTML=await renderBlocks(data.results||[]);
       panel.appendChild(content);
     })
     .catch(function(){loading.innerHTML='<div class="empty">No se pudo cargar.</div>';});
 }
 
-function renderBlocks(blocks){
-  return blocks.map(function(b){
+async function renderBlocks(blocks){
+  var parts=await Promise.all(blocks.map(async function(b){
     function txt(arr){
       return(arr||[]).map(function(r){
         var t=r.plain_text||'';
@@ -465,9 +465,25 @@ function renderBlocks(blocks){
       case 'image':
         var src=(b.image&&b.image.file&&b.image.file.url)||(b.image&&b.image.external&&b.image.external.url)||'';
         return src?'<img src="'+src+'" style="width:100%;border-radius:8px;margin:8px 0;">':'';
+      case 'table':
+        var hasHeader=b.table&&b.table.has_column_header;
+        var rowData=await fetch(WORKER+'/blocks/'+b.id.replace(/-/g,'')).then(function(r){return r.json();});
+        var thtml='<table style="width:100%;border-collapse:collapse;margin:8px 0;">';
+        (rowData.results||[]).forEach(function(row,idx){
+          var cells=(row.table_row&&row.table_row.cells)||[];
+          var isHeader=hasHeader&&idx===0;
+          var tag=isHeader?'th':'td';
+          var style=isHeader
+            ?'border:0.5px solid var(--border2);padding:6px 10px;font-size:13px;background:var(--bg3);font-weight:600;color:var(--text);text-align:left;'
+            :'border:0.5px solid var(--border2);padding:6px 10px;font-size:13px;color:var(--text2);';
+          thtml+='<tr>'+cells.map(function(cell){return'<'+tag+' style="'+style+'">'+txt(cell)+'</'+tag+'>';}).join('')+'</tr>';
+        });
+        thtml+='</table>';
+        return thtml;
       default:return '';
     }
-  }).join('');
+  }));
+  return parts.join('');
 }
 
 document.getElementById('detailOverlay').onclick=function(e){
