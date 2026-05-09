@@ -288,7 +288,6 @@ function renderFeatured(){
   document.getElementById('featuredDesc').textContent=f.desc;
   document.getElementById('featuredOpenBtn').onclick=function(){openDetail(f);};
   var badges='';
-  if(f.status==='Finished')badges+='<span class="badge badge-done">finalizado</span>';
   if(f.podcast)badges+='<span class="badge badge-audio">podcast</span>';
   document.getElementById('featuredBadges').innerHTML=badges;
   if(f.curso){var l=document.getElementById('featuredCourseLink');l.href=f.curso;l.style.display='inline-flex';}
