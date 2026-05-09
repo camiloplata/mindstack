@@ -260,6 +260,7 @@ function fetchCourses(){
             podcast:(pr.Podcast&&pr.Podcast.url)||null,
             curso:(pr.Curso&&pr.Curso.url)||null,
             status:(pr.Status&&pr.Status.status&&pr.Status.status.name)||'',
+            icon:(p.icon&&p.icon.type==='emoji'&&p.icon.emoji)||null,
             cat:getCat((pr.Name.title[0]&&pr.Name.title[0].plain_text)||'')
           };
         });
@@ -322,7 +323,7 @@ function renderCourses(courses){
       var badges='';
       if(c.podcast)badges+='<span class="badge badge-audio">podcast</span>';
       if(c.status==='Finished')badges+='<span class="badge badge-done">✓</span>';
-      card.innerHTML='<div class="card-top"><div class="card-icon" style="background:'+cat.color+'22;">'+cat.icon+'</div><div class="card-badges">'+badges+'</div></div><div class="card-title">'+c.title+'</div><div class="card-desc">'+(c.desc||'Ver contenido')+'</div><div class="card-footer"><button class="card-link">ver lecturas</button>'+(c.curso?'<a class="card-link" href="'+c.curso+'" target="_blank" onclick="event.stopPropagation()">Platzi</a>':'')+'</div>';
+      card.innerHTML='<div class="card-top"><div class="card-icon" style="background:'+cat.color+'22;">'+(c.icon||cat.icon)+'</div><div class="card-badges">'+badges+'</div></div><div class="card-title">'+c.title+'</div><div class="card-desc">'+(c.desc||'Ver contenido')+'</div><div class="card-footer"><button class="card-link">ver lecturas</button>'+(c.curso?'<a class="card-link" href="'+c.curso+'" target="_blank" onclick="event.stopPropagation()">Platzi</a>':'')+'</div>';
       (function(course){
         card.onclick=function(){openDetail(course);};
         card.querySelector('button.card-link').onclick=function(e){e.stopPropagation();openDetail(course);};
