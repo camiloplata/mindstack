@@ -217,7 +217,7 @@ function getCat(name) {
 function driveUrl(url) {
   if (!url) return null;
   const m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-  if (m) return `https://drive.google.com/uc?export=download&id=${m[1]}`;
+  if (m) return `https://drive.google.com/file/d/${m[1]}/preview`;
   return url;
 }
 
@@ -368,7 +368,7 @@ async function openDetail(course) {
     if (subpages.length) {
       document.getElementById('detailSubpages').style.display='block';
       document.getElementById('subpageList').innerHTML=subpages.map(sp=>`
-        <div class="subpage-item" onclick="openSubpage('${sp.id}','${(sp.child_page?.title||'').replace(/'/g,"\\'")}')">
+        <div class="subpage-item" onclick="openSubpage('${sp.id}','${(sp.child_page?.title||'').replace(/'/g,"\\'")}','${course.id}')">
           <span>📄</span>
           <div class="subpage-content"><div class="subpage-title">${sp.child_page?.title||'Sin título'}</div></div>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
@@ -379,13 +379,14 @@ async function openDetail(course) {
   } catch(e) {}
 }
 
-async function openSubpage(pageId, title) {
+async function openSubpage(pageId, title, courseId) {
   const panel = document.getElementById('detailPanel');
-  panel.innerHTML = `<button class="detail-close" onclick="openDetail(currentCourse)">← Volver al curso</button><div class="detail-title" style="font-size:18px;margin-bottom:1.5rem;">${title}</div><div class="loading"><div class="spinner"></div><div class="loading-text">Cargando contenido...</div></div>`;
+  const backCourse = allCourses.find(x=>x.id===courseId) || currentCourse;
+  panel.innerHTML = `<button class="detail-close" onclick="openDetail(allCourses.find(x=>x.id==='${courseId}'))">← Volver al curso</button><div class="detail-title" style="font-size:18px;margin-bottom:1.5rem;">${title}</div><div class="loading"><div class="spinner"></div><div class="loading-text">Cargando contenido...</div></div>`;
   try {
     const res = await fetch(WORKER+'/blocks/'+pageId.replace(/-/g,''));
     const data = await res.json();
-    panel.innerHTML = `<button class="detail-close" onclick="openDetail(currentCourse)">← Volver al curso</button><div class="detail-title" style="font-size:18px;margin-bottom:1.5rem;">${title}</div><div class="notion-content">${renderBlocks(data.results||[])}</div>`;
+    panel.innerHTML = `<button class="detail-close" onclick="openDetail(allCourses.find(x=>x.id==='${courseId}'))">← Volver al curso</button><div class="detail-title" style="font-size:18px;margin-bottom:1.5rem;">${title}</div><div class="notion-content">${renderBlocks(data.results||[])}</div>`;
   } catch(e) { panel.innerHTML += '<div class="empty">No se pudo cargar el contenido.</div>'; }
 }
 
