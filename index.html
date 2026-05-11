@@ -471,14 +471,14 @@ function openDetail(course){
       if(subpages.length){
         var list=document.createElement('div');
         list.className='subpage-list';
-        subpages.forEach(function(sp){
+        subpages.forEach(function(sp,idx){
           var t=(sp.child_page&&sp.child_page.title)||'Sin titulo';
           var item=document.createElement('div');
           item.className='subpage-item';
           item.innerHTML='<span>📄</span><div class="subpage-title">'+t+'</div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>';
-          (function(spId,spTitle,courseId){
-            item.onclick=function(){openSubpage(spId,spTitle,courseId);};
-          })(sp.id,t,cid);
+          (function(spId,spTitle,courseId,i){
+            item.onclick=function(){openSubpage(spId,spTitle,courseId,subpages,i);};
+          })(sp.id,t,cid,idx);
           list.appendChild(item);
         });
         subWrap.innerHTML='<div class="detail-section-title">contenido del curso</div>';
@@ -490,22 +490,39 @@ function openDetail(course){
     .catch(function(){subWrap.innerHTML='';});
 }
 
-function openSubpage(pageId,title,courseId){
+function openSubpage(pageId,title,courseId,subpages,idx){
   var panel=document.getElementById('detailPanel');
   panel.innerHTML='';
 
-  var backBtn=document.createElement('button');
-  backBtn.className='detail-close';
-  backBtn.textContent='← Volver al curso';
-  (function(cid){
-    backBtn.onclick=function(){
-      var c=null;
-      for(var i=0;i<allCourses.length;i++){if(allCourses[i].id===cid){c=allCourses[i];break;}}
-      if(c)openDetail(c);
-      else if(currentCourse)openDetail(currentCourse);
-    };
-  })(courseId);
-  panel.appendChild(backBtn);
+  function goBack(){
+    var c=null;
+    for(var i=0;i<allCourses.length;i++){if(allCourses[i].id===courseId){c=allCourses[i];break;}}
+    if(c)openDetail(c);else if(currentCourse)openDetail(currentCourse);
+  }
+
+  function makeNav(bottom){
+    var nav=document.createElement('div');
+    nav.style.cssText='display:flex;gap:8px;'+(bottom?'margin-top:2.5rem;':'margin-bottom:1.5rem;');
+    var back=document.createElement('button');
+    back.className='detail-close';
+    back.style.margin='0';
+    back.textContent='← Volver al curso';
+    back.onclick=goBack;
+    nav.appendChild(back);
+    if(subpages&&idx<subpages.length-1){
+      var nextSp=subpages[idx+1];
+      var nextTitle=(nextSp.child_page&&nextSp.child_page.title)||'Sin titulo';
+      var nextBtn=document.createElement('button');
+      nextBtn.className='detail-close';
+      nextBtn.style.cssText='margin:0;color:var(--purple);border-color:var(--purple2);';
+      nextBtn.textContent='Siguiente →';
+      nextBtn.onclick=function(){openSubpage(nextSp.id,nextTitle,courseId,subpages,idx+1);};
+      nav.appendChild(nextBtn);
+    }
+    return nav;
+  }
+
+  panel.appendChild(makeNav(false));
 
   var titleEl=document.createElement('div');
   titleEl.className='detail-title';
@@ -526,6 +543,7 @@ function openSubpage(pageId,title,courseId){
       content.className='notion-content';
       content.innerHTML=await renderBlocks(data.results||[]);
       panel.appendChild(content);
+      panel.appendChild(makeNav(true));
     })
     .catch(function(){loading.innerHTML='<div class="empty">No se pudo cargar.</div>';});
 }
