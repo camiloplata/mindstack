@@ -49,6 +49,13 @@ header{padding:1.5rem 2rem;border-bottom:0.5px solid var(--border);display:flex;
 .player-time{font-size:11px;color:var(--text3);font-family:monospace;flex:1;}
 .speed-btn{background:var(--bg3);border:0.5px solid var(--border2);border-radius:6px;color:var(--text2);font-size:11px;font-family:'DM Sans',sans-serif;padding:3px 8px;cursor:pointer;transition:color 0.15s,border-color 0.15s;}
 .speed-btn:hover,.speed-btn.active{color:var(--purple);border-color:var(--purple);}
+.vol-wrap{display:flex;align-items:center;gap:5px;}
+.vol-icon{background:none;border:none;cursor:pointer;padding:2px;display:flex;align-items:center;color:var(--text3);transition:color 0.15s;flex-shrink:0;}
+.vol-icon:hover{color:var(--text2);}
+.vol-icon svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.vol-slider{-webkit-appearance:none;appearance:none;width:56px;height:3px;border-radius:2px;outline:none;cursor:pointer;border:none;}
+.vol-slider::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;border-radius:50%;background:var(--purple);cursor:pointer;}
+.vol-slider::-moz-range-thumb{width:11px;height:11px;border-radius:50%;background:var(--purple);border:none;cursor:pointer;}
 audio{display:none;}
 .no-audio{background:var(--bg3);border:0.5px solid var(--border);border-radius:12px;padding:2rem;text-align:center;color:var(--text3);font-size:13px;}
 .filters{padding:1.5rem 2rem;border-bottom:0.5px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;}
@@ -165,6 +172,7 @@ audio{display:none;}
           <button class="play-btn" id="featuredPlayBtn"><svg id="featuredPlayIcon" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button>
           <span class="player-time" id="featuredTime">0:00 / 0:00</span>
           <button class="speed-btn" id="featuredSpeedBtn">1x</button>
+          <div class="vol-wrap"><button class="vol-icon" id="featuredVolBtn"><svg viewBox="0 0 24 24"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><path d="M15.54,8.46a5,5,0,0,1,0,7.07"/></svg></button><input type="range" class="vol-slider" id="featuredVolSlider" min="0" max="1" step="0.05" value="1"></div>
         </div>
         <audio id="featuredAudio" preload="none" crossorigin="anonymous"></audio>
       </div>
@@ -219,7 +227,7 @@ function fmt(s){
   return Math.floor(s/60)+':'+(Math.floor(s%60)+'').padStart(2,'0');
 }
 
-function setupPlayer(audio,playBtn,iconEl,bar,prog,timeEl,speedBtn){
+function setupPlayer(audio,playBtn,iconEl,bar,prog,timeEl,speedBtn,volBtn,volSlider){
   playBtn.onclick=function(){
     if(currentAudio&&currentAudio!==audio)currentAudio.pause();
     if(audio.paused){
@@ -253,6 +261,32 @@ function setupPlayer(audio,playBtn,iconEl,bar,prog,timeEl,speedBtn){
       audio.playbackRate=speeds[si];
       speedBtn.textContent=speeds[si]+'x';
       speedBtn.classList.toggle('active',speeds[si]!==1);
+    };
+  }
+  function setVolFill(s){
+    var pct=parseFloat(s.value)*100;
+    s.style.background='linear-gradient(to right,var(--purple) '+pct+'%,var(--border2) '+pct+'%)';
+  }
+  function setVolIcon(btn,v){
+    var ic=btn.querySelector('svg');
+    if(v===0){ic.innerHTML='<polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>';}
+    else{ic.innerHTML='<polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><path d="M15.54,8.46a5,5,0,0,1,0,7.07"/>';}
+  }
+  if(volSlider){
+    setVolFill(volSlider);
+    volSlider.oninput=function(){
+      audio.volume=parseFloat(volSlider.value);
+      setVolFill(volSlider);
+      if(volBtn)setVolIcon(volBtn,audio.volume);
+    };
+  }
+  if(volBtn&&volSlider){
+    var prevVol=1;
+    volBtn.onclick=function(){
+      if(audio.volume>0){prevVol=audio.volume;audio.volume=0;volSlider.value=0;}
+      else{audio.volume=prevVol;volSlider.value=prevVol;}
+      setVolFill(volSlider);
+      setVolIcon(volBtn,audio.volume);
     };
   }
 }
@@ -307,7 +341,7 @@ function renderFeatured(){
     var audio=document.getElementById('featuredAudio');
     audio.src=driveUrl(f.podcast);
     document.getElementById('featuredPlayerName').textContent=f.title;
-    setupPlayer(audio,document.getElementById('featuredPlayBtn'),document.getElementById('featuredPlayIcon'),document.getElementById('featuredBar'),document.getElementById('featuredProg'),document.getElementById('featuredTime'),document.getElementById('featuredSpeedBtn'));
+    setupPlayer(audio,document.getElementById('featuredPlayBtn'),document.getElementById('featuredPlayIcon'),document.getElementById('featuredBar'),document.getElementById('featuredProg'),document.getElementById('featuredTime'),document.getElementById('featuredSpeedBtn'),document.getElementById('featuredVolBtn'),document.getElementById('featuredVolSlider'));
   }
 }
 
@@ -388,11 +422,11 @@ function openDetail(course){
   if(course.podcast){
     var pw=document.createElement('div');
     pw.style.marginBottom='1.5rem';
-    pw.innerHTML='<div class="detail-section-title">podcast del curso</div><div class="player"><div class="player-bar" id="dBar"><div class="player-progress" id="dProg"></div></div><div class="player-controls"><button class="play-btn" id="dPlayBtn"><svg id="dPlayIcon" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button><span class="player-time" id="dTime">0:00 / 0:00</span><button class="speed-btn" id="dSpeedBtn">1x</button></div><audio id="dAudio" preload="none" crossorigin="anonymous"></audio></div>';
+    pw.innerHTML='<div class="detail-section-title">podcast del curso</div><div class="player"><div class="player-bar" id="dBar"><div class="player-progress" id="dProg"></div></div><div class="player-controls"><button class="play-btn" id="dPlayBtn"><svg id="dPlayIcon" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button><span class="player-time" id="dTime">0:00 / 0:00</span><button class="speed-btn" id="dSpeedBtn">1x</button><div class="vol-wrap"><button class="vol-icon" id="dVolBtn"><svg viewBox="0 0 24 24"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><path d="M15.54,8.46a5,5,0,0,1,0,7.07"/></svg></button><input type="range" class="vol-slider" id="dVolSlider" min="0" max="1" step="0.05" value="1"></div></div><audio id="dAudio" preload="none" crossorigin="anonymous"></audio></div>';
     panel.appendChild(pw);
     var da=document.getElementById('dAudio');
     da.src=driveUrl(course.podcast);
-    setupPlayer(da,document.getElementById('dPlayBtn'),document.getElementById('dPlayIcon'),document.getElementById('dBar'),document.getElementById('dProg'),document.getElementById('dTime'),document.getElementById('dSpeedBtn'));
+    setupPlayer(da,document.getElementById('dPlayBtn'),document.getElementById('dPlayIcon'),document.getElementById('dBar'),document.getElementById('dProg'),document.getElementById('dTime'),document.getElementById('dSpeedBtn'),document.getElementById('dVolBtn'),document.getElementById('dVolSlider'));
   }
 
   var subWrap=document.createElement('div');
