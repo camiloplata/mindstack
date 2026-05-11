@@ -276,22 +276,25 @@ function setupPlayer(audio,playBtn,iconEl,bar,prog,timeEl,speedBtn,volBtn,volSli
     if(v===0){ic.innerHTML='<polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>';}
     else{ic.innerHTML='<polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><path d="M15.54,8.46a5,5,0,0,1,0,7.07"/>';}
   }
-  if(volSlider){
-    setVolFill(volSlider);
-    volSlider.oninput=function(){
-      audio.volume=parseFloat(volSlider.value);
-      setVolFill(volSlider);
-      if(volBtn)setVolIcon(volBtn,audio.volume);
-    };
-  }
+  var isIOS=/iPhone|iPad|iPod/i.test(navigator.userAgent);
   if(volBtn&&volSlider){
-    var prevVol=1;
-    volBtn.onclick=function(){
-      if(audio.volume>0){prevVol=audio.volume;audio.volume=0;volSlider.value=0;}
-      else{audio.volume=prevVol;volSlider.value=prevVol;}
+    if(isIOS){
+      volBtn.closest('.vol-wrap').style.display='none';
+    } else {
       setVolFill(volSlider);
-      setVolIcon(volBtn,audio.volume);
-    };
+      volSlider.oninput=function(){
+        audio.volume=parseFloat(volSlider.value);
+        setVolFill(volSlider);
+        setVolIcon(volBtn,audio.volume);
+      };
+      var prevVol=1;
+      volBtn.onclick=function(){
+        if(audio.volume>0){prevVol=audio.volume;audio.volume=0;volSlider.value=0;}
+        else{audio.volume=prevVol;volSlider.value=prevVol;}
+        setVolFill(volSlider);
+        setVolIcon(volBtn,audio.volume);
+      };
+    }
   }
 }
 
