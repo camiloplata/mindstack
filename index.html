@@ -510,6 +510,16 @@ function openSubpage(pageId,title,courseId,subpages,idx){
     back.textContent='← Volver al curso';
     back.onclick=goBack;
     nav.appendChild(back);
+    if(subpages&&idx>0){
+      var prevSp=subpages[idx-1];
+      var prevTitle=(prevSp.child_page&&prevSp.child_page.title)||'Sin titulo';
+      var prevBtn=document.createElement('button');
+      prevBtn.className='detail-close';
+      prevBtn.style.margin='0';
+      prevBtn.textContent='← Atrás';
+      prevBtn.onclick=function(){openSubpage(prevSp.id,prevTitle,courseId,subpages,idx-1);};
+      nav.appendChild(prevBtn);
+    }
     if(subpages&&idx<subpages.length-1){
       var nextSp=subpages[idx+1];
       var nextTitle=(nextSp.child_page&&nextSp.child_page.title)||'Sin titulo';
