@@ -157,13 +157,14 @@ audio{display:none;}
 </header>
 <div class="stats-bar">
   <div class="stat-item"><div class="stat-num" style="color:#AFA9EC;" id="totalCourses">-</div><div class="stat-label">cursos</div></div>
-  <div class="stat-item"><div class="stat-num" style="color:#5DCAA5;">4</div><div class="stat-label">categorias</div></div>
+  <div class="stat-item"><div class="stat-num" style="color:#5DCAA5;">5</div><div class="stat-label">categorias</div></div>
   <div class="stat-item"><div class="stat-num" style="color:#7F77DD;" id="totalPodcasts">-</div><div class="stat-label">podcasts</div></div>
 </div>
 <div class="featured-section" id="featuredSection" style="display:none;"></div>
 <div class="filters">
   <button class="filter-btn active" onclick="filterCat('all',this)">todos</button>
   <button class="filter-btn" onclick="filterCat('ia',this)">inteligencia artificial</button>
+  <button class="filter-btn" onclick="filterCat('auto',this)">automatizaciones</button>
   <button class="filter-btn" onclick="filterCat('tools',this)">herramientas</button>
   <button class="filter-btn" onclick="filterCat('pro',this)">desarrollo profesional</button>
   <button class="filter-btn" onclick="filterCat('tech',this)">tecnologia y datos</button>
@@ -177,6 +178,7 @@ audio{display:none;}
 <script>
 var WORKER='https://mindstack-api.skmiloplata.workers.dev';
 var CATS={
+  auto:{label:'automatizaciones',icon:'⚡',color:'#5BB8D4',kw:['n8n','copilot studio','automatizacion','automatizaciones','workflow automation']},
   ia:{label:'inteligencia artificial',icon:'🤖',color:'#AFA9EC',kw:['ia','inteligencia artificial','claude','chatgpt','gemini','prompt','copilot','tips','trucos','pensamiento critico','perplexity','grok','llm','gpt','midjourney','dall-e','stable diffusion','cursor','notebooklm','openai','chatbot','machine learning']},
   tools:{label:'herramientas y productividad',icon:'🛠️',color:'#5DCAA5',kw:['notion','teams','power apps','power automate','microsoft 365','gestion del tiempo']},
   pro:{label:'desarrollo profesional',icon:'💼',color:'#F0997B',kw:['linkedin','posicionamiento','profesional','optimizacion']},
@@ -369,7 +371,7 @@ function renderCourses(courses){
   var grouped={};
   courses.forEach(function(c){if(!grouped[c.cat])grouped[c.cat]=[];grouped[c.cat].push(c);});
   wrap.innerHTML='';
-  ['ia','tools','pro','tech'].forEach(function(key){
+  ['ia','auto','tools','pro','tech'].forEach(function(key){
     if(!grouped[key])return;
     var cat=CATS[key];
     var sec=document.createElement('div');
