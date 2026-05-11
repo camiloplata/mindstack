@@ -178,7 +178,7 @@ audio{display:none;}
           <button class="speed-btn" id="featuredSpeedBtn">1x</button>
           <div class="vol-wrap"><button class="vol-icon" id="featuredVolBtn"><svg viewBox="0 0 24 24"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><path d="M15.54,8.46a5,5,0,0,1,0,7.07"/></svg></button><input type="range" class="vol-slider" id="featuredVolSlider" min="0" max="1" step="0.05" value="1"></div>
         </div>
-        <audio id="featuredAudio" preload="none" crossorigin="anonymous"></audio>
+        <audio id="featuredAudio" preload="metadata" crossorigin="anonymous"></audio>
       </div>
     </div>
   </div>
@@ -251,6 +251,7 @@ function setupPlayer(audio,playBtn,iconEl,bar,prog,timeEl,speedBtn,volBtn,volSli
   };
   audio.onplay=function(){iconEl.innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';};
   audio.onpause=function(){iconEl.innerHTML='<polygon points="5,3 19,12 5,21"/>';};
+  audio.onloadedmetadata=function(){timeEl.textContent='0:00 / '+fmt(audio.duration);};
   audio.onerror=function(){timeEl.textContent='No disponible';};
   bar.onclick=function(e){
     if(!audio.duration)return;
@@ -429,7 +430,7 @@ function openDetail(course){
   if(course.podcast){
     var pw=document.createElement('div');
     pw.style.marginBottom='1.5rem';
-    pw.innerHTML='<div class="detail-section-title">podcast del curso</div><div class="player"><div class="player-bar" id="dBar"><div class="player-progress" id="dProg"></div></div><div class="player-controls"><button class="play-btn" id="dPlayBtn"><svg id="dPlayIcon" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button><span class="player-time" id="dTime">0:00 / 0:00</span><button class="speed-btn" id="dSpeedBtn">1x</button><div class="vol-wrap"><button class="vol-icon" id="dVolBtn"><svg viewBox="0 0 24 24"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><path d="M15.54,8.46a5,5,0,0,1,0,7.07"/></svg></button><input type="range" class="vol-slider" id="dVolSlider" min="0" max="1" step="0.05" value="1"></div></div><audio id="dAudio" preload="none" crossorigin="anonymous"></audio></div>';
+    pw.innerHTML='<div class="detail-section-title">podcast del curso</div><div class="player"><div class="player-bar" id="dBar"><div class="player-progress" id="dProg"></div></div><div class="player-controls"><button class="play-btn" id="dPlayBtn"><svg id="dPlayIcon" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button><span class="player-time" id="dTime">0:00 / 0:00</span><button class="speed-btn" id="dSpeedBtn">1x</button><div class="vol-wrap"><button class="vol-icon" id="dVolBtn"><svg viewBox="0 0 24 24"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><path d="M15.54,8.46a5,5,0,0,1,0,7.07"/></svg></button><input type="range" class="vol-slider" id="dVolSlider" min="0" max="1" step="0.05" value="1"></div></div><audio id="dAudio" preload="metadata" crossorigin="anonymous"></audio></div>';
     panel.appendChild(pw);
     var da=document.getElementById('dAudio');
     da.src=driveUrl(course.podcast);
