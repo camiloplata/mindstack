@@ -553,7 +553,7 @@ async function renderBlocks(blocks){
       case 'heading_3':return '<h3>'+txt(b.heading_3&&b.heading_3.rich_text)+'</h3>';
       case 'paragraph':
         var pc=txt(b.paragraph&&b.paragraph.rich_text);
-        if(pc.trim()==='---')return '<hr style="border:none;border-top:0.5px solid var(--border);margin:1rem 0;">';
+        if(/^-{3,}$/.test(pc.trim()))return '<hr style="border:none;border-top:0.5px solid var(--border);margin:1rem 0;">';
         return pc?'<p>'+applyMarkdown(pc)+'</p>':'';
       case 'bulleted_list_item':return '<ul><li>'+applyMarkdown(txt(b.bulleted_list_item&&b.bulleted_list_item.rich_text))+'</li></ul>';
       case 'numbered_list_item':return '<ol><li>'+applyMarkdown(txt(b.numbered_list_item&&b.numbered_list_item.rich_text))+'</li></ol>';
