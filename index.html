@@ -553,12 +553,12 @@ async function renderBlocks(blocks){
       case 'heading_3':return '<h3>'+txt(b.heading_3&&b.heading_3.rich_text)+'</h3>';
       case 'paragraph':
         var pc=txt(b.paragraph&&b.paragraph.rich_text);
-        if(/^-{3,}$/.test(pc.trim()))return '<hr style="border:none;border-top:0.5px solid var(--border);margin:1rem 0;">';
+        if(/^-{3,}$/.test(pc.trim()))return '<hr style="border:none;border-top:1px solid var(--border);margin:1rem 0;">';
         return pc?'<p>'+applyMarkdown(pc)+'</p>':'';
       case 'bulleted_list_item':return '<ul><li>'+applyMarkdown(txt(b.bulleted_list_item&&b.bulleted_list_item.rich_text))+'</li></ul>';
       case 'numbered_list_item':return '<ol><li>'+applyMarkdown(txt(b.numbered_list_item&&b.numbered_list_item.rich_text))+'</li></ol>';
       case 'quote':return '<blockquote>'+applyMarkdown(txt(b.quote&&b.quote.rich_text))+'</blockquote>';
-      case 'divider':return '<hr style="border:none;border-top:0.5px solid var(--border);margin:1rem 0;">';
+      case 'divider':return '<hr style="border:none;border-top:1px solid var(--border);margin:1rem 0;">';
       case 'callout':return '<div style="background:var(--bg3);border:0.5px solid var(--border);border-radius:8px;padding:12px;margin:8px 0;">'+applyMarkdown(txt(b.callout&&b.callout.rich_text))+'</div>';
       case 'image':
         var src=(b.image&&b.image.file&&b.image.file.url)||(b.image&&b.image.external&&b.image.external.url)||'';
