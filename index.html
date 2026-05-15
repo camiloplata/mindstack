@@ -283,6 +283,11 @@ function fetchCourses(){
       document.getElementById('totalPodcasts').textContent=allCourses.filter(function(c){return c.podcast;}).length;
       renderCategoryCards();
       renderCourses(allCourses);
+      var cParam=new URLSearchParams(location.search).get('c');
+      if(cParam){
+        var target=allCourses.find(function(c){return c.id===decodeURIComponent(cParam);});
+        if(target)openDetail(target);
+      }
     })
     .catch(function(){
       document.getElementById('coursesWrap').innerHTML='<div class="empty">No se pudieron cargar los cursos.</div>';
@@ -425,6 +430,7 @@ function openDetail(course){
   panel.appendChild(ext);
 
   document.getElementById('detailOverlay').classList.add('open');
+  history.pushState({courseId:course.id},'','?c='+encodeURIComponent(course.id));
   document.body.style.overflow='hidden';
 
   var cid=course.id;
@@ -576,6 +582,7 @@ function closeDetailPanel(){
   document.getElementById('detailOverlay').classList.remove('open');
   document.body.style.overflow='';
   if(currentAudio){currentAudio.pause();currentAudio=null;}
+  history.pushState({},'',location.pathname);
 }
 
 function showToast(msg){
@@ -586,7 +593,7 @@ function showToast(msg){
 }
 
 function shareCourse(course){
-  var url='https://camiloplata.github.io/mindstack/';
+  var url='https://camiloplata.github.io/mindstack/?c='+encodeURIComponent(course.id);
   var data={title:course.title,text:course.desc||course.title,url:url};
   if(navigator.share){
     navigator.share(data).catch(function(){});
@@ -596,6 +603,14 @@ function shareCourse(course){
     }).catch(function(){showToast('No se pudo copiar');});
   }
 }
+
+window.addEventListener('popstate',function(){
+  if(!new URLSearchParams(location.search).get('c')){
+    document.getElementById('detailOverlay').classList.remove('open');
+    document.body.style.overflow='';
+    if(currentAudio){currentAudio.pause();currentAudio=null;}
+  }
+});
 
 fetchCourses();
 </script>
