@@ -107,6 +107,13 @@ audio{display:none;}
 .notion-content li{margin-bottom:4px;}
 .notion-content blockquote{border-left:3px solid var(--purple);padding-left:1rem;color:var(--text3);margin:1rem 0;}
 .empty{padding:2rem;text-align:center;color:var(--text3);font-size:13px;}
+.error-state{padding:3rem 2rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px;}
+.error-icon{font-size:32px;line-height:1;}
+.error-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:600;color:var(--text);}
+.error-msg{font-size:13px;color:var(--text3);line-height:1.6;max-width:320px;}
+.error-hint{font-size:12px;color:var(--text3);margin-top:4px;}
+.error-hint a{color:var(--purple);text-decoration:none;}
+.error-hint a:hover{text-decoration:underline;}
 .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:8px 18px;font-size:13px;color:var(--text);z-index:400;opacity:0;transition:opacity 0.2s;pointer-events:none;}
 .toast.show{opacity:1;}
 @media(max-width:600px){
@@ -273,9 +280,25 @@ function setupPlayer(audio,playBtn,iconEl,bar,prog,timeEl,speedBtn,volBtn,volSli
   }
 }
 
+function showErrorState(){
+  document.getElementById('coursesWrap').innerHTML=
+    '<div class="error-state">'+
+      '<div class="error-icon">⚠️</div>'+
+      '<div class="error-title">No pudimos cargar los cursos</div>'+
+      '<div class="error-msg">Nuestro servidor tardó demasiado en responder. Esto suele resolverse solo en unos segundos.</div>'+
+      '<button class="btn btn-primary" onclick="retryFetch()">Intentar de nuevo</button>'+
+      '<div class="error-hint">Si el problema persiste, escríbele a <a href="https://www.linkedin.com/in/camiloplata" target="_blank">Camilo</a>.</div>'+
+    '</div>';
+}
+
+function retryFetch(){
+  document.getElementById('coursesWrap').innerHTML='<div class="loading"><div class="spinner"></div><div class="loading-text">Cargando cursos...</div></div>';
+  fetchCourses();
+}
+
 function fetchCourses(){
-  fetch(WORKER+'/courses')
-    .then(function(r){return r.json();})
+  var timeout=new Promise(function(_,reject){setTimeout(function(){reject(new Error('timeout'));},10000);});
+  Promise.race([fetch(WORKER+'/courses').then(function(r){return r.json();}),timeout])
     .then(function(data){
       allCourses=(data.results||[])
         .filter(function(p){return p.properties&&p.properties.Name&&p.properties.Name.title&&p.properties.Name.title.length>0;})
@@ -302,9 +325,7 @@ function fetchCourses(){
         if(target)openDetail(target);
       }
     })
-    .catch(function(){
-      document.getElementById('coursesWrap').innerHTML='<div class="empty">No se pudieron cargar los cursos.</div>';
-    });
+    .catch(function(){showErrorState();});
 }
 
 function renderCategoryCards(){
