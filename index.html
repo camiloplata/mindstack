@@ -361,7 +361,7 @@ function renderCategoryCards(){
   allCard.style.borderColor='#7F77DD';
   allCard.style.setProperty('--hover-color','#7F77DD');
   allCard.style.background='#7F77DD18';
-  allCard.innerHTML='<div class="cat-card-icon">📚</div><div class="cat-card-name">todos</div><div class="cat-card-count">'+allCourses.length+' cursos</div>';
+  allCard.innerHTML='<div class="cat-card-icon">📚</div><div class="cat-card-name">todos</div><div class="cat-card-count">'+allCourses.length+' curso'+(allCourses.length===1?'':'s')+'</div>';
   allCard.onclick=function(){setActive('all',allCard);};
   cards.appendChild(allCard);
   ['ia','auto','tools','pro','tech'].forEach(function(key){
@@ -370,7 +370,7 @@ function renderCategoryCards(){
     var card=document.createElement('div');
     card.className='cat-card';
     card.style.setProperty('--hover-color',cat.color);
-    card.innerHTML='<div class="cat-card-icon">'+cat.icon+'</div><div class="cat-card-name">'+cat.label+'</div><div class="cat-card-count">'+count+' cursos</div>';
+    card.innerHTML='<div class="cat-card-icon">'+cat.icon+'</div><div class="cat-card-name">'+cat.label+'</div><div class="cat-card-count">'+count+' curso'+(count===1?'':'s')+'</div>';
     (function(k,c){c.onclick=function(){setActive(k,c);};})(key,card);
     cards.appendChild(card);
   });
@@ -389,7 +389,7 @@ function renderCourses(courses){
     sec.className='cat-section';
     var hdr=document.createElement('div');
     hdr.className='cat-header';
-    hdr.innerHTML='<span style="font-size:18px">'+cat.icon+'</span><span class="cat-name">'+cat.label+'</span><span class="cat-count">'+grouped[key].length+' cursos</span>';
+    hdr.innerHTML='<span style="font-size:18px">'+cat.icon+'</span><span class="cat-name">'+cat.label+'</span><span class="cat-count">'+grouped[key].length+' curso'+(grouped[key].length===1?'':'s')+'</span>';
     sec.appendChild(hdr);
     var grid=document.createElement('div');
     grid.className='cards-grid';
