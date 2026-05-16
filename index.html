@@ -17,8 +17,10 @@ header{padding:1.5rem 2rem;border-bottom:0.5px solid var(--border);display:flex;
 .logo-name{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--text);}
 .logo-sub{font-size:11px;color:var(--text3);margin-top:1px;}
 .search-wrap{padding:1.25rem 2rem;border-bottom:0.5px solid var(--border);}
-.search-box{display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:11px 16px;transition:border-color 0.2s;}
-.search-box:focus-within{border-color:var(--purple);}
+@keyframes searchGradient{0%{background-position:0% center;}100%{background-position:300% center;}}
+.search-border{border-radius:11px;padding:1.5px;background:linear-gradient(90deg,#AFA9EC,#5BB8D4,#5DCAA5,#F0997B,#EF9F27,#AFA9EC);background-size:300% 100%;animation:searchGradient 4s linear infinite;}
+.search-border.solid{animation:none;background:var(--search-accent,var(--purple));transition:background 0.4s ease;}
+.search-box{display:flex;align-items:center;gap:10px;background:var(--bg3);border:none;border-radius:9.5px;padding:11px 16px;}
 .search-box input{background:none;border:none;outline:none;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;width:100%;flex:1;}
 .search-box input::placeholder{color:var(--text3);}
 .search-clear{background:none;border:none;color:var(--text3);cursor:pointer;padding:0;font-size:18px;line-height:1;display:none;transition:color 0.15s;flex-shrink:0;}
@@ -159,10 +161,12 @@ audio{display:none;}
   <div class="stat-item"><div class="stat-num" style="color:#7F77DD;" id="totalPodcasts">-</div><div class="stat-label">podcasts</div></div>
 </div>
 <div class="search-wrap">
-  <div class="search-box">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text3);flex-shrink:0;"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <input type="text" id="searchInput" placeholder="¿Qué quieres aprender hoy?">
-    <button class="search-clear" id="searchClear" aria-label="Limpiar búsqueda">×</button>
+  <div class="search-border" id="searchBorder">
+    <div class="search-box">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text3);flex-shrink:0;"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="searchInput" placeholder="¿Qué quieres aprender hoy?">
+      <button class="search-clear" id="searchClear" aria-label="Limpiar búsqueda">×</button>
+    </div>
   </div>
 </div>
 <div id="catCardsSection"></div>
@@ -353,6 +357,7 @@ function renderCategoryCards(){
     var count=allCourses.filter(function(c){return c.cat===key;}).length;
     var card=document.createElement('div');
     card.className='cat-card';
+    card.style.borderColor=cat.color+'55';
     card.innerHTML='<div class="cat-card-icon">'+cat.icon+'</div><div class="cat-card-name">'+cat.label+'</div><div class="cat-card-count">'+count+' cursos</div>';
     (function(k,c){c.onclick=function(){setActive(k,c);};})(key,card);
     cards.appendChild(card);
@@ -401,12 +406,21 @@ document.getElementById('searchInput').addEventListener('input',function(e){
   var feedback=document.getElementById('searchFeedback');
   clearBtn.style.display=q?'block':'none';
   var hint=document.getElementById('searchHint');
+  var border=document.getElementById('searchBorder');
   if(!q){
     feedback.style.display='none';
     hint.style.display='none';
+    border.classList.remove('solid');
+    border.style.removeProperty('--search-accent');
     renderCourses(allCourses);
   } else {
     var results=allCourses.filter(function(c){return c.title.toLowerCase().indexOf(q)>=0||c.desc.toLowerCase().indexOf(q)>=0;});
+    var catCounts={};
+    results.forEach(function(c){catCounts[c.cat]=(catCounts[c.cat]||0)+1;});
+    var dominantCat=Object.keys(catCounts).sort(function(a,b){return catCounts[b]-catCounts[a];})[0];
+    var accent=dominantCat&&CATS[dominantCat]?CATS[dominantCat].color:'#7F77DD';
+    border.classList.add('solid');
+    border.style.setProperty('--search-accent',accent);
     var label='<span>'+results.length+' curso'+(results.length===1?'':'s')+'</span> encontrado'+(results.length===1?'':'s');
     feedback.innerHTML=label+' para "'+e.target.value.trim()+'"';
     feedback.style.display='block';
@@ -421,6 +435,9 @@ document.getElementById('searchClear').addEventListener('click',function(){
   this.style.display='none';
   document.getElementById('searchFeedback').style.display='none';
   document.getElementById('searchHint').style.display='none';
+  var border=document.getElementById('searchBorder');
+  border.classList.remove('solid');
+  border.style.removeProperty('--search-accent');
   inp.focus();
   renderCourses(allCourses);
 });
