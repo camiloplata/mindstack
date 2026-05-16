@@ -46,6 +46,8 @@ header{padding:1.5rem 2rem;border-bottom:0.5px solid var(--border);display:flex;
 .badge{font-size:11px;padding:3px 10px;border-radius:20px;}
 .badge-done{background:#1a1a2a;color:#AFA9EC;border:0.5px solid var(--purple2);}
 .badge-audio{background:#0d2018;color:var(--teal);border:0.5px solid #0F6E56;}
+.badge-play{cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.15s,border-color 0.15s,color 0.15s;}
+.badge-play:hover{background:#0f2e1e;border-color:var(--teal);color:#fff;}
 .btn{padding:8px 16px;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:opacity 0.15s;}
 .btn:hover{opacity:0.85;}
 .btn-primary{background:var(--purple);color:#fff;}
@@ -77,9 +79,6 @@ audio{display:none;}
 .cat-count{font-size:12px;color:var(--text3);background:var(--bg3);border:0.5px solid var(--border);border-radius:12px;padding:2px 8px;}
 .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
 .course-card{background:var(--bg2);border:0.5px solid var(--border2);border-radius:12px;padding:1.1rem;cursor:pointer;transition:border-color 0.15s,transform 0.15s;position:relative;}
-.card-play-btn{position:absolute;bottom:11px;right:11px;width:30px;height:30px;border-radius:50%;background:var(--purple);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(0.75);transition:opacity 0.18s,transform 0.18s;z-index:2;flex-shrink:0;padding:0;}
-.course-card:hover .card-play-btn{opacity:1;transform:scale(1);}
-@media(max-width:600px){.card-play-btn{opacity:0.85;transform:scale(1);}}
 .course-card:hover{border-color:var(--hover-color,var(--purple));transform:translateY(-2px);}
 .card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;}
 .card-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
@@ -414,22 +413,14 @@ function renderCourses(courses){
       card.className='course-card';
       card.style.setProperty('--hover-color',cat.color);
       var badges='';
-      if(c.podcast)badges+='<span class="badge badge-audio">podcast</span>';
+      if(c.podcast)badges+='<button class="badge badge-audio badge-play">▶ podcast</button>';
       card.innerHTML='<div class="card-top"><div class="card-icon" style="background:'+cat.color+'22;">'+(c.icon||cat.icon)+'</div><div class="card-badges">'+badges+'</div></div><div class="card-title">'+c.title+'</div><div class="card-desc">'+(c.desc||'Ver contenido')+'</div><div class="card-footer"><button class="card-link">ver lecturas</button><div style="display:flex;align-items:center;gap:8px;"><button class="card-link card-share" title="Compartir"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button></div></div>';
-      if(c.podcast){
-        var playBtn=document.createElement('button');
-        playBtn.className='card-play-btn';
-        playBtn.title='Escuchar podcast';
-        playBtn.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="#fff"><polygon points="5,3 19,12 5,21"/></svg>';
-        card.appendChild(playBtn);
-        (function(course,btn){
-          btn.onclick=function(e){e.stopPropagation();openDetail(course,true);};
-        })(c,playBtn);
-      }
       (function(course){
         card.onclick=function(){openDetail(course);};
         card.querySelector('button.card-link').onclick=function(e){e.stopPropagation();openDetail(course);};
         card.querySelector('.card-share').onclick=function(e){e.stopPropagation();shareCourse(course);};
+        var badgePlay=card.querySelector('.badge-play');
+        if(badgePlay){badgePlay.onclick=function(e){e.stopPropagation();openDetail(course,true);};}
       })(c);
       grid.appendChild(card);
     });
