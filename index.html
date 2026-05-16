@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MindStack</title>
 <link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0a0a0a;--bg2:#111111;--bg3:#181818;--border:#222222;--border2:#2a2a2a;--text:#f0f0f0;--text2:#aaaaaa;--text3:#666666;--purple:#7F77DD;--purple2:#534AB7;--teal:#5DCAA5;}
@@ -26,7 +28,6 @@ header{padding:1.5rem 2rem;border-bottom:0.5px solid var(--border);display:flex;
 .search-box input::placeholder{color:var(--text3);}
 .search-clear{background:none;border:none;color:var(--text3);cursor:pointer;padding:0;font-size:18px;line-height:1;display:none;transition:color 0.15s;flex-shrink:0;}
 .search-clear:hover{color:var(--text);}
-.search-hint{display:none;}
 .search-feedback{padding:0.6rem 2rem 0;font-size:12px;color:var(--text3);display:none;}
 .search-feedback span{color:var(--purple);font-weight:500;}
 .stats-bar{display:flex;border-bottom:0.5px solid var(--border);}
@@ -46,7 +47,7 @@ header{padding:1.5rem 2rem;border-bottom:0.5px solid var(--border);display:flex;
 .badge{font-size:11px;padding:3px 10px;border-radius:20px;}
 .badge-done{background:#1a1a2a;color:#AFA9EC;border:0.5px solid var(--purple2);}
 .badge-audio{background:#0d2018;color:var(--teal);border:0.5px solid #0F6E56;}
-.badge-play{cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.15s,border-color 0.15s,color 0.15s;}
+.badge-play{cursor:pointer;transition:background 0.15s,border-color 0.15s,color 0.15s;}
 .badge-play:hover{background:#0f2e1e;border-color:var(--teal);color:#fff;}
 .btn{padding:8px 16px;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:opacity 0.15s;}
 .btn:hover{opacity:0.85;}
@@ -213,6 +214,7 @@ var CATS={
 };
 var allCourses=[],currentAudio=null,currentCourse=null;
 
+function esc(s){var d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
 function norm(s){return(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
 function toSlug(s){return norm(s).replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-').slice(0,60);}
 function getCat(name){
@@ -414,7 +416,7 @@ function renderCourses(courses){
       card.style.setProperty('--hover-color',cat.color);
       var badges='';
       if(c.podcast)badges+='<button class="badge badge-audio badge-play">▶ podcast</button>';
-      card.innerHTML='<div class="card-top"><div class="card-icon" style="background:'+cat.color+'22;">'+(c.icon||cat.icon)+'</div><div class="card-badges">'+badges+'</div></div><div class="card-title">'+c.title+'</div><div class="card-desc">'+(c.desc||'Ver contenido')+'</div><div class="card-footer"><button class="card-link">ver lecturas</button><div style="display:flex;align-items:center;gap:8px;"><button class="card-link card-share" title="Compartir"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button></div></div>';
+      card.innerHTML='<div class="card-top"><div class="card-icon" style="background:'+cat.color+'22;">'+(c.icon||cat.icon)+'</div><div class="card-badges">'+badges+'</div></div><div class="card-title">'+esc(c.title)+'</div><div class="card-desc">'+esc(c.desc||'Ver contenido')+'</div><div class="card-footer"><button class="card-link">ver lecturas</button><div style="display:flex;align-items:center;gap:8px;"><button class="card-link card-share" title="Compartir"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button></div></div>';
       (function(course){
         card.onclick=function(){openDetail(course);};
         card.querySelector('button.card-link').onclick=function(e){e.stopPropagation();openDetail(course);};
@@ -543,7 +545,7 @@ function openDetail(course,autoplay){
           var t=(sp.child_page&&sp.child_page.title)||'Sin titulo';
           var item=document.createElement('div');
           item.className='subpage-item';
-          item.innerHTML='<span>📄</span><div class="subpage-title">'+t+'</div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>';
+          item.innerHTML='<span>📄</span><div class="subpage-title">'+esc(t)+'</div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>';
           (function(spId,spTitle,courseId,i){
             item.onclick=function(){openSubpage(spId,spTitle,courseId,subpages,i);};
           })(sp.id,t,cid,idx);
@@ -641,7 +643,7 @@ async function renderBlocks(blocks){
         if(r.annotations&&r.annotations.bold)t='<strong>'+t+'</strong>';
         if(r.annotations&&r.annotations.italic)t='<em>'+t+'</em>';
         if(r.annotations&&r.annotations.code)t='<code style="background:var(--bg3);padding:1px 5px;border-radius:4px;font-size:12px;">'+t+'</code>';
-        if(r.href)t='<a href="'+r.href+'" target="_blank" style="color:var(--purple);">'+t+'</a>';
+        if(r.href)t='<a href="'+r.href+'" target="_blank" rel="noopener noreferrer" style="color:var(--purple);">'+t+'</a>';
         return t;
       }).join('');
     }
@@ -660,7 +662,7 @@ async function renderBlocks(blocks){
       case 'callout':return '<div style="background:var(--bg3);border:0.5px solid var(--border);border-radius:8px;padding:12px;margin:8px 0;">'+applyMarkdown(txt(b.callout&&b.callout.rich_text))+'</div>';
       case 'image':
         var src=(b.image&&b.image.file&&b.image.file.url)||(b.image&&b.image.external&&b.image.external.url)||'';
-        return src?'<img src="'+src+'" style="width:100%;border-radius:8px;margin:8px 0;">':'';
+        return src?'<img src="'+src+'" loading="lazy" style="width:100%;border-radius:8px;margin:8px 0;">':'';
       case 'table':
         var hasHeader=b.table&&b.table.has_column_header;
         var rowData=await fetch(WORKER+'/blocks/'+b.id.replace(/-/g,'')).then(function(r){return r.json();});
@@ -738,8 +740,8 @@ fetchCourses();
     <div class="platzi-modal-title">¿Ya tienes cuenta en Platzi?</div>
     <div class="platzi-modal-desc">Si aún no tienes, regístrate con mi enlace y ambos ganamos un mes gratis.</div>
     <div class="platzi-modal-btns">
-      <a id="platziDirectBtn" class="btn btn-ghost" target="_blank" onclick="closePlatziModal()" style="justify-content:center;">Sí, ir al curso →</a>
-      <a href="https://platzi.com/r/camiloplata" class="btn btn-primary" target="_blank" onclick="closePlatziModal()" style="justify-content:center;">No, registrarme con el enlace de Camilo 🎁</a>
+      <a id="platziDirectBtn" class="btn btn-ghost" target="_blank" rel="noopener noreferrer" onclick="closePlatziModal()" style="justify-content:center;">Sí, ir al curso →</a>
+      <a href="https://platzi.com/r/camiloplata" class="btn btn-primary" target="_blank" rel="noopener noreferrer" onclick="closePlatziModal()" style="justify-content:center;">No, registrarme con el enlace de Camilo 🎁</a>
     </div>
     <button class="platzi-modal-cancel" onclick="closePlatziModal()">Cancelar</button>
   </div>
