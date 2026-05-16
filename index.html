@@ -16,15 +16,14 @@ header{padding:1.5rem 2rem;border-bottom:0.5px solid var(--border);display:flex;
 .logo-icon svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2;}
 .logo-name{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--text);}
 .logo-sub{font-size:11px;color:var(--text3);margin-top:1px;}
-.search-box{display:flex;align-items:center;gap:8px;background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:7px 12px;transition:border-color 0.2s;}
+.search-wrap{padding:1.25rem 2rem;border-bottom:0.5px solid var(--border);}
+.search-box{display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:11px 16px;transition:border-color 0.2s;}
 .search-box:focus-within{border-color:var(--purple);}
-.search-box input{background:none;border:none;outline:none;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;width:180px;}
+.search-box input{background:none;border:none;outline:none;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;width:100%;flex:1;}
 .search-box input::placeholder{color:var(--text3);}
-.search-clear{background:none;border:none;color:var(--text3);cursor:pointer;padding:0;font-size:16px;line-height:1;display:none;transition:color 0.15s;}
+.search-clear{background:none;border:none;color:var(--text3);cursor:pointer;padding:0;font-size:18px;line-height:1;display:none;transition:color 0.15s;flex-shrink:0;}
 .search-clear:hover{color:var(--text);}
-.search-wrap{position:relative;}
-.search-hint{position:absolute;top:calc(100% + 6px);right:0;background:var(--bg3);border:0.5px solid var(--border2);border-radius:6px;padding:5px 10px;font-size:11px;color:var(--text3);white-space:nowrap;display:none;z-index:200;}
-.search-hint span{color:var(--purple);font-weight:500;}
+.search-hint{display:none;}
 .search-feedback{padding:0.6rem 2rem 0;font-size:12px;color:var(--text3);display:none;}
 .search-feedback span{color:var(--purple);font-weight:500;}
 .stats-bar{display:flex;border-bottom:0.5px solid var(--border);}
@@ -117,8 +116,8 @@ audio{display:none;}
 .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:8px 18px;font-size:13px;color:var(--text);z-index:400;opacity:0;transition:opacity 0.2s;pointer-events:none;}
 .toast.show{opacity:1;}
 @media(max-width:600px){
-  header{padding:1rem;gap:8px;}
-  .search-box input{width:120px;}
+  header{padding:1rem;}
+  .search-wrap{padding:1rem;}
   .stat-item{padding:1rem;}
   .stat-num{font-size:27px;}
   .stat-label{font-size:13px;}
@@ -144,7 +143,6 @@ audio{display:none;}
 }
 @media(max-width:400px){
   .cards-grid{grid-template-columns:1fr;}
-  .search-box input{width:90px;}
 }
 </style>
 </head>
@@ -154,19 +152,18 @@ audio{display:none;}
     <div class="logo-icon" style="background:none;padding:0;overflow:hidden;"><img src="logo.png" style="width:34px;height:34px;object-fit:cover;border-radius:8px;display:block;"></div>
     <div><div class="logo-name">MindStack</div><div class="logo-sub">Biblioteca de Cursos</div></div>
   </a>
-  <div class="search-wrap">
-    <div class="search-box">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input type="text" id="searchInput" placeholder="Buscar curso...">
-      <button class="search-clear" id="searchClear" aria-label="Limpiar búsqueda">×</button>
-    </div>
-    <div class="search-hint" id="searchHint"></div>
-  </div>
 </header>
 <div class="stats-bar">
   <div class="stat-item"><div class="stat-num" style="color:#AFA9EC;" id="totalCourses">-</div><div class="stat-label">cursos</div></div>
   <div class="stat-item"><div class="stat-num" style="color:#5DCAA5;">5</div><div class="stat-label">categorias</div></div>
   <div class="stat-item"><div class="stat-num" style="color:#7F77DD;" id="totalPodcasts">-</div><div class="stat-label">podcasts</div></div>
+</div>
+<div class="search-wrap">
+  <div class="search-box">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text3);flex-shrink:0;"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="searchInput" placeholder="¿Qué quieres aprender hoy?">
+    <button class="search-clear" id="searchClear" aria-label="Limpiar búsqueda">×</button>
+  </div>
 </div>
 <div id="catCardsSection"></div>
 <div class="search-feedback" id="searchFeedback"></div>
