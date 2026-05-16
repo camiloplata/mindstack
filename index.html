@@ -117,6 +117,14 @@ audio{display:none;}
 .error-hint{font-size:12px;color:var(--text3);margin-top:4px;}
 .error-hint a{color:var(--purple);text-decoration:none;}
 .error-hint a:hover{text-decoration:underline;}
+.platzi-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:300;backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:1rem;}
+.platzi-overlay.open{display:flex;}
+.platzi-modal{background:var(--bg2);border:0.5px solid var(--border2);border-radius:16px;padding:2rem;width:min(400px,92vw);animation:fadeUp 0.2s ease;}
+.platzi-modal-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px;}
+.platzi-modal-desc{font-size:13px;color:var(--text3);line-height:1.6;margin-bottom:1.5rem;}
+.platzi-modal-btns{display:flex;flex-direction:column;gap:8px;}
+.platzi-modal-cancel{background:none;border:none;color:var(--text3);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:12px;padding:0;text-align:center;width:100%;}
+.platzi-modal-cancel:hover{color:var(--text);}
 .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:8px 18px;font-size:13px;color:var(--text);z-index:400;opacity:0;transition:opacity 0.2s;pointer-events:none;}
 .toast.show{opacity:1;}
 @media(max-width:600px){
@@ -506,11 +514,10 @@ function openDetail(course){
   shareBtn.onclick=function(){shareCourse(course);};
   ext.appendChild(shareBtn);
   if(course.curso){
-    var lnk=document.createElement('a');
+    var lnk=document.createElement('button');
     lnk.className='btn btn-ghost';
-    lnk.href=course.curso;
-    lnk.target='_blank';
     lnk.textContent='Ir al curso en Platzi';
+    (function(url){lnk.onclick=function(){openPlatziModal(url);};})(course.curso);
     ext.appendChild(lnk);
   }
   panel.appendChild(ext);
@@ -681,6 +688,17 @@ function closeDetailPanel(){
   history.pushState({},'',location.pathname);
 }
 
+function openPlatziModal(courseUrl){
+  document.getElementById('platziDirectBtn').href=courseUrl;
+  document.getElementById('platziOverlay').classList.add('open');
+}
+function closePlatziModal(){
+  document.getElementById('platziOverlay').classList.remove('open');
+}
+document.addEventListener('click',function(e){
+  if(e.target===document.getElementById('platziOverlay'))closePlatziModal();
+});
+
 function showToast(msg){
   var t=document.getElementById('toast');
   t.textContent=msg;
@@ -710,6 +728,17 @@ window.addEventListener('popstate',function(){
 
 fetchCourses();
 </script>
+<div class="platzi-overlay" id="platziOverlay">
+  <div class="platzi-modal">
+    <div class="platzi-modal-title">¿Ya tienes cuenta en Platzi?</div>
+    <div class="platzi-modal-desc">Si aún no tienes, regístrate con mi enlace y ambos ganamos un mes gratis.</div>
+    <div class="platzi-modal-btns">
+      <a id="platziDirectBtn" class="btn btn-ghost" target="_blank" onclick="closePlatziModal()" style="justify-content:center;">Sí, ir al curso →</a>
+      <a href="https://platzi.com/r/skmiloplata" class="btn btn-primary" target="_blank" onclick="closePlatziModal()" style="justify-content:center;">No, registrarme con el enlace de Camilo 🎁</a>
+    </div>
+    <button class="platzi-modal-cancel" onclick="closePlatziModal()">Cancelar</button>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 </body>
 </html>
