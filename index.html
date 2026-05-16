@@ -405,11 +405,9 @@ document.getElementById('searchInput').addEventListener('input',function(e){
   var clearBtn=document.getElementById('searchClear');
   var feedback=document.getElementById('searchFeedback');
   clearBtn.style.display=q?'block':'none';
-  var hint=document.getElementById('searchHint');
   var border=document.getElementById('searchBorder');
   if(!q){
     feedback.style.display='none';
-    hint.style.display='none';
     border.classList.remove('solid');
     border.style.removeProperty('--search-accent');
     renderCourses(allCourses);
@@ -424,8 +422,6 @@ document.getElementById('searchInput').addEventListener('input',function(e){
     var label='<span>'+results.length+' curso'+(results.length===1?'':'s')+'</span> encontrado'+(results.length===1?'':'s');
     feedback.innerHTML=label+' para "'+e.target.value.trim()+'"';
     feedback.style.display='block';
-    hint.innerHTML=label;
-    hint.style.display='block';
     renderCourses(results);
   }
 });
