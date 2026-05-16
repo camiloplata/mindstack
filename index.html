@@ -90,6 +90,9 @@ audio{display:none;}
 .card-desc{font-size:13px;color:var(--text2);line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 .card-footer{margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .card-link{font-size:13px;color:var(--purple);display:flex;align-items:center;gap:4px;text-decoration:none;background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.card-cta{font-size:13px;color:var(--text3);}
+.card-share{padding:4px 6px;border-radius:6px;transition:color 0.15s,background 0.15s;}
+.card-share:hover{color:#fff;background:var(--purple);}
 .detail-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;backdrop-filter:blur(6px);padding:2rem 1rem;overflow-y:auto;}
 .detail-overlay.open{display:flex;align-items:flex-start;justify-content:center;}
 .detail-panel{width:min(780px,96vw);background:var(--bg2);border:0.5px solid var(--border2);border-radius:16px;overflow:visible;padding:2.5rem;margin:auto;animation:fadeUp 0.22s ease;}
@@ -457,10 +460,9 @@ function renderCourses(courses){
       card.style.setProperty('--hover-color',cat.color);
       var badges='';
       if(c.podcast)badges+='<button class="badge badge-audio badge-play">▶ podcast</button>';
-      card.innerHTML='<div class="card-top"><div class="card-icon" style="background:'+cat.color+'22;">'+(c.icon||getIcon(c.title,cat.icon))+'</div><div class="card-badges">'+badges+'</div></div><div class="card-title">'+esc(c.title)+'</div><div class="card-desc">'+esc(c.desc||'Ver contenido')+'</div><div class="card-footer"><button class="card-link">ver contenido</button><div style="display:flex;align-items:center;gap:8px;"><button class="card-link card-share" title="Compartir"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button></div></div>';
+      card.innerHTML='<div class="card-top"><div class="card-icon" style="background:'+cat.color+'22;">'+(c.icon||getIcon(c.title,cat.icon))+'</div><div class="card-badges">'+badges+'</div></div><div class="card-title">'+esc(c.title)+'</div><div class="card-desc">'+esc(c.desc||'Ver contenido')+'</div><div class="card-footer"><span class="card-cta">ver resumen →</span><div style="display:flex;align-items:center;gap:8px;"><button class="card-link card-share" title="Compartir"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button></div></div>';
       (function(course){
         card.onclick=function(){openDetail(course);};
-        card.querySelector('button.card-link').onclick=function(e){e.stopPropagation();openDetail(course);};
         card.querySelector('.card-share').onclick=function(e){e.stopPropagation();shareCourse(course);};
         var badgePlay=card.querySelector('.badge-play');
         if(badgePlay){badgePlay.onclick=function(e){e.stopPropagation();openDetail(course,true);};}
