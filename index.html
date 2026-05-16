@@ -215,6 +215,24 @@ var CATS={
 };
 var allCourses=[],currentAudio=null,currentCourse=null;
 
+var ICON_MAP=[
+  ['chatgpt','💬'],['gemini','♊'],['claude','✨'],['perplexity','🔍'],['grok','🔮'],
+  ['midjourney','🎨'],['dall-e','🎨'],['stable diffusion','🎨'],
+  ['cursor','🖱️'],['notebooklm','📓'],['copilot studio','🎯'],['copilot','🤝'],
+  ['n8n','⚡'],['workflow automation','🔄'],['automatizacion','⚙️'],
+  ['notion','📝'],['teams','👥'],['power apps','📱'],['power automate','🔄'],
+  ['microsoft 365','🗂️'],['gestion del tiempo','⏰'],
+  ['linkedin','💼'],['posicionamiento','📍'],
+  ['estadistica','📊'],['ingenieria de software','⚙️'],['pensamiento logico','🧩'],
+  ['pensamiento critico','🎯'],['machine learning','🧬'],['chatbot','🤖'],
+  ['finanzas','💰'],['tips','💡'],['trucos','💡'],['prompt','✍️'],['fundamentos','🏗️'],
+  ['openai','🔵'],['gpt','💬'],['ia generativa','🤖'],['inteligencia artificial','🧠']
+];
+function getIcon(title,fallback){
+  var n=norm(title);
+  for(var i=0;i<ICON_MAP.length;i++){if(n.indexOf(ICON_MAP[i][0])>=0)return ICON_MAP[i][1];}
+  return fallback;
+}
 function esc(s){var d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
 function norm(s){return(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
 function toSlug(s){return norm(s).replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-').slice(0,60);}
@@ -417,7 +435,7 @@ function renderCourses(courses){
       card.style.setProperty('--hover-color',cat.color);
       var badges='';
       if(c.podcast)badges+='<button class="badge badge-audio badge-play">▶ podcast</button>';
-      card.innerHTML='<div class="card-top"><div class="card-icon" style="background:'+cat.color+'22;">'+(c.icon||cat.icon)+'</div><div class="card-badges">'+badges+'</div></div><div class="card-title">'+esc(c.title)+'</div><div class="card-desc">'+esc(c.desc||'Ver contenido')+'</div><div class="card-footer"><button class="card-link">ver contenido</button><div style="display:flex;align-items:center;gap:8px;"><button class="card-link card-share" title="Compartir"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button></div></div>';
+      card.innerHTML='<div class="card-top"><div class="card-icon" style="background:'+cat.color+'22;">'+(c.icon||getIcon(c.title,cat.icon))+'</div><div class="card-badges">'+badges+'</div></div><div class="card-title">'+esc(c.title)+'</div><div class="card-desc">'+esc(c.desc||'Ver contenido')+'</div><div class="card-footer"><button class="card-link">ver contenido</button><div style="display:flex;align-items:center;gap:8px;"><button class="card-link card-share" title="Compartir"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button></div></div>';
       (function(course){
         card.onclick=function(){openDetail(course);};
         card.querySelector('button.card-link').onclick=function(e){e.stopPropagation();openDetail(course);};
