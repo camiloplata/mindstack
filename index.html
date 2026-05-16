@@ -189,6 +189,7 @@ var CATS={
 var allCourses=[],currentAudio=null,currentCourse=null;
 
 function norm(s){return(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
+function toSlug(s){return norm(s).replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-').slice(0,60);}
 function getCat(name){
   var n=norm(name);
   var keys=Object.keys(CATS);
@@ -322,7 +323,7 @@ function fetchCourses(){
       renderCourses(allCourses);
       var cParam=new URLSearchParams(location.search).get('c');
       if(cParam){
-        var target=allCourses.find(function(c){return c.id===decodeURIComponent(cParam);});
+        var target=allCourses.find(function(c){return toSlug(c.title)===cParam||c.id===decodeURIComponent(cParam);});
         if(target)openDetail(target);
       }
     })
@@ -500,7 +501,7 @@ function openDetail(course){
   panel.appendChild(ext);
 
   document.getElementById('detailOverlay').classList.add('open');
-  history.pushState({courseId:course.id},'','?c='+encodeURIComponent(course.id));
+  history.pushState({courseId:course.id},'','?c='+toSlug(course.title));
   document.body.style.overflow='hidden';
 
   var cid=course.id;
@@ -673,7 +674,7 @@ function showToast(msg){
 }
 
 function shareCourse(course){
-  var url='https://camiloplata.github.io/mindstack/?c='+encodeURIComponent(course.id);
+  var url='https://camiloplata.github.io/mindstack/?c='+toSlug(course.title);
   var data={title:course.title,text:course.desc||course.title,url:url};
   if(navigator.share){
     navigator.share(data).catch(function(){});
