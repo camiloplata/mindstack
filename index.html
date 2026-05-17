@@ -40,6 +40,8 @@ header{padding:1.5rem 2rem;border-bottom:0.5px solid var(--border);display:flex;
 .stat-label{font-size:15px;color:var(--text3);margin-top:4px;}
 .podcast-hint{padding:1.25rem 2rem;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;gap:10px;font-size:15px;color:var(--text2);}
 .cat-cards-section{padding:2rem 2rem 1.5rem;border-bottom:0.5px solid var(--border);}
+.cat-divider{display:flex;align-items:center;gap:12px;color:var(--text3);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:1.25rem;}
+.cat-divider::before,.cat-divider::after{content:'';flex:1;height:0.5px;background:var(--border);}
 .cat-cards{display:flex;gap:10px;overflow-x:auto;overflow-y:visible;padding-top:6px;margin-top:-6px;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
 .cat-cards::-webkit-scrollbar{display:none;}
 .cat-card{flex:1;min-width:130px;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:1rem;cursor:pointer;transition:border-color 0.2s,background 0.2s,transform 0.15s;display:flex;flex-direction:column;gap:5px;user-select:none;}
@@ -404,7 +406,7 @@ function fetchCourses(){
 
 function renderCategoryCards(){
   var section=document.getElementById('catCardsSection');
-  section.innerHTML='<div class="cat-header"><span style="font-size:18px">🗂️</span><span class="cat-name">categorías</span><span class="cat-count">5 temas</span></div><div class="cat-cards" id="catCards"></div>';
+  section.innerHTML='<div class="cat-divider">explorar por tema</div><div class="cat-cards" id="catCards"></div>';
   var cards=document.getElementById('catCards');
   function setActive(key,cardEl){
     document.querySelectorAll('.cat-card').forEach(function(c){
