@@ -40,8 +40,7 @@ header{padding:1.5rem 2rem;border-bottom:0.5px solid var(--border);display:flex;
 .stat-label{font-size:15px;color:var(--text3);margin-top:4px;}
 .podcast-hint{padding:1.25rem 2rem;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;gap:10px;font-size:15px;color:var(--text2);}
 .cat-cards-section{padding:2rem 2rem 1.5rem;border-bottom:0.5px solid var(--border);}
-.cat-divider{display:flex;align-items:center;gap:12px;color:var(--text3);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;margin:1rem 0 1.75rem;}
-.cat-divider::before,.cat-divider::after{content:'';flex:1;height:0.5px;background:var(--border);}
+.cat-divider{text-align:center;color:var(--text3);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;margin:1rem 0 1.75rem;}
 .cat-cards{display:flex;gap:10px;overflow-x:auto;overflow-y:visible;padding-top:6px;margin-top:-6px;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
 .cat-cards::-webkit-scrollbar{display:none;}
 .cat-card{flex:1;min-width:130px;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:1rem;cursor:pointer;transition:border-color 0.2s,background 0.2s,transform 0.15s;display:flex;flex-direction:column;gap:5px;user-select:none;}
@@ -394,7 +393,7 @@ function fetchCourses(){
       document.getElementById('totalCourses').textContent=allCourses.length;
       document.getElementById('totalPodcasts').textContent=allCourses.filter(function(c){return c.podcast;}).length;
       renderCategoryCards();
-      renderCourses(allCourses);
+      renderCourses(allCourses.slice(0,5));
       var cParam=new URLSearchParams(location.search).get('c');
       if(cParam){
         var target=allCourses.find(function(c){return toSlug(c.title)===cParam||c.id===decodeURIComponent(cParam);});
@@ -415,18 +414,18 @@ function renderCategoryCards(){
       c.style.background='';
     });
     cardEl.classList.add('active');
-    var color=key==='all'?'#7F77DD':(CATS[key]&&CATS[key].color)||'#7F77DD';
+    var color=key==='new'?'#7F77DD':(CATS[key]&&CATS[key].color)||'#7F77DD';
     cardEl.style.borderColor=color;
     cardEl.style.background=color+'18';
-    renderCourses(key==='all'?allCourses:allCourses.filter(function(c){return c.cat===key;}));
+    renderCourses(key==='new'?allCourses.slice(0,5):allCourses.filter(function(c){return c.cat===key;}));
   }
   var allCard=document.createElement('div');
   allCard.className='cat-card active';
   allCard.style.borderColor='#7F77DD';
   allCard.style.setProperty('--hover-color','#7F77DD');
   allCard.style.background='#7F77DD18';
-  allCard.innerHTML='<div class="cat-card-icon">📚</div><div class="cat-card-name">todos</div><div class="cat-card-count">'+allCourses.length+' curso'+(allCourses.length===1?'':'s')+'</div>';
-  allCard.onclick=function(){setActive('all',allCard);};
+  allCard.innerHTML='<div class="cat-card-icon">✨</div><div class="cat-card-name">lo nuevo</div><div class="cat-card-count">5 cursos</div>';
+  allCard.onclick=function(){setActive('new',allCard);};
   cards.appendChild(allCard);
   ['ia','auto','tools','pro','tech'].forEach(function(key){
     var cat=CATS[key];
