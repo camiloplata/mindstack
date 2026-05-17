@@ -404,7 +404,7 @@ function fetchCourses(){
 
 function renderCategoryCards(){
   var section=document.getElementById('catCardsSection');
-  section.innerHTML='<div class="cat-cards" id="catCards"></div>';
+  section.innerHTML='<div class="cat-header"><span style="font-size:18px">🗂️</span><span class="cat-name">categorías</span><span class="cat-count">5 temas</span></div><div class="cat-cards" id="catCards"></div>';
   var cards=document.getElementById('catCards');
   function setActive(key,cardEl){
     document.querySelectorAll('.cat-card').forEach(function(c){
