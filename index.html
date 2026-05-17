@@ -337,7 +337,7 @@ function setupPlayer(audio,playBtn,iconEl,bar,prog,timeEl,speedBtn,volBtn,volSli
   }
   function setVolFill(s){
     var pct=parseFloat(s.value)*100;
-    s.style.background='linear-gradient(to right,var(--purple) '+pct+'%,var(--border2) '+pct+'%)';
+    s.style.background='linear-gradient(to right,var(--cat-color,var(--purple)) '+pct+'%,var(--border2) '+pct+'%)';
   }
   function setVolIcon(btn,v){
     var ic=btn.querySelector('svg');
