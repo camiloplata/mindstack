@@ -33,6 +33,14 @@ header{padding:1.5rem 2rem;border-bottom:0.5px solid var(--border);display:flex;
 .search-clear:hover{color:var(--text);}
 .search-feedback{padding:0.6rem 2rem 0;font-size:12px;color:var(--text3);display:none;}
 .search-feedback span{color:var(--purple);font-weight:500;}
+.search-container{position:relative;}
+.search-suggestions{position:absolute;left:0;right:0;top:calc(100% + 6px);background:var(--bg2);border:0.5px solid var(--border2);border-radius:10px;z-index:50;overflow:hidden;display:none;box-shadow:0 8px 24px rgba(0,0,0,0.5);}
+.search-suggestions.show{display:block;}
+.suggestion-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;transition:background 0.12s;border-bottom:0.5px solid var(--border);}
+.suggestion-item:last-child{border-bottom:none;}
+.suggestion-item:hover{background:#7F77DD18;}
+.suggestion-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.suggestion-title{font-size:13px;color:var(--text);}
 .stats-bar{display:flex;border-bottom:0.5px solid var(--border);}
 .stat-item{flex:1;padding:1.75rem 2rem;border-right:0.5px solid var(--border);}
 .stat-item:last-child{border-right:none;}
@@ -215,12 +223,15 @@ footer{border-top:0.5px solid var(--border);padding:3rem 2rem 2rem;margin-top:1r
   <span>Antes de leer, escucha. Dale play al <button class="badge badge-audio badge-play" style="pointer-events:none;cursor:default;">▶ podcast</button> de cada curso y decide cuánto quieres aprender.</span>
 </div>
 <div class="search-wrap">
-  <div class="search-border" id="searchBorder">
-    <div class="search-box">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text3);flex-shrink:0;"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input type="text" id="searchInput" placeholder="¿Qué quieres aprender hoy?">
-      <button class="search-clear" id="searchClear" aria-label="Limpiar búsqueda">×</button>
+  <div class="search-container">
+    <div class="search-border" id="searchBorder">
+      <div class="search-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text3);flex-shrink:0;"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="searchInput" placeholder="¿Qué quieres aprender hoy?">
+        <button class="search-clear" id="searchClear" aria-label="Limpiar búsqueda">×</button>
+      </div>
     </div>
+    <div class="search-suggestions" id="searchSuggestions"></div>
   </div>
 </div>
 <div id="catCardsSection"></div>
@@ -477,17 +488,34 @@ function renderCourses(courses){
 }
 
 
+function showSuggestions(q){
+  var box=document.getElementById('searchSuggestions');
+  if(q.length<3){box.classList.remove('show');box.innerHTML='';return;}
+  var matches=allCourses.filter(function(c){return norm(c.title).indexOf(norm(q))>=0;}).slice(0,5);
+  if(!matches.length){box.classList.remove('show');box.innerHTML='';return;}
+  box.innerHTML='';
+  matches.forEach(function(course){
+    var cat=CATS[course.cat];
+    var item=document.createElement('div');
+    item.className='suggestion-item';
+    item.innerHTML='<div class="suggestion-icon" style="background:'+cat.color+'22;">'+(course.icon||getIcon(course.title,cat.icon))+'</div><div class="suggestion-title">'+esc(course.title)+'</div>';
+    (function(c){item.addEventListener('mousedown',function(e){e.preventDefault();openDetail(c);box.classList.remove('show');box.innerHTML='';document.getElementById('searchInput').value='';document.getElementById('searchClear').style.display='none';document.getElementById('searchFeedback').style.display='none';document.getElementById('searchBorder').classList.remove('solid');document.getElementById('searchBorder').style.removeProperty('--search-accent');renderCourses(allCourses.slice(0,5));});})(course);
+    box.appendChild(item);
+  });
+  box.classList.add('show');
+}
 document.getElementById('searchInput').addEventListener('input',function(e){
   var q=e.target.value.toLowerCase().trim();
   var clearBtn=document.getElementById('searchClear');
   var feedback=document.getElementById('searchFeedback');
   clearBtn.style.display=q?'block':'none';
   var border=document.getElementById('searchBorder');
+  showSuggestions(q);
   if(!q){
     feedback.style.display='none';
     border.classList.remove('solid');
     border.style.removeProperty('--search-accent');
-    renderCourses(allCourses);
+    renderCourses(allCourses.slice(0,5));
   } else {
     var results=allCourses.filter(function(c){return c.title.toLowerCase().indexOf(q)>=0||c.desc.toLowerCase().indexOf(q)>=0;});
     var catCounts={};
@@ -502,10 +530,15 @@ document.getElementById('searchInput').addEventListener('input',function(e){
     renderCourses(results);
   }
 });
+document.getElementById('searchInput').addEventListener('blur',function(){
+  setTimeout(function(){var box=document.getElementById('searchSuggestions');box.classList.remove('show');box.innerHTML='';},150);
+});
 document.getElementById('searchClear').addEventListener('click',function(){
   var inp=document.getElementById('searchInput');
   inp.value='';
   this.style.display='none';
+  document.getElementById('searchSuggestions').classList.remove('show');
+  document.getElementById('searchSuggestions').innerHTML='';
   document.getElementById('searchFeedback').style.display='none';
   var border=document.getElementById('searchBorder');
   border.classList.remove('solid');
