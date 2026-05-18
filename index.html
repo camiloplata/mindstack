@@ -834,7 +834,7 @@ var STATS_MOBILE=[
   {num:'-',label:'resúmenes listos',color:'#5DCAA5'},
   {num:'~5 min',label:'por lectura',color:'#7F77DD'},
   {num:'~20 min',label:'por podcast',color:'#5BB8D4'},
-  {num:null,label:'Aprendo y resumo lo que me parece útil. Si algo de esto te sirve, genial.<br><span style="font-size:12px;letter-spacing:1px;opacity:0.5;display:block;margin-top:8px;">escucha · lee · comparte</span>',color:'var(--text2)'}
+  {num:null,label:'escucha · lee · comparte',color:'var(--text)'}
 ];
 function initStatsMobile(){
   var numEl=document.getElementById('statMobileNum');
@@ -848,11 +848,12 @@ function initStatsMobile(){
       idx=(idx+1)%STATS_MOBILE.length;
       var s=STATS_MOBILE[idx];
       if(s.num===null){
-        numEl.style.fontSize='15px';
-        numEl.style.fontFamily='inherit';
-        numEl.style.fontWeight='400';
-        numEl.style.lineHeight='1.6';
-        numEl.innerHTML=s.label;
+        numEl.style.fontSize='22px';
+        numEl.style.fontFamily="'Syne',sans-serif";
+        numEl.style.fontWeight='700';
+        numEl.style.lineHeight='1.4';
+        numEl.style.letterSpacing='0.5px';
+        numEl.textContent=s.label;
         numEl.style.color=s.color;
         lblEl.style.display='none';
       } else {
