@@ -585,9 +585,13 @@ function openDetail(course,autoplay){
   if(!course)return;
   var da=document.getElementById('dAudio');
   var resuming=(miniPlayerCourse&&miniPlayerCourse.id===course.id&&da&&!da.paused);
-  if(!resuming&&currentAudio&&currentAudio!==da){currentAudio.pause();}
-  if(!resuming&&da&&!da.paused){da.pause();}
-  hideMiniPlayer(false);
+  var miniActive=!!(miniPlayerCourse&&!resuming);
+  if(resuming){
+    hideMiniPlayer(false);
+  } else if(!miniActive){
+    if(currentAudio&&currentAudio!==da){currentAudio.pause();}
+    if(da&&!da.paused){da.pause();}
+  }
   currentCourse=course;
   var cat=CATS[course.cat];
   var catColor=cat.color||'#7F77DD';
@@ -626,19 +630,29 @@ function openDetail(course,autoplay){
     playerEl.style.boxShadow='0 0 0 1px '+catColor+'40, 0 0 24px '+catColor+'55';
     panel.appendChild(pw);
     var da=document.getElementById('dAudio');
-    if(!resuming){da.src=driveUrl(course.podcast);}
-    setupPlayer(da,document.getElementById('dPlayBtn'),document.getElementById('dPlayIcon'),document.getElementById('dBar'),document.getElementById('dProg'),document.getElementById('dTime'),document.getElementById('dSpeedBtn'),document.getElementById('dVolBtn'),document.getElementById('dVolSlider'));
     if(resuming){
-      var pi=document.getElementById('dPlayIcon');
-      pi.innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+      setupPlayer(da,document.getElementById('dPlayBtn'),document.getElementById('dPlayIcon'),document.getElementById('dBar'),document.getElementById('dProg'),document.getElementById('dTime'),document.getElementById('dSpeedBtn'),document.getElementById('dVolBtn'),document.getElementById('dVolSlider'));
+      document.getElementById('dPlayIcon').innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
       if(da.duration){
         document.getElementById('dProg').style.width=(da.currentTime/da.duration*100)+'%';
         document.getElementById('dTime').textContent=fmt(da.currentTime)+' / '+fmt(da.duration);
       }
-    } else if(autoplay){
-      da.play().catch(function(){da.addEventListener('canplay',function(){da.play().catch(function(){});},{once:true});});
+      currentAudio=da;
+    } else if(miniActive){
+      var newSrc=driveUrl(course.podcast);
+      document.getElementById('dPlayBtn').onclick=function(){
+        hideMiniPlayer(true);
+        da.src=newSrc;
+        da.play().catch(function(){da.addEventListener('canplay',function(){da.play().catch(function(){});},{once:true});});
+        currentAudio=da;
+        setupPlayer(da,document.getElementById('dPlayBtn'),document.getElementById('dPlayIcon'),document.getElementById('dBar'),document.getElementById('dProg'),document.getElementById('dTime'),document.getElementById('dSpeedBtn'),document.getElementById('dVolBtn'),document.getElementById('dVolSlider'));
+      };
+    } else {
+      da.src=driveUrl(course.podcast);
+      setupPlayer(da,document.getElementById('dPlayBtn'),document.getElementById('dPlayIcon'),document.getElementById('dBar'),document.getElementById('dProg'),document.getElementById('dTime'),document.getElementById('dSpeedBtn'),document.getElementById('dVolBtn'),document.getElementById('dVolSlider'));
+      if(autoplay){da.play().catch(function(){da.addEventListener('canplay',function(){da.play().catch(function(){});},{once:true});});}
+      currentAudio=da;
     }
-    currentAudio=da;
   }
 
   var subWrap=document.createElement('div');
@@ -832,6 +846,8 @@ function showMiniPlayer(course,catColor){
   document.getElementById('miniTitle').textContent=course.title;
   mp.style.setProperty('--cat-color',catColor);
   document.getElementById('miniPlayBtn').style.background=catColor;
+  mp.style.borderColor=catColor;
+  mp.style.boxShadow='0 0 0 1px '+catColor+'40, 0 0 22px '+catColor+'55';
   mp.classList.add('show');
   miniPlayerCourse=course;
   var mpb=document.getElementById('miniPlayBtn');
