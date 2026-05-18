@@ -46,6 +46,10 @@ header{padding:1.5rem 2rem;border-bottom:0.5px solid var(--border);display:flex;
 .stat-item:last-child{border-right:none;}
 .stat-num{font-family:'Syne',sans-serif;font-size:35px;font-weight:700;}
 .stat-label{font-size:15px;color:var(--text3);margin-top:4px;}
+.stats-mobile{display:none;padding:1.75rem 2rem;border-bottom:0.5px solid var(--border);align-items:center;justify-content:center;flex-direction:column;text-align:center;}
+.stat-mobile-num{font-family:'Syne',sans-serif;font-size:35px;font-weight:700;transition:opacity 0.35s;}
+.stat-mobile-label{font-size:15px;color:var(--text3);margin-top:4px;transition:opacity 0.35s;}
+.stat-mobile-num.fade,.stat-mobile-label.fade{opacity:0;}
 .podcast-hint{padding:1.25rem 2rem;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;gap:10px;font-size:15px;color:var(--text2);}
 .cat-cards-section{padding:2rem 2rem 1.5rem;border-bottom:0.5px solid var(--border);}
 .cat-divider{text-align:center;color:var(--text3);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;margin:1rem 0 1.75rem;}
@@ -148,6 +152,8 @@ audio{display:none;}
   .header-center{display:none;}
   .search-wrap{padding:1rem;}
   .stat-item{padding:1rem;}
+  .stats-bar{display:none;}
+  .stats-mobile{display:flex;}
   .stat-num{font-size:27px;}
   .stat-label{font-size:13px;}
   .cat-cards-section{padding:1rem;}
@@ -217,6 +223,10 @@ footer{border-top:0.5px solid var(--border);padding:3rem 2rem 2rem;margin-top:1r
   <div class="stat-item"><div class="stat-num" style="color:#5DCAA5;" id="totalCourses">-</div><div class="stat-label">resúmenes listos</div></div>
   <div class="stat-item"><div class="stat-num" style="color:#7F77DD;">~5 min</div><div class="stat-label">por lectura</div></div>
   <div class="stat-item"><div class="stat-num" style="color:#5BB8D4;">~20 min</div><div class="stat-label">por podcast</div></div>
+</div>
+<div class="stats-mobile" id="statsMobile">
+  <div class="stat-mobile-num" id="statMobileNum" style="color:#A8D468;">+200h</div>
+  <div class="stat-mobile-label" id="statMobileLabel">invertidas en aprender</div>
 </div>
 <div class="podcast-hint">
   <span>Antes de leer, escucha. Dale play al <button class="badge badge-audio badge-play" style="pointer-events:none;cursor:default;">▶ podcast</button> de cada curso y decide cuánto quieres aprender.</span>
@@ -401,6 +411,7 @@ function fetchCourses(){
           };
         });
       document.getElementById('totalCourses').textContent=allCourses.length;
+      STATS_MOBILE[1].num=allCourses.length;
       renderCategoryCards();
       renderCourses(allCourses.slice(0,5));
       var cParam=new URLSearchParams(location.search).get('c');
@@ -818,7 +829,33 @@ window.addEventListener('popstate',function(){
   }
 });
 
+var STATS_MOBILE=[
+  {num:'+200h',label:'invertidas en aprender',color:'#A8D468'},
+  {num:'-',label:'resúmenes listos',color:'#5DCAA5'},
+  {num:'~5 min',label:'por lectura',color:'#7F77DD'},
+  {num:'~20 min',label:'por podcast',color:'#5BB8D4'}
+];
+function initStatsMobile(){
+  var numEl=document.getElementById('statMobileNum');
+  var lblEl=document.getElementById('statMobileLabel');
+  if(!numEl||!lblEl)return;
+  var idx=0;
+  setInterval(function(){
+    numEl.classList.add('fade');
+    lblEl.classList.add('fade');
+    setTimeout(function(){
+      idx=(idx+1)%STATS_MOBILE.length;
+      var s=STATS_MOBILE[idx];
+      numEl.textContent=s.num;
+      numEl.style.color=s.color;
+      lblEl.textContent=s.label;
+      numEl.classList.remove('fade');
+      lblEl.classList.remove('fade');
+    },350);
+  },3000);
+}
 fetchCourses();
+initStatsMobile();
 </script>
 <div class="platzi-overlay" id="platziOverlay">
   <div class="platzi-modal">
