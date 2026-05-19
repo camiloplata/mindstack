@@ -637,6 +637,8 @@ function openDetail(course,autoplay){
     playerEl.style.border='1px solid '+catColor;
     playerEl.style.boxShadow='0 0 0 1px '+catColor+'40, 0 0 24px '+catColor+'55';
     panel.appendChild(pw);
+    var isIOSp=/iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if(!isIOSp){var s=document.getElementById('dVolSlider');if(s){s.style.background='linear-gradient(to right,'+catColor+' 100%,var(--border2) 100%)';}}
     var da=document.getElementById('dAudio');
     if(resuming){
       setupPlayer(da,document.getElementById('dPlayBtn'),document.getElementById('dPlayIcon'),document.getElementById('dBar'),document.getElementById('dProg'),document.getElementById('dTime'),document.getElementById('dSpeedBtn'),document.getElementById('dVolBtn'),document.getElementById('dVolSlider'));
