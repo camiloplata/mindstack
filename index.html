@@ -36,11 +36,13 @@ header{padding:1.5rem 2rem;border-bottom:0.5px solid var(--border);display:flex;
 .search-container{position:relative;}
 .search-suggestions{position:absolute;left:0;right:0;top:calc(100% + 6px);background:var(--bg2);border:0.5px solid var(--border2);border-radius:10px;z-index:50;overflow:hidden;display:none;box-shadow:0 8px 24px rgba(0,0,0,0.5);}
 .search-suggestions.show{display:block;}
-.suggestion-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;transition:background 0.12s;border-bottom:0.5px solid var(--border);}
+.suggestion-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;transition:background 0.12s;border-bottom:0.5px solid var(--border);text-decoration:none;}
 .suggestion-item:last-child{border-bottom:none;}
 .suggestion-item:hover{background:#7F77DD18;}
 .suggestion-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
-.suggestion-title{font-size:13px;color:var(--text);}
+.suggestion-content{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.suggestion-title{font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.suggestion-url{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .stats-bar{display:flex;border-bottom:0.5px solid var(--border);}
 .stat-item{flex:1;padding:1.75rem 2rem;border-right:0.5px solid var(--border);}
 .stat-item:last-child{border-right:none;}
@@ -582,9 +584,11 @@ function showSuggestions(q){
   box.innerHTML='';
   matches.forEach(function(course){
     var cat=CATS[course.cat];
-    var item=document.createElement('div');
+    var slug=toSlug(course.title);
+    var item=document.createElement('a');
     item.className='suggestion-item';
-    item.innerHTML='<div class="suggestion-icon" style="background:'+cat.color+'22;">'+(course.icon||getIcon(course.title,cat.icon))+'</div><div class="suggestion-title">'+esc(course.title)+'</div>';
+    item.href='?c='+slug;
+    item.innerHTML='<div class="suggestion-icon" style="background:'+cat.color+'22;">'+(course.icon||getIcon(course.title,cat.icon))+'</div><div class="suggestion-content"><div class="suggestion-title">'+esc(course.title)+'</div><div class="suggestion-url">mindstack · ?c='+slug+'</div></div>';
     (function(c){item.addEventListener('mousedown',function(e){e.preventDefault();openDetail(c);box.classList.remove('show');box.innerHTML='';document.getElementById('searchInput').value='';document.getElementById('searchClear').style.display='none';document.getElementById('searchFeedback').style.display='none';document.getElementById('searchBorder').classList.remove('solid');document.getElementById('searchBorder').style.removeProperty('--search-accent');renderCourses(allCourses.slice(0,5));});})(course);
     box.appendChild(item);
   });
