@@ -938,9 +938,11 @@ function closeDetailPanel(){
   document.getElementById('detailOverlay').classList.remove('open');
   document.body.style.overflow='';
   if(da&&!da.paused&&currentCourse&&currentCourse.podcast){
-    var cat=CATS[currentCourse.cat];
-    showMiniPlayer(currentCourse,cat.color||'#7F77DD');
-  } else {
+    if(!miniPlayerCourse||miniPlayerCourse.id===currentCourse.id){
+      var cat=CATS[currentCourse.cat];
+      showMiniPlayer(currentCourse,cat.color||'#7F77DD');
+    }
+  } else if(!miniPlayerCourse){
     if(currentAudio){currentAudio.pause();}
     currentAudio=null;
   }
@@ -983,9 +985,11 @@ window.addEventListener('popstate',function(){
     document.getElementById('detailOverlay').classList.remove('open');
     document.body.style.overflow='';
     if(da&&!da.paused&&currentCourse&&currentCourse.podcast){
-      var cat=CATS[currentCourse.cat];
-      showMiniPlayer(currentCourse,cat.color||'#7F77DD');
-    } else {
+      if(!miniPlayerCourse||miniPlayerCourse.id===currentCourse.id){
+        var cat=CATS[currentCourse.cat];
+        showMiniPlayer(currentCourse,cat.color||'#7F77DD');
+      }
+    } else if(!miniPlayerCourse){
       if(currentAudio){currentAudio.pause();}
       currentAudio=null;
     }
