@@ -132,6 +132,18 @@ audio{display:none;}
 .subpage-item:hover{border-color:rgba(255,255,255,0.3);color:var(--text);}
 .subpage-title{font-size:14px;color:var(--text);font-weight:500;flex:1;}
 .detail-external{display:flex;gap:8px;margin-top:1.5rem;}
+.about-logo-wrap{display:flex;flex-direction:column;align-items:center;text-align:center;padding:0.5rem 0 2rem;}
+.about-logo-img{width:64px;height:64px;border-radius:14px;margin-bottom:1rem;}
+.about-logo-name{font-family:'Syne',sans-serif;font-size:30px;font-weight:700;margin-bottom:10px;}
+.about-tagline{font-size:15px;color:var(--text2);line-height:1.5;max-width:380px;}
+.about-divider{height:0.5px;background:var(--border2);margin:1.75rem 0;}
+.about-section{margin-bottom:0;}
+.about-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:10px;}
+.about-body{font-size:15px;color:var(--text2);line-height:1.7;}
+.about-highlight{font-family:'Syne',sans-serif;font-size:16px;font-weight:600;color:var(--text);margin-top:0.75rem;}
+.about-topics{display:flex;flex-wrap:wrap;gap:8px;margin-top:1rem;}
+.about-topic{font-size:12px;padding:4px 12px;border-radius:20px;border:0.5px solid;}
+.about-footer{text-align:center;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--purple);letter-spacing:3px;padding:1.5rem 0 0.5rem;border-top:0.5px solid var(--border2);margin-top:2rem;}
 .loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4rem;gap:16px;}
 .spinner{width:32px;height:32px;border:2px solid var(--border2);border-top-color:var(--purple);border-radius:50%;animation:spin 0.8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
@@ -218,7 +230,7 @@ footer{border-top:0.5px solid var(--border);padding:3rem 2rem 2rem;margin-top:1r
 </head>
 <body>
 <header>
-  <a class="logo" href="#">
+  <a class="logo" href="#" onclick="openAbout();return false;">
     <div class="logo-icon" style="background:none;padding:0;overflow:hidden;"><img src="logo.png" style="width:34px;height:34px;object-fit:cover;border-radius:8px;display:block;"></div>
     <div><div class="logo-name">MindStack</div><div class="logo-sub">Biblioteca de Cursos</div></div>
   </a>
@@ -263,6 +275,34 @@ footer{border-top:0.5px solid var(--border);padding:3rem 2rem 2rem;margin-top:1r
 </div>
 <div class="detail-overlay" id="detailOverlay">
   <div class="detail-panel" id="detailPanel"></div>
+</div>
+<div class="detail-overlay" id="aboutOverlay">
+  <div class="detail-panel" id="aboutPanel">
+    <button class="detail-close" id="aboutClose">← Volver</button>
+    <div class="about-logo-wrap">
+      <img class="about-logo-img" src="logo.png" alt="MindStack">
+      <div class="about-logo-name">MindStack</div>
+      <div class="about-tagline">Lo que aprendo, organizado para que a ti también te sirva.</div>
+    </div>
+    <div class="about-divider"></div>
+    <div class="about-section">
+      <div class="about-label">¿Qué es?</div>
+      <p class="about-body">Una biblioteca de cursos Online — la forma en que organizo lo que aprendo, resumido, categorizado y listo para escuchar o leer cuando quieras.</p>
+    </div>
+    <div class="about-divider"></div>
+    <div class="about-section">
+      <div class="about-label">¿Para quién está pensada?</div>
+      <p class="about-body">Para personas que quieren aprender sin comprometerse a un curso de 8 horas. Si el resumen te sirve, perfecto. Si quieres ir más profundo, el link está a un clic.</p>
+      <div class="about-topics" id="aboutTopics"></div>
+    </div>
+    <div class="about-divider"></div>
+    <div class="about-section">
+      <div class="about-label">Quién soy y por qué la estoy construyendo</div>
+      <p class="about-body">Soy Camilo. Llevo tiempo estudiando en diferentes plataformas y tomando notas de lo que me parece realmente útil. En algún punto me pregunté por qué guardaba todo eso solo para mí.</p>
+      <p class="about-highlight">MindStack es la respuesta a esa pregunta.</p>
+    </div>
+    <div class="about-footer">escucha · lee · comparte</div>
+  </div>
 </div>
 <audio id="dAudio" preload="metadata" crossorigin="anonymous"></audio>
 <div id="miniPlayer" class="mini-player">
@@ -847,6 +887,10 @@ async function renderBlocks(blocks){
 document.getElementById('detailOverlay').onclick=function(e){
   if(e.target===document.getElementById('detailOverlay'))closeDetailPanel();
 };
+document.getElementById('aboutClose').onclick=closeAbout;
+document.getElementById('aboutOverlay').onclick=function(e){
+  if(e.target===document.getElementById('aboutOverlay'))closeAbout();
+};
 
 function showMiniPlayer(course,catColor){
   var da=document.getElementById('dAudio');
@@ -935,6 +979,27 @@ function hideMiniPlayer(stop){
   }
 }
 
+function openAbout(){
+  var topics=document.getElementById('aboutTopics');
+  if(!topics.children.length){
+    Object.keys(CATS).forEach(function(k){
+      var c=CATS[k];
+      var t=document.createElement('span');
+      t.className='about-topic';
+      t.textContent=c.icon+' '+c.label;
+      t.style.color=c.color;
+      t.style.borderColor=c.color+'60';
+      t.style.background=c.color+'15';
+      topics.appendChild(t);
+    });
+  }
+  document.getElementById('aboutOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeAbout(){
+  document.getElementById('aboutOverlay').classList.remove('open');
+  document.body.style.overflow='';
+}
 function closeDetailPanel(){
   var da=document.getElementById('dAudio');
   document.getElementById('detailOverlay').classList.remove('open');
