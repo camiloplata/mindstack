@@ -142,7 +142,8 @@ audio{display:none;}
 .about-body{font-size:15px;color:var(--text2);line-height:1.7;}
 .about-highlight{font-family:'Syne',sans-serif;font-size:16px;font-weight:600;color:var(--text);margin-top:0.75rem;}
 .about-topics{display:flex;flex-wrap:wrap;gap:8px;margin-top:1rem;}
-.about-topic{font-size:12px;padding:4px 12px;border-radius:20px;border:0.5px solid;}
+.about-topic{font-size:12px;padding:4px 12px;border-radius:20px;border:0.5px solid;cursor:pointer;transition:opacity 0.15s;}
+.about-topic:hover{opacity:0.75;}
 .about-footer{text-align:center;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text);letter-spacing:3px;padding:1.5rem 0 0.5rem;border-top:0.5px solid var(--border2);margin-top:2rem;}
 .loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4rem;gap:16px;}
 .spinner{width:32px;height:32px;border:2px solid var(--border2);border-top-color:var(--purple);border-radius:50%;animation:spin 0.8s linear infinite;}
@@ -979,17 +980,28 @@ function hideMiniPlayer(stop){
   }
 }
 
+function filterByCategory(key){
+  var order=['new','ia','auto','tools','pro','tech'];
+  var cards=document.querySelectorAll('.cat-card');
+  var idx=order.indexOf(key);
+  if(idx>=0&&cards[idx])cards[idx].click();
+  var section=document.getElementById('catCardsSection');
+  if(section)section.scrollIntoView({behavior:'smooth',block:'start'});
+}
 function openAbout(){
   var topics=document.getElementById('aboutTopics');
   if(!topics.children.length){
-    Object.keys(CATS).forEach(function(k){
-      var c=CATS[k];
+    var all=[{key:'new',icon:'✨',label:'lo nuevo',color:'#7F77DD'}].concat(
+      Object.keys(CATS).map(function(k){return{key:k,icon:CATS[k].icon,label:CATS[k].label,color:CATS[k].color};})
+    );
+    all.forEach(function(item){
       var t=document.createElement('span');
       t.className='about-topic';
-      t.textContent=c.icon+' '+c.label;
-      t.style.color=c.color;
-      t.style.borderColor=c.color+'60';
-      t.style.background=c.color+'15';
+      t.textContent=item.icon+' '+item.label;
+      t.style.color=item.color;
+      t.style.borderColor=item.color+'60';
+      t.style.background=item.color+'15';
+      t.onclick=function(){closeAbout();filterByCategory(item.key);};
       topics.appendChild(t);
     });
   }
