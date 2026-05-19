@@ -410,7 +410,10 @@ function setupPlayer(audio,playBtn,iconEl,bar,prog,timeEl,speedBtn,volBtn,volSli
   };
   if(speedBtn){
     var speeds=[1,1.25,1.5,2];
-    var si=0;
+    var si=speeds.indexOf(audio.playbackRate);
+    if(si<0)si=0;
+    speedBtn.textContent=speeds[si]+'x';
+    speedBtn.classList.toggle('active',speeds[si]!==1);
     speedBtn.onclick=function(){
       si=(si+1)%speeds.length;
       audio.playbackRate=speeds[si];
@@ -432,6 +435,7 @@ function setupPlayer(audio,playBtn,iconEl,bar,prog,timeEl,speedBtn,volBtn,volSli
     if(isIOS){
       volBtn.closest('.vol-wrap').style.display='none';
     } else {
+      volSlider.value=audio.volume;
       setVolFill(volSlider);
       volSlider.oninput=function(){
         audio.volume=parseFloat(volSlider.value);
@@ -927,7 +931,10 @@ function showMiniPlayer(course,catColor){
     var r=mbar.getBoundingClientRect();
     da.currentTime=((e.clientX-r.left)/r.width)*da.duration;
   };
-  var speeds=[1,1.25,1.5,2];var si=0;
+  var speeds=[1,1.25,1.5,2];
+  var si=speeds.indexOf(da.playbackRate);if(si<0)si=0;
+  mspeed.textContent=speeds[si]+'x';
+  mspeed.classList.toggle('active',speeds[si]!==1);
   mspeed.onclick=function(){
     si=(si+1)%speeds.length;
     da.playbackRate=speeds[si];
@@ -1107,6 +1114,7 @@ function initStatsMobile(){
         numEl.style.fontFamily="'Syne',sans-serif";
         numEl.style.fontWeight='700';
         numEl.style.lineHeight='';
+        numEl.style.letterSpacing='';
         numEl.textContent=s.num;
         numEl.style.color=s.color;
         lblEl.textContent=s.label;
