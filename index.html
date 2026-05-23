@@ -330,11 +330,11 @@ footer{border-top:0.5px solid var(--border);padding:3rem 2rem 2rem;margin-top:1r
 <script>
 var WORKER='https://mindstack-api.skmiloplata.workers.dev';
 var CATS={
-  auto:{label:'automatizaciones',icon:'⚡',color:'#5BB8D4',kw:['n8n','copilot studio','automatizacion','automatizaciones','workflow automation','power apps','power automate']},
-  ia:{label:'inteligencia artificial',icon:'🤖',color:'#A8D468',kw:['inteligencia artificial','claude','chatgpt','gemini','prompt','copilot','tips','trucos','pensamiento critico','perplexity','grok','llm','gpt','midjourney','dall-e','stable diffusion','cursor','notebooklm','openai','chatbot','machine learning','vibe coding']},
-  tools:{label:'herramientas y productividad',icon:'🛠️',color:'#5DCAA5',kw:['notion','teams','microsoft 365','gestion del tiempo']},
-  pro:{label:'desarrollo profesional',icon:'💼',color:'#F0997B',kw:['linkedin','posicionamiento','profesional','optimizacion']},
-  tech:{label:'tecnologia y datos',icon:'💻',color:'#E89AC4',kw:['estadistica','ingenieria de software','pensamiento logico','fundamentos']}
+  auto:{label:'Automatizaciones',icon:'⚡',color:'#5BB8D4',kw:['n8n','copilot studio','automatizacion','automatizaciones','workflow automation','power apps','power automate']},
+  ia:{label:'Inteligencia artificial',icon:'🤖',color:'#A8D468',kw:['inteligencia artificial','claude','chatgpt','gemini','prompt','copilot','tips','trucos','pensamiento critico','perplexity','grok','llm','gpt','midjourney','dall-e','stable diffusion','cursor','notebooklm','openai','chatbot','machine learning','vibe coding']},
+  tools:{label:'Herramientas y productividad',icon:'🛠️',color:'#5DCAA5',kw:['notion','teams','microsoft 365','gestion del tiempo']},
+  pro:{label:'Desarrollo profesional',icon:'💼',color:'#F0997B',kw:['linkedin','posicionamiento','profesional','optimizacion']},
+  tech:{label:'Tecnología y datos',icon:'💻',color:'#E89AC4',kw:['estadistica','ingenieria de software','pensamiento logico','fundamentos']}
 };
 var allCourses=[],currentAudio=null,currentCourse=null,miniPlayerCourse=null;
 
@@ -524,7 +524,7 @@ function renderCategoryCards(){
   allCard.style.borderColor='#7F77DD';
   allCard.style.setProperty('--hover-color','#7F77DD');
   allCard.style.background='#7F77DD18';
-  allCard.innerHTML='<div class="cat-card-icon">✨</div><div class="cat-card-name">lo nuevo</div><div class="cat-card-count">5 cursos</div>';
+  allCard.innerHTML='<div class="cat-card-icon">✨</div><div class="cat-card-name">Lo nuevo</div><div class="cat-card-count">5 cursos</div>';
   allCard.onclick=function(){setActive('new',allCard);};
   cards.appendChild(allCard);
   ['ia','auto','tools','pro','tech'].forEach(function(key){
@@ -1002,7 +1002,7 @@ function filterByCategory(key){
 function openAbout(){
   var topics=document.getElementById('aboutTopics');
   if(!topics.children.length){
-    var all=[{key:'new',icon:'✨',label:'lo nuevo',color:'#7F77DD'}].concat(
+    var all=[{key:'new',icon:'✨',label:'Lo nuevo',color:'#7F77DD'}].concat(
       Object.keys(CATS).map(function(k){return{key:k,icon:CATS[k].icon,label:CATS[k].label,color:CATS[k].color};})
     );
     all.forEach(function(item){
