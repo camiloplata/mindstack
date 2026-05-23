@@ -895,8 +895,6 @@ function openSubpage(pageId,title,courseId,subpages,idx){
     .then(async function(data){
       loading.remove();
       var blocks=data.results||[];
-      var hasTable=blocks.some(function(b){return b.type==='table';});
-      if(hasTable&&topTtsBtn){topTtsBtn.style.display='none';}
       var content=document.createElement('div');
       content.className='notion-content';
       content.innerHTML=await renderBlocks(blocks);
@@ -1202,7 +1200,9 @@ function ttsToggle(btn){
   window.speechSynthesis.cancel();
   var contentEl=document.querySelector('#detailPanel .notion-content');
   if(!contentEl)return;
-  var text=(contentEl.innerText||contentEl.textContent||'').trim();
+  var clone=contentEl.cloneNode(true);
+  clone.querySelectorAll('table').forEach(function(t){t.remove();});
+  var text=(clone.innerText||clone.textContent||'').trim();
   if(!text)return;
   var da=document.getElementById('dAudio');
   if(da&&!da.paused)da.pause();
