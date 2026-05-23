@@ -562,6 +562,8 @@ function renderCategoryCards(){
     cardEl.style.borderColor=color;
     cardEl.style.background=color+'18';
     renderCourses(key==='new'?allCourses.slice(0,5):allCourses.filter(function(c){return c.cat===key;}));
+    var wrap=document.getElementById('coursesWrap');
+    if(wrap){setTimeout(function(){wrap.scrollIntoView({behavior:'smooth',block:'start'});},50);}
   }
   var allCard=document.createElement('div');
   allCard.className='cat-card active';
