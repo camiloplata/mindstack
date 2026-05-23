@@ -743,7 +743,6 @@ function openDetail(course,autoplay){
     panel.appendChild(pw);
     var isIOSp=/iPhone|iPad|iPod/i.test(navigator.userAgent);
     if(!isIOSp){var s=document.getElementById('dVolSlider');if(s){s.style.background='linear-gradient(to right,'+catColor+' 100%,var(--border2) 100%)';}}
-    var da=document.getElementById('dAudio');
     if(resuming){
       setupPlayer(da,document.getElementById('dPlayBtn'),document.getElementById('dPlayIcon'),document.getElementById('dBar'),document.getElementById('dProg'),document.getElementById('dTime'),document.getElementById('dSpeedBtn'),document.getElementById('dVolBtn'),document.getElementById('dVolSlider'));
       document.getElementById('dPlayIcon').innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
@@ -1055,8 +1054,6 @@ function filterByCategory(key){
   var cards=document.querySelectorAll('.cat-card');
   var idx=order.indexOf(key);
   if(idx>=0&&cards[idx])cards[idx].click();
-  var section=document.getElementById('catCardsSection');
-  if(section)section.scrollIntoView({behavior:'smooth',block:'start'});
 }
 function openAbout(){
   var topics=document.getElementById('aboutTopics');
