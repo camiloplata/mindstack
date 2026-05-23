@@ -1091,7 +1091,7 @@ function renderGuides(){
 function openGuide(guide){
   var content=document.getElementById('guideModalContent');
   var copyHtml=guide.copy.map(function(p){return '<p class="guide-modal-copy">'+esc(p)+'</p>';}).join('');
-  content.innerHTML='<div class="guide-modal-eyebrow">En construcción</div><div class="guide-modal-title">'+esc(guide.name)+'</div>'+copyHtml+'<div class="guide-modal-label">¿Te aviso cuando esté lista?</div><div class="guide-email-row"><input type="email" class="guide-email-input" id="guideEmailInput" placeholder="tu@correo.com"><button class="guide-email-btn" id="guideEmailBtn">Avísame cuando esté lista</button></div><div class="guide-thanks" id="guideThanks">Listo. Te escribo cuando esté lista. Gracias por la confianza. 🙌</div>';
+  content.innerHTML='<div class="guide-modal-eyebrow">En construcción</div><div class="guide-modal-title">'+esc(guide.name)+'</div>'+copyHtml+'<div class="guide-modal-label">¿Te aviso cuando esté lista?</div><div class="guide-email-row"><input type="email" class="guide-email-input" id="guideEmailInput" placeholder="tu@correo.com"><button class="guide-email-btn" id="guideEmailBtn">Avísame cuando esté lista</button></div><div class="guide-thanks" id="guideThanks">Anotado. Ahora tengo más presión para terminarla. Gracias por eso. 😅</div>';
   var emailBtn=document.getElementById('guideEmailBtn');
   emailBtn.style.background=guide.color+'25';
   emailBtn.style.borderColor=guide.color+'AA';
