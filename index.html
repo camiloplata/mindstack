@@ -211,9 +211,9 @@ audio{display:none;}
 .platzi-modal-cancel:hover{color:var(--text);}
 .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:8px 18px;font-size:13px;color:var(--text);z-index:400;opacity:0;transition:opacity 0.2s;pointer-events:none;}
 .toast.show{opacity:1;}
-.tts-btn{background:var(--teal);color:#0a0a0a;border:0.5px solid transparent;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;padding:8px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:opacity 0.15s,background 0.15s,color 0.15s,border-color 0.15s;flex-shrink:0;}
-.tts-btn:hover{opacity:0.85;}
-.tts-btn.tts-active{background:transparent;color:var(--teal);border-color:var(--teal);}
+.tts-btn{background:transparent;color:var(--teal);border:0.5px solid rgba(93,202,165,0.35);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;padding:8px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:box-shadow 0.2s,border-color 0.2s;flex-shrink:0;box-shadow:0 0 8px rgba(93,202,165,0.12);}
+.tts-btn:hover{border-color:rgba(93,202,165,0.6);box-shadow:0 0 12px rgba(93,202,165,0.22);}
+.tts-btn.tts-active{border-color:rgba(93,202,165,0.7);box-shadow:0 0 0 1px rgba(93,202,165,0.15),0 0 14px rgba(93,202,165,0.28);}
 @media(max-width:600px){
   header{padding:1rem;}
   .header-center{display:none;}
@@ -829,6 +829,7 @@ function openDetail(course,autoplay){
 function openSubpage(pageId,title,courseId,subpages,idx){
   var panel=document.getElementById('detailPanel');
   panel.innerHTML='';
+  var topTtsBtn=null;
 
   function goBack(){
     var c=null;
@@ -871,6 +872,7 @@ function openSubpage(pageId,title,courseId,subpages,idx){
       ttsButton.textContent='▶ Leer para mí';
       ttsButton.onclick=function(){ttsToggle(ttsButton);};
       nav.appendChild(ttsButton);
+      topTtsBtn=ttsButton;
     }
     return nav;
   }
@@ -892,9 +894,12 @@ function openSubpage(pageId,title,courseId,subpages,idx){
     .then(function(r){return r.json();})
     .then(async function(data){
       loading.remove();
+      var blocks=data.results||[];
+      var hasTable=blocks.some(function(b){return b.type==='table';});
+      if(hasTable&&topTtsBtn){topTtsBtn.style.display='none';}
       var content=document.createElement('div');
       content.className='notion-content';
-      content.innerHTML=await renderBlocks(data.results||[]);
+      content.innerHTML=await renderBlocks(blocks);
       panel.appendChild(content);
       panel.appendChild(makeNav(true));
     })
