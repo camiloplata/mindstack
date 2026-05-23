@@ -211,6 +211,9 @@ audio{display:none;}
 .platzi-modal-cancel:hover{color:var(--text);}
 .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:8px 18px;font-size:13px;color:var(--text);z-index:400;opacity:0;transition:opacity 0.2s;pointer-events:none;}
 .toast.show{opacity:1;}
+.tts-btn{background:var(--teal);color:#0a0a0a;border:0.5px solid transparent;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;padding:8px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:opacity 0.15s,background 0.15s,color 0.15s,border-color 0.15s;flex-shrink:0;}
+.tts-btn:hover{opacity:0.85;}
+.tts-btn.tts-active{background:transparent;color:var(--teal);border-color:var(--teal);}
 @media(max-width:600px){
   header{padding:1rem;}
   .header-center{display:none;}
@@ -390,7 +393,7 @@ var CATS={
   pro:{label:'Desarrollo profesional',icon:'💼',color:'#F0997B',kw:['linkedin','posicionamiento','profesional','optimizacion']},
   tech:{label:'Tecnología y datos',icon:'💻',color:'#E89AC4',kw:['estadistica','ingenieria de software','pensamiento logico','fundamentos']}
 };
-var allCourses=[],currentAudio=null,currentCourse=null,miniPlayerCourse=null;
+var allCourses=[],currentAudio=null,currentCourse=null,miniPlayerCourse=null,ttsBtn=null;
 
 var ICON_MAP=[
   ['chatgpt','💬'],['gemini','♊'],['claude','✨'],['perplexity','🔍'],['grok','🔮'],
@@ -835,12 +838,12 @@ function openSubpage(pageId,title,courseId,subpages,idx){
 
   function makeNav(bottom){
     var nav=document.createElement('div');
-    nav.style.cssText='display:flex;gap:8px;'+(bottom?'margin-top:2.5rem;':'margin-bottom:1.5rem;');
+    nav.style.cssText='display:flex;gap:8px;flex-wrap:wrap;align-items:center;'+(bottom?'margin-top:2.5rem;':'margin-bottom:1.5rem;');
     var back=document.createElement('button');
     back.className='detail-close';
     back.style.margin='0';
     back.textContent='← Volver al curso';
-    back.onclick=goBack;
+    back.onclick=function(){ttsCancel();goBack();};
     nav.appendChild(back);
     if(subpages&&idx>0){
       var prevSp=subpages[idx-1];
@@ -849,7 +852,7 @@ function openSubpage(pageId,title,courseId,subpages,idx){
       prevBtn.className='detail-close';
       prevBtn.style.margin='0';
       prevBtn.textContent='← Atrás';
-      prevBtn.onclick=function(){openSubpage(prevSp.id,prevTitle,courseId,subpages,idx-1);};
+      prevBtn.onclick=function(){ttsCancel();openSubpage(prevSp.id,prevTitle,courseId,subpages,idx-1);};
       nav.appendChild(prevBtn);
     }
     if(subpages&&idx<subpages.length-1){
@@ -859,8 +862,15 @@ function openSubpage(pageId,title,courseId,subpages,idx){
       nextBtn.className='detail-close';
       nextBtn.style.cssText='margin:0;color:var(--purple);border-color:var(--purple2);';
       nextBtn.textContent='Siguiente →';
-      nextBtn.onclick=function(){openSubpage(nextSp.id,nextTitle,courseId,subpages,idx+1);};
+      nextBtn.onclick=function(){ttsCancel();openSubpage(nextSp.id,nextTitle,courseId,subpages,idx+1);};
       nav.appendChild(nextBtn);
+    }
+    if(!bottom){
+      var ttsButton=document.createElement('button');
+      ttsButton.className='tts-btn';
+      ttsButton.textContent='▶ Leer para mí';
+      ttsButton.onclick=function(){ttsToggle(ttsButton);};
+      nav.appendChild(ttsButton);
     }
     return nav;
   }
@@ -1141,7 +1151,64 @@ function closeGuide(){
   document.body.style.overflow='';
 }
 renderGuides();
+function ttsChunkText(text){
+  var parts=text.replace(/([.!?])\s+/g,'$1\n').split('\n');
+  var chunks=[],current='';
+  parts.forEach(function(s){
+    if(current.length+s.length+1>240){if(current)chunks.push(current.trim());current=s;}
+    else{current=current?current+' '+s:s;}
+  });
+  if(current)chunks.push(current.trim());
+  return chunks.filter(function(c){return c.length>0;});
+}
+function ttsGetVoice(){
+  var voices=window.speechSynthesis.getVoices();
+  return voices.find(function(v){return v.lang==='es-MX';})||
+         voices.find(function(v){return v.lang.startsWith('es');})||null;
+}
+function ttsSpeakChunks(chunks,idx,btn){
+  if(idx>=chunks.length){ttsResetBtn(btn);return;}
+  var u=new SpeechSynthesisUtterance(chunks[idx]);
+  u.lang='es-MX';u.rate=0.9;u.pitch=1.0;
+  var v=ttsGetVoice();if(v)u.voice=v;
+  u.onend=function(){ttsSpeakChunks(chunks,idx+1,btn);};
+  u.onerror=function(){ttsResetBtn(btn);};
+  window.speechSynthesis.speak(u);
+}
+function ttsResetBtn(btn){
+  if(btn){btn.textContent='▶ Leer para mí';btn.classList.remove('tts-active');}
+  ttsBtn=null;
+}
+function ttsCancel(){
+  window.speechSynthesis.cancel();
+  ttsResetBtn(ttsBtn);
+}
+function ttsToggle(btn){
+  if(window.speechSynthesis.speaking&&!window.speechSynthesis.paused){
+    window.speechSynthesis.pause();
+    btn.textContent='▶ Continuar';
+    return;
+  }
+  if(window.speechSynthesis.paused){
+    window.speechSynthesis.resume();
+    btn.textContent='⏸ Pausar';
+    return;
+  }
+  window.speechSynthesis.cancel();
+  var contentEl=document.querySelector('#detailPanel .notion-content');
+  if(!contentEl)return;
+  var text=(contentEl.innerText||contentEl.textContent||'').trim();
+  if(!text)return;
+  var da=document.getElementById('dAudio');
+  if(da&&!da.paused)da.pause();
+  ttsBtn=btn;
+  btn.textContent='⏸ Pausar';
+  btn.classList.add('tts-active');
+  ttsSpeakChunks(ttsChunkText(text),0,btn);
+}
+
 function closeDetailPanel(){
+  ttsCancel();
   var da=document.getElementById('dAudio');
   document.getElementById('detailOverlay').classList.remove('open');
   document.body.style.overflow='';
