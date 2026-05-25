@@ -1191,7 +1191,7 @@ function ttsGetVoice(){
 function ttsSpeakChunks(chunks,idx,btn){
   if(idx>=chunks.length){ttsResetBtn(btn);return;}
   var u=new SpeechSynthesisUtterance(chunks[idx]);
-  u.lang='es-MX';u.rate=0.9;u.pitch=1.0;
+  u.lang='es-MX';u.rate=1.0;u.pitch=1.0;
   var v=ttsGetVoice();if(v)u.voice=v;
   u.onend=function(){ttsSpeakChunks(chunks,idx+1,btn);};
   u.onerror=function(){ttsResetBtn(btn);};
