@@ -588,7 +588,8 @@ function renderCategoryCards(){
   allCard.style.borderColor='#7F77DD';
   allCard.style.setProperty('--hover-color','#7F77DD');
   allCard.style.background='#7F77DD18';
-  allCard.innerHTML='<div class="cat-card-icon">✨</div><div class="cat-card-name">Lo nuevo</div><div class="cat-card-count">5 cursos</div>';
+  var newCount=Math.min(5,allCourses.length);
+  allCard.innerHTML='<div class="cat-card-icon">✨</div><div class="cat-card-name">Lo nuevo</div><div class="cat-card-count">'+newCount+' curso'+(newCount===1?'':'s')+'</div>';
   allCard.onclick=function(){setActive('new',allCard);};
   cards.appendChild(allCard);
   ['ia','auto','tools','pro','tech'].forEach(function(key){
@@ -679,7 +680,7 @@ document.getElementById('searchInput').addEventListener('input',function(e){
     border.classList.add('solid');
     border.style.setProperty('--search-accent',accent);
     var label='<span>'+results.length+' curso'+(results.length===1?'':'s')+'</span> encontrado'+(results.length===1?'':'s');
-    feedback.innerHTML=label+' para "'+e.target.value.trim()+'"';
+    feedback.innerHTML=label+' para "'+esc(e.target.value.trim())+'"';
     feedback.style.display='block';
     renderCourses(results);
   }
@@ -925,7 +926,7 @@ async function renderBlocks(blocks){
         if(r.annotations&&r.annotations.bold)t='<strong>'+t+'</strong>';
         if(r.annotations&&r.annotations.italic)t='<em>'+t+'</em>';
         if(r.annotations&&r.annotations.code)t='<code style="background:var(--bg3);padding:1px 5px;border-radius:4px;font-size:12px;">'+t+'</code>';
-        if(r.href)t='<a href="'+r.href+'" target="_blank" rel="noopener noreferrer" style="color:var(--purple);">'+t+'</a>';
+        if(r.href&&/^https?:\/\//i.test(r.href))t='<a href="'+r.href+'" target="_blank" rel="noopener noreferrer" style="color:var(--purple);">'+t+'</a>';
         return t;
       }).join('');
     }
@@ -947,7 +948,7 @@ async function renderBlocks(blocks){
         return src?'<img src="'+src+'" loading="lazy" style="width:100%;border-radius:8px;margin:8px 0;">':'';
       case 'table':
         var hasHeader=b.table&&b.table.has_column_header;
-        var rowData=await fetch(WORKER+'/blocks/'+b.id.replace(/-/g,'')).then(function(r){return r.json();});
+        var rowData=await fetch(WORKER+'/blocks/'+b.id.replace(/-/g,'')).then(function(r){return r.json();}).catch(function(){return{results:[]};});
         var thtml='<table style="width:100%;border-collapse:collapse;margin:8px 0;">';
         (rowData.results||[]).forEach(function(row,idx){
           var cells=(row.table_row&&row.table_row.cells)||[];
@@ -1284,6 +1285,7 @@ function shareCourse(course){
 }
 
 window.addEventListener('popstate',function(){
+  ttsCancel();
   if(!new URLSearchParams(location.search).get('c')){
     var da=document.getElementById('dAudio');
     document.getElementById('detailOverlay').classList.remove('open');
