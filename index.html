@@ -218,7 +218,6 @@ audio{display:none;}
 .tts-btn.tts-active{border-color:rgba(93,202,165,0.7);box-shadow:0 0 0 1px rgba(93,202,165,0.15),0 0 14px rgba(93,202,165,0.28);}
 @media(max-width:600px){
   header{padding:1rem;}
-  .linkedin-name{display:none;}
   .header-center{display:none;}
   .search-wrap{padding:1rem;}
   .stat-item{padding:1rem;}
@@ -923,7 +922,7 @@ async function renderBlocks(blocks){
   var parts=await Promise.all(blocks.map(async function(b){
     function txt(arr){
       return(arr||[]).map(function(r){
-        var t=r.plain_text||'';
+        var t=esc(r.plain_text||'');
         if(r.annotations&&r.annotations.bold)t='<strong>'+t+'</strong>';
         if(r.annotations&&r.annotations.italic)t='<em>'+t+'</em>';
         if(r.annotations&&r.annotations.code)t='<code style="background:var(--bg3);padding:1px 5px;border-radius:4px;font-size:12px;">'+t+'</code>';
