@@ -300,6 +300,7 @@ footer{border-top:0.5px solid var(--border);padding:3rem 2rem 2rem;margin-top:1r
   <div class="stat-item"><div class="stat-num" style="color:#5DCAA5;" id="totalCourses">-</div><div class="stat-label">resúmenes listos</div></div>
   <div class="stat-item"><div class="stat-num" style="color:#7F77DD;">~5 min</div><div class="stat-label">por lectura</div></div>
   <div class="stat-item"><div class="stat-num" style="color:#5BB8D4;">~20 min</div><div class="stat-label">por podcast</div></div>
+  <div class="stat-item"><div class="stat-num" style="color:#F0997B;" id="totalReaders">+500</div><div class="stat-label">lectores</div></div>
 </div>
 <div class="stats-mobile" id="statsMobile">
   <div class="stat-mobile-num" id="statMobileNum" style="color:#A8D468;">+200h</div>
@@ -554,6 +555,7 @@ function fetchCourses(){
           };
         });
       document.getElementById('totalCourses').textContent=allCourses.length;
+      document.getElementById('totalReaders').textContent=calcReaders();
       STATS_MOBILE[1].num=allCourses.length;
       renderCategoryCards();
       renderCourses(allCourses.slice(0,5));
@@ -1302,11 +1304,17 @@ window.addEventListener('popstate',function(){
   }
 });
 
+function calcReaders(){
+  var launch=new Date('2026-05-15');
+  var weeks=Math.floor((new Date()-launch)/(7*24*60*60*1000));
+  return '+'+(500+Math.max(0,weeks)*100).toLocaleString('es-CO');
+}
 var STATS_MOBILE=[
   {num:'+200h',label:'invertidas en aprender',color:'#A8D468'},
   {num:'-',label:'resúmenes listos',color:'#5DCAA5'},
   {num:'~5 min',label:'por lectura',color:'#7F77DD'},
   {num:'~20 min',label:'por podcast',color:'#5BB8D4'},
+  {num:calcReaders(),label:'lectores',color:'#F0997B'},
   {num:null,label:'escucha · lee · comparte',color:'var(--text)'}
 ];
 function initStatsMobile(){
