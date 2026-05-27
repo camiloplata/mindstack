@@ -706,7 +706,7 @@ document.getElementById('searchClear').addEventListener('click',function(){
 function openDetail(course,autoplay){
   if(!course)return;
   var da=document.getElementById('dAudio');
-  var resuming=(miniPlayerCourse&&miniPlayerCourse.id===course.id&&da&&!da.paused);
+  var resuming=(da&&!da.paused&&((currentCourse&&currentCourse.id===course.id)||(miniPlayerCourse&&miniPlayerCourse.id===course.id)));
   var miniActive=!!(miniPlayerCourse&&!resuming);
   if(resuming){
     hideMiniPlayer(false);
