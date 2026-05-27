@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diccionario de Fórmulas Excel · Análisis Financiero</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface2: #181818;
+    --border: #222222;
+    --accent: #00e5ff;
+    --accent2: #7c5cfc;
+    --accent3: #00ff9d;
+    --warn: #ffb547;
+    --danger: #ff5c6c;
+    --text: #e2e8f8;
+    --text-muted: #7a8aaa;
+    --text-dim: #4a5570;
+    --cat-lookup: #7c5cfc;
+    --cat-logic: #00e5ff;
+    --cat-math: #00ff9d;
+    --cat-financial: #ffb547;
+    --cat-text: #ff7eb3;
+    --cat-date: #ff5c6c;
+    --cat-stats: #38e8b0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── GRID BACKGROUND ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    position: relative;
+    z-index: 10;
+    padding: 60px 48px 48px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(124,92,252,.08) 0%, transparent 100%);
+  }
+
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,229,255,.08);
+    border: 1px solid rgba(0,229,255,.2);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .header-badge span { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: .4; transform: scale(.8); }
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 5vw, 58px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -.02em;
+    color: #fff;
+    margin-bottom: 16px;
+  }
+
+  h1 span { color: var(--accent); }
+
+  .header-sub {
+    font-size: 16px;
+    color: var(--text-muted);
+    max-width: 560px;
+    line-height: 1.7;
+    margin-bottom: 36px;
+  }
+
+  .stats-row {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: #fff;
+  }
+
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+
+  /* ─── CONTROLS ─── */
+  .controls {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,10,.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 48px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+    max-width: 360px;
+  }
+
+  .search-wrap svg {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-dim);
+    pointer-events: none;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px 10px 40px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    outline: none;
+    transition: border .2s;
+  }
+
+  input[type="text"]:focus { border-color: var(--accent); }
+  input[type="text"]::placeholder { color: var(--text-dim); }
+
+  .filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 7px 14px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all .2s;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 500; }
+
+  /* ─── MAIN CONTENT ─── */
+  main {
+    position: relative;
+    z-index: 1;
+    padding: 48px 48px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .category-section { margin-bottom: 64px; }
+
+  .category-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .category-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .cat-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 3px 10px;
+    border-radius: 100px;
+    margin-left: auto;
+  }
+
+  /* ─── CARDS ─── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(580px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: border-color .25s, transform .25s, box-shadow .25s;
+    cursor: pointer;
+  }
+
+  .card:hover {
+    border-color: rgba(0,229,255,.3);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0,0,0,.4);
+  }
+
+  .card-header {
+    padding: 20px 24px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .func-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    letter-spacing: .05em;
+  }
+
+  .card-title-group { flex: 1; min-width: 0; }
+
+  .card-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .card-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .card-body {
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  /* syntax */
+  .syntax-block {
+    background: #0d1118;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12.5px;
+    color: var(--accent);
+    line-height: 1.6;
+    word-break: break-all;
+  }
+
+  .syntax-block .param { color: var(--warn); }
+  .syntax-block .optional { color: var(--text-dim); }
+  .syntax-block .comment { color: var(--text-dim); font-style: italic; }
+
+  /* explanation */
+  .explanation {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  /* example */
+  .example-block {
+    background: rgba(0,255,157,.04);
+    border: 1px solid rgba(0,255,157,.15);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+
+  .example-formula {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--accent3);
+    margin-bottom: 8px;
+    word-break: break-all;
+    line-height: 1.6;
+  }
+
+  .example-context {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .example-label {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    background: rgba(0,255,157,.1);
+    color: var(--accent3);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+
+  /* errors */
+  .errors-block {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .error-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .error-code {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--danger);
+    background: rgba(255,92,108,.08);
+    border: 1px solid rgba(255,92,108,.2);
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .error-text {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* class tag */
+  .class-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    background: rgba(124,92,252,.1);
+    border: 1px solid rgba(124,92,252,.2);
+    color: var(--accent2);
+    padding: 3px 10px;
+    border-radius: 100px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+
+  .class-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  /* ─── EMPTY STATE ─── */
+  .empty {
+    text-align: center;
+    padding: 80px 24px;
+    color: var(--text-dim);
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    display: none;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 40px 24px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .06em;
+  }
+
+  footer span { color: var(--accent); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    header, .controls, main { padding-left: 20px; padding-right: 20px; }
+    .cards-grid { grid-template-columns: 1fr; }
+    h1 { font-size: 32px; }
+  }
+
+  /* animations */
+  .card { animation: fadeUp .4s ease both; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .hidden { display: none !important; }
+  .section-hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="controls">
+  <div class="search-wrap">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="searchInput" placeholder="Buscar fórmula..." />
+  </div>
+  <div class="filters">
+    <button class="filter-btn active" data-cat="all">Todas</button>
+    <button class="filter-btn" data-cat="busqueda">Búsqueda</button>
+    <button class="filter-btn" data-cat="logica">Lógica</button>
+    <button class="filter-btn" data-cat="matematica">Matemática</button>
+    <button class="filter-btn" data-cat="financiera">Financiera</button>
+    <button class="filter-btn" data-cat="texto">Texto</button>
+    <button class="filter-btn" data-cat="fecha">Fecha</button>
+    <button class="filter-btn" data-cat="estadistica">Estadística</button>
+  </div>
+</div>
+
+<main>
+  <div id="emptyState" class="empty">No se encontraron fórmulas para tu búsqueda.</div>
+
+  <!-- ══════════════════════════════════════════════════
+       CATEGORÍA 1 · BÚSQUEDA Y REFERENCIA
+  ══════════════════════════════════════════════════ -->
+  <section class="category-section" data-cat="busqueda">
+    <div class="category-header">
+      <div class="cat-icon" style="background:rgba(124,92,252,.15);">🔍</div>
+      <span class="category-title">Búsqueda y Referencia</span>
+      <span class="cat-count">2 fórmulas</span>
+    </div>
+    <div class="cards-grid">
+
+      <!-- BUSCARV -->
+      <div class="card" data-cat="busqueda" data-name="BUSCARV VLOOKUP">
+        <div class="card-header">
+          <span class="func-badge" style="background:rgba(124,92,252,.15);color:#7c5cfc;">BUSCARV</span>
+          <div class="card-title-group">
+            <div class="card-name">Buscar Vertical</div>
+            <div class="card-desc">Busca un valor en la primera columna de un rango y devuelve un valor de la misma fila en otra columna.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="section-label">Sintaxis</div>
+            <div class="syntax-block">
+              =BUSCARV(<span class="param">valor_buscado</span>, <span class="param">rango_tabla</span>, <span class="param">núm_columna</span>, <span class="optional">[coincidencia]</span>)<br>
+              <span class="comment">// coincidencia: 0 = exacta (usa siempre 0 en finanzas)</span>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Cómo funciona</div>
+            <div class="explanation">Toma el <strong style="color:#e2e8f8">valor_buscado</strong>, lo busca de arriba hacia abajo en la primera columna del <strong style="color:#e2e8f8">rango_tabla</strong>, y cuando lo encuentra devuelve el valor de la columna número <strong style="color:#e2e8f8">núm_columna</strong> en esa misma fila. Con <code style="color:var(--accent)">0</code> (o FALSO) exige coincidencia exacta — obligatorio para clasificar cuentas contables donde un número incorrecto arruina el análisis.</div>
+          </div>
+          <div>
+            <div class="section-label">Ejemplo del curso — Clase 3 · Diccionario Financiero</div>
+            <div class="example-block">
+              <div class="example-label">Casa Palma · Diccionario Financiero</div>
+              <div class="example-formula">=BUSCARV(A2, DiccionarioFinanciero!$A:$D, 2, 0)</div>
+              <div class="example-context">En el ERP de Casa Palma llegan 300+ cuentas contables crudas (ej: cuenta 4135). Esta fórmula busca ese código en el Diccionario y trae automáticamente el <strong>Rubro</strong> correspondiente (Ingresos, Costo de Ventas, etc.), clasificando miles de registros en segundos sin hacerlo manualmente.</div>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Errores comunes</div>
+            <div class="errors-block">
+              <div class="error-item"><span class="error-code">#N/A</span><span class="error-text">El valor buscado no existe en la primera columna. Causa frecuente: el código del ERP tiene espacios o formato diferente al diccionario. Solución: usar <code style="color:var(--accent)">ESPACIOS()</code> o <code style="color:var(--accent)">VALOR()</code> para limpiar primero.</span></div>
+              <div class="error-item"><span class="error-code">#REF!</span><span class="error-text">El núm_columna es mayor al número de columnas del rango. Revisá que el rango incluya la columna que querés devolver.</span></div>
+              <div class="error-item"><span class="error-code">Valor incorrecto</span><span class="error-text">Olvidaste poner el 0 al final y Excel hace coincidencia aproximada. Siempre usá 0 en modelos financieros.</span></div>
+            </div>
+          </div>
+          <div class="class-tags">
+            <span class="class-tag">📚 Clase 3 · Diccionario financiero</span>
+            <span class="class-tag">📚 Clase 24 · Errores con IA</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- BUSCARX -->
+      <div class="card" data-cat="busqueda" data-name="BUSCARX XLOOKUP">
+        <div class="card-header">
+          <span class="func-badge" style="background:rgba(124,92,252,.15);color:#7c5cfc;">BUSCARX</span>
+          <div class="card-title-group">
+            <div class="card-name">Buscar X (versión moderna)</div>
+            <div class="card-desc">Versión avanzada de BUSCARV: busca en cualquier dirección, devuelve rangos enteros y maneja errores nativamente.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="section-label">Sintaxis</div>
+            <div class="syntax-block">
+              =BUSCARX(<span class="param">valor_buscado</span>, <span class="param">rango_búsqueda</span>, <span class="param">rango_retorno</span>, <span class="optional">[si_no_encontrado]</span>, <span class="optional">[modo_coincidencia]</span>)<br>
+              <span class="comment">// si_no_encontrado: texto o valor si no hay resultado (evita #N/A)</span>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Cómo funciona</div>
+            <div class="explanation">A diferencia de BUSCARV, el rango de búsqueda y el rango de retorno son independientes — podés buscar en cualquier columna y devolver cualquier otra. Esto elimina el problema de "contar columnas" de BUSCARV. Además el parámetro <strong style="color:#e2e8f8">si_no_encontrado</strong> permite devolver 0 o un texto en vez de mostrar #N/A, limpiando el modelo automáticamente.</div>
+          </div>
+          <div>
+            <div class="section-label">Ejemplo del curso — Clase 3 · Diccionario Financiero</div>
+            <div class="example-block">
+              <div class="example-label">Casa Palma · Clasificación automática</div>
+              <div class="example-formula">=BUSCARX(A2, DiccionarioFinanciero[Cuenta], DiccionarioFinanciero[Subrubro], "Sin clasificar")</div>
+              <div class="example-context">Busca el código de cuenta (ej: 4135) en la columna Cuenta del diccionario y devuelve el Subrubro (ej: "Ventas Minoristas"). Si la cuenta no existe en el diccionario, devuelve "Sin clasificar" en lugar de un error — esto es clave para detectar cuentas nuevas del ERP que aún no están clasificadas.</div>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Errores comunes</div>
+            <div class="errors-block">
+              <div class="error-item"><span class="error-code">#N/A</span><span class="error-text">Solo ocurre si olvidás el parámetro si_no_encontrado. Siempre completalo en modelos financieros.</span></div>
+              <div class="error-item"><span class="error-code">No disponible</span><span class="error-text">BUSCARX requiere Excel 365 o Excel 2019+. En versiones anteriores usá BUSCARV.</span></div>
+            </div>
+          </div>
+          <div class="class-tags">
+            <span class="class-tag">📚 Clase 3 · Diccionario financiero</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       CATEGORÍA 2 · LÓGICA
+  ══════════════════════════════════════════════════ -->
+  <section class="category-section" data-cat="logica">
+    <div class="category-header">
+      <div class="cat-icon" style="background:rgba(0,229,255,.1);">⚙️</div>
+      <span class="category-title">Lógica y Control de Flujo</span>
+      <span class="cat-count">4 fórmulas</span>
+    </div>
+    <div class="cards-grid">
+
+      <!-- IF -->
+      <div class="card" data-cat="logica" data-name="IF SI condicional">
+        <div class="card-header">
+          <span class="func-badge" style="background:rgba(0,229,255,.1);color:#00e5ff;">SI / IF</span>
+          <div class="card-title-group">
+            <div class="card-name">Condicional Simple</div>
+            <div class="card-desc">Evalúa una condición y devuelve un valor si es verdadera, otro si es falsa.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="section-label">Sintaxis</div>
+            <div class="syntax-block">
+              =SI(<span class="param">condición</span>, <span class="param">valor_si_verdadero</span>, <span class="param">valor_si_falso</span>)<br>
+              <span class="comment">// En inglés: =IF(...) · Se pueden anidar hasta 64 niveles</span>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Cómo funciona</div>
+            <div class="explanation">Evalúa la <strong style="color:#e2e8f8">condición</strong> (puede ser una comparación, fórmula o celda). Si el resultado es VERDADERO devuelve el primer valor; si es FALSO, el segundo. Se anidan varios SI para manejar múltiples casos, como asignar semáforos de alerta (Verde / Amarillo / Rojo) a KPIs financieros según rangos.</div>
+          </div>
+          <div>
+            <div class="section-label">Ejemplo del curso — Clase 10 · Capacidad de Préstamo</div>
+            <div class="example-block">
+              <div class="example-label">Casa Palma · KPIs de Apalancamiento</div>
+              <div class="example-formula">=SI(B24&lt;2.5, "Verde", SI(B24&lt;3.5, "Amarillo", "Rojo"))</div>
+              <div class="example-context">Evalúa el ratio Deuda/EBITDA de Casa Palma (celda B24). Si es menor a 2.5x → Verde (negocio sano para banco). Si está entre 2.5x y 3.5x → Amarillo (zona de atención). Si supera 3.5x → Rojo (riesgo de rechazo de crédito). Este semáforo es la base del dashboard de apalancamiento de la Clase 10.</div>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Errores comunes</div>
+            <div class="errors-block">
+              <div class="error-item"><span class="error-code">VERDADERO/FALSO inesperado</span><span class="error-text">Olvidaste las comillas en el texto: =SI(A1>0, Verde, Rojo) devuelve error porque Excel cree que "Verde" y "Rojo" son rangos. Correcto: =SI(A1>0, "Verde", "Rojo").</span></div>
+              <div class="error-item"><span class="error-code">Lógica invertida</span><span class="error-text">Confundir el orden de los parámetros (verdadero/falso). Siempre leer en voz alta: "Si esto... entonces esto... si no, esto otro".</span></div>
+            </div>
+          </div>
+          <div class="class-tags">
+            <span class="class-tag">📚 Clase 3 · Diccionario</span>
+            <span class="class-tag">📚 Clase 8 · KPIs rentabilidad</span>
+            <span class="class-tag">📚 Clase 10 · Préstamo</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- IFERROR -->
+      <div class="card" data-cat="logica" data-name="IFERROR SI.ERROR manejo errores">
+        <div class="card-header">
+          <span class="func-badge" style="background:rgba(0,229,255,.1);color:#00e5ff;">SI.ERROR</span>
+          <div class="card-title-group">
+            <div class="card-name">Manejo de Errores</div>
+            <div class="card-desc">Atrapa cualquier error de una fórmula y devuelve un valor alternativo en su lugar.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="section-label">Sintaxis</div>
+            <div class="syntax-block">
+              =SI.ERROR(<span class="param">fórmula</span>, <span class="param">valor_si_error</span>)<br>
+              <span class="comment">// En inglés: =IFERROR(...)  · Captura #N/A, #DIV/0!, #REF!, #VALOR!, etc.</span>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Cómo funciona</div>
+            <div class="explanation">Ejecuta la <strong style="color:#e2e8f8">fórmula</strong> normalmente. Si produce cualquier tipo de error (#N/A, #DIV/0!, #REF!, etc.), en lugar de mostrar el error devuelve el <strong style="color:#e2e8f8">valor_si_error</strong> que definas (generalmente 0, un guión "-" o texto explicativo). Imprescindible en dashboards financieros donde una división por cero rompería toda la visualización.</div>
+          </div>
+          <div>
+            <div class="section-label">Ejemplo del curso — Clase 7 · Rentabilidad y KPIs</div>
+            <div class="example-block">
+              <div class="example-label">Casa Palma · Dashboard KPI · Margen Bruto</div>
+              <div class="example-formula">=SI.ERROR(B9/B6, 0)</div>
+              <div class="example-context">Calcula el margen bruto de una sucursal de Casa Palma (utilidad bruta / ingresos). Si los ingresos de ese mes son 0 (sucursal sin ventas o mes no iniciado), en vez de romper el dashboard con #DIV/0! devuelve 0. Esto permite que el gráfico del dashboard siga funcionando correctamente para todos los meses del año.</div>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Errores comunes</div>
+            <div class="errors-block">
+              <div class="error-item"><span class="error-code">Ocultar errores reales</span><span class="error-text">SI.ERROR aplicado a una BUSCARV que da #N/A puede esconder cuentas sin clasificar. En el diccionario financiero es mejor dejar que el error sea visible para auditar cuentas faltantes.</span></div>
+              <div class="error-item"><span class="error-code">0 vs. blanco</span><span class="error-text">Devolver 0 en vez de "" puede distorsionar promedios. Para gráficos, devolver "" (vacío) evita que se trace la línea en ese punto.</span></div>
+            </div>
+          </div>
+          <div class="class-tags">
+            <span class="class-tag">📚 Clase 7 · Rentabilidad</span>
+            <span class="class-tag">📚 Clase 22 · Dashboard</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- AND -->
+      <div class="card" data-cat="logica" data-name="AND Y logica multiple condiciones">
+        <div class="card-header">
+          <span class="func-badge" style="background:rgba(0,229,255,.1);color:#00e5ff;">Y / AND</span>
+          <div class="card-title-group">
+            <div class="card-name">Lógica Y — Todas deben cumplirse</div>
+            <div class="card-desc">Devuelve VERDADERO solo si TODAS las condiciones evaluadas son verdaderas.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="section-label">Sintaxis</div>
+            <div class="syntax-block">
+              =Y(<span class="param">condición1</span>, <span class="param">condición2</span>, <span class="optional">[condición3...]</span>)<br>
+              <span class="comment">// En inglés: =AND(...) · Se usa casi siempre dentro de un SI()</span>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Cómo funciona</div>
+            <div class="explanation">Evalúa cada condición en paralelo. Si <strong>todas</strong> son verdaderas, devuelve VERDADERO. Si al menos una es falsa, devuelve FALSO. En modelos financieros se usa para verificar que múltiples checks pasen simultáneamente — por ejemplo, que el balance esté cuadrado Y que el flujo de caja sea positivo Y que los márgenes estén dentro del presupuesto.</div>
+          </div>
+          <div>
+            <div class="section-label">Ejemplo del curso — Clase 19 · Auditoría del Modelo</div>
+            <div class="example-block">
+              <div class="example-label">Casa Palma · Hoja Checks · Verificación global</div>
+              <div class="example-formula">=SI(Y(CONTAR.SI(B6:N6,"ERROR")=0, CONTAR.SI(B12:M12,"ERROR")=0, CONTAR.SI(B18:M18,"ERROR")=0), "✅ MODELO OK — TODAS LAS VERIFICACIONES PASAN", "❌ HAY ERRORES — REVISAR ARRIBA")</div>
+              <div class="example-context">Esta es la celda de verificación global del modelo de Casa Palma. Solo muestra "✅ MODELO OK" si las tres filas de checks (P&L, Balance y Flujo de Caja) no tienen ninguna celda con "ERROR". Si cualquier check falla, muestra la alerta en rojo. Un solo punto de control para auditar todo el modelo.</div>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Errores comunes</div>
+            <div class="errors-block">
+              <div class="error-item"><span class="error-code">Confundir Y con O</span><span class="error-text">Y requiere que TODAS sean verdaderas; O requiere que al menos UNA sea verdadera. En auditoría de modelos usamos Y porque queremos que todos los checks pasen.</span></div>
+            </div>
+          </div>
+          <div class="class-tags">
+            <span class="class-tag">📚 Clase 19 · Auditoría modelo</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- OR -->
+      <div class="card" data-cat="logica" data-name="OR O logica alternativa">
+        <div class="card-header">
+          <span class="func-badge" style="background:rgba(0,229,255,.1);color:#00e5ff;">O / OR</span>
+          <div class="card-title-group">
+            <div class="card-name">Lógica O — Al menos una debe cumplirse</div>
+            <div class="card-desc">Devuelve VERDADERO si AL MENOS UNA de las condiciones evaluadas es verdadera.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="section-label">Sintaxis</div>
+            <div class="syntax-block">
+              =O(<span class="param">condición1</span>, <span class="param">condición2</span>, <span class="optional">[condición3...]</span>)<br>
+              <span class="comment">// En inglés: =OR(...)  · Siempre dentro de un SI() en la práctica</span>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Cómo funciona</div>
+            <div class="explanation">Complemento de Y(). Devuelve VERDADERO si <strong>cualquiera</strong> de las condiciones se cumple. En el diccionario financiero se usa para clasificar grupos de cuentas contables: "si el primer dígito es 1, 2 o 3 → Balance; si es 4, 5, 6, 7 u 8 → P&L".</div>
+          </div>
+          <div>
+            <div class="section-label">Ejemplo del curso — Clase 3 · Diccionario Financiero</div>
+            <div class="example-block">
+              <div class="example-label">Casa Palma · Ejercicio Diccionario · Clasificación de Estado Financiero</div>
+              <div class="example-formula">=SI(O(C8="1", C8="2", C8="3"), "Balance", "P&L")</div>
+              <div class="example-context">El primer dígito de cada cuenta contable indica su tipo. Si ese dígito es 1 (Activos), 2 (Pasivos) o 3 (Patrimonio), la cuenta va al Balance General. Cualquier otro (4=Ingresos, 5=Costos, 6-8=Gastos) va al P&L. Esta lógica clasifica automáticamente todas las cuentas del ERP sin revisarlas una por una.</div>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Errores comunes</div>
+            <div class="errors-block">
+              <div class="error-item"><span class="error-code">Tipo de dato</span><span class="error-text">Si el código de cuenta viene como número (1) y lo comparás con texto ("1"), O() puede fallar. Verificá que ambos lados de la comparación sean del mismo tipo.</span></div>
+            </div>
+          </div>
+          <div class="class-tags">
+            <span class="class-tag">📚 Clase 3 · Diccionario financiero</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       CATEGORÍA 3 · MATEMÁTICA Y ESTADÍSTICA
+  ══════════════════════════════════════════════════ -->
+  <section class="category-section" data-cat="matematica">
+    <div class="category-header">
+      <div class="cat-icon" style="background:rgba(0,255,157,.08);">∑</div>
+      <span class="category-title">Matemática y Agregación</span>
+      <span class="cat-count">6 fórmulas</span>
+    </div>
+    <div class="cards-grid">
+
+      <!-- SUM -->
+      <div class="card" data-cat="matematica" data-name="SUM SUMA sumar total">
+        <div class="card-header">
+          <span class="func-badge" style="background:rgba(0,255,157,.08);color:#00ff9d;">SUMA</span>
+          <div class="card-title-group">
+            <div class="card-name">Suma de Rangos</div>
+            <div class="card-desc">Suma todos los valores numéricos de un rango de celdas.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="section-label">Sintaxis</div>
+            <div class="syntax-block">
+              =SUMA(<span class="param">rango1</span>, <span class="optional">[rango2]</span>, <span class="optional">[...]</span>)<br>
+              <span class="comment">// En inglés: =SUM(...)  · Ignora texto y celdas vacías automáticamente</span>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Cómo funciona</div>
+            <div class="explanation">Suma todos los valores numéricos del rango. Las celdas con texto o vacías se ignoran. En modelos financieros se usa en cada total de fila o columna del P&L y Balance — es la base de todos los subtotales (Utilidad Bruta, EBITDA, Utilidad Neta).</div>
+          </div>
+          <div>
+            <div class="section-label">Ejemplo del curso — Clase 8 · Cascada de Rentabilidad</div>
+            <div class="example-block">
+              <div class="example-label">Casa Palma · Dashboard KPI · Total anual</div>
+              <div class="example-formula">=SUMA(B25:M25)</div>
+              <div class="example-context">En el Dashboard KPI del modelo final, cada fila representa una cuenta del P&L (Ingresos, Costo, Utilidad Bruta, etc.). La columna N suma los 12 meses (B a M) para obtener el total anual. Esta fórmula se aplica en todas las filas del P&L para construir la cascada de rentabilidad anual de Casa Palma.</div>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Errores comunes</div>
+            <div class="errors-block">
+              <div class="error-item"><span class="error-code">Números como texto</span><span class="error-text">Si los valores del ERP o POS vienen como texto (alineados a la izquierda), SUMA los ignora y da 0. Convertí con VALOR() o usá el truco de multiplicar por 1.</span></div>
+            </div>
+          </div>
+          <div class="class-tags">
+            <span class="class-tag">📚 Clase 8 · Cascada P&L</span>
+            <span class="class-tag">📚 Clase 17 · Balance proyectado</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUMIFS -->
+      <div class="card" data-cat="matematica" data-name="SUMIFS SUMAR.SI.CONJUNTO suma condicional multiple">
+        <div class="card-header">
+          <span class="func-badge" style="background:rgba(0,255,157,.08);color:#00ff9d;">SUMAR.SI.CONJUNTO</span>
+          <div class="card-title-group">
+            <div class="card-name">Suma con Múltiples Filtros</div>
+            <div class="card-desc">Suma solo los valores que cumplen VARIOS criterios simultáneamente. La fórmula más poderosa del curso.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="section-label">Sintaxis</div>
+            <div class="syntax-block">
+              =SUMAR.SI.CONJUNTO(<span class="param">rango_suma</span>, <span class="param">rango_crit1</span>, <span class="param">criterio1</span>, <span class="optional">[rango_crit2, criterio2...]</span>)<br>
+              <span class="comment">// En inglés: =SUMIFS(...)  · Hasta 127 pares de rango-criterio</span>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Cómo funciona</div>
+            <div class="explanation">Solo suma las filas de <strong style="color:#e2e8f8">rango_suma</strong> donde TODOS los criterios se cumplen al mismo tiempo. En el modelo de Casa Palma, la TablaMaestra tiene miles de filas con datos de las 3 sucursales, 12 meses, ERP+POS+Presupuesto. Con SUMIFS se puede aislar exactamente: "ingresos de la sucursal Norte, mes de marzo, fuente ERP, tipo Real".</div>
+          </div>
+          <div>
+            <div class="section-label">Ejemplo del curso — Clase 6 · Dashboard con Tablas Dinámicas</div>
+            <div class="example-block">
+              <div class="example-label">Casa Palma · Dashboard KPI · Ingresos por sucursal y fecha</div>
+              <div class="example-formula">=SUMAR.SI.CONJUNTO(TablaMaestra[Monto_Ajustado], TablaMaestra[Rubro], "Ingresos", TablaMaestra[Sucursal], B$5, TablaMaestra[Tipo], "Real", TablaMaestra[Fuente], "ERP", TablaMaestra[Fecha_Mes], ">="&FECHA(2024,1,1), TablaMaestra[Fecha_Mes], "<="&FECHA(2024,1,31))</div>
+              <div class="example-context">Esta fórmula extrae los ingresos reales del ERP de una sucursal específica (referenciada en B$5) durante enero 2024. El símbolo $ ancla la fila 5 para que al copiar la fórmula hacia la derecha cambie la columna de sucursal pero no la fila. Es la base de todo el Dashboard KPI del curso.</div>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Errores comunes</div>
+            <div class="errors-block">
+              <div class="error-item"><span class="error-code">Rango desalineado</span><span class="error-text">Todos los rangos (rango_suma y rango_criterio) deben tener exactamente el mismo número de filas. Si tienen tamaños distintos devuelve #VALOR!.</span></div>
+              <div class="error-item"><span class="error-code">Criterio de fecha</span><span class="error-text">Para filtrar por fechas hay que usar ">="&FECHA(2024,1,1) con el ampersand. Poner la fecha directamente como texto no funciona.</span></div>
+            </div>
+          </div>
+          <div class="class-tags">
+            <span class="class-tag">📚 Clase 6 · Tablas dinámicas</span>
+            <span class="class-tag">📚 Clase 22 · Dashboard</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROUND -->
+      <div class="card" data-cat="matematica" data-name="ROUND REDONDEAR decimales">
+        <div class="card-header">
+          <span class="func-badge" style="background:rgba(0,255,157,.08);color:#00ff9d;">REDONDEAR</span>
+          <div class="card-title-group">
+            <div class="card-name">Redondeo Controlado</div>
+            <div class="card-desc">Redondea un número a una cantidad específica de decimales.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="section-label">Sintaxis</div>
+            <div class="syntax-block">
+              =REDONDEAR(<span class="param">número</span>, <span class="param">núm_decimales</span>)<br>
+              <span class="comment">// En inglés: =ROUND(...)  · 2 = centavos, 0 = entero, -3 = miles</span>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Cómo funciona</div>
+            <div class="explanation">Redondea el <strong style="color:#e2e8f8">número</strong> al número de posiciones decimales indicado. Con 2 redondea a centavos, con 0 a entero, con -3 a miles. En modelos financieros es crítico para verificar que los porcentajes de participación sumen exactamente 100% — errores de punto flotante pueden hacer que 33.33% + 33.33% + 33.34% ≠ 100% sin redondeo.</div>
+          </div>
+          <div>
+            <div class="section-label">Ejemplo del curso — Clase 14 · Supuestos de Proyección</div>
+            <div class="example-block">
+              <div class="example-label">Casa Palma · Supuestos · Validación de participación de sucursales</div>
+              <div class="example-formula">=SI(REDONDEAR(F15+F16+F17, 2)=1, "Sí", "No")</div>
+              <div class="example-context">En la hoja de Supuestos, las tres sucursales de Casa Palma tienen un % de participación en ventas. Esta celda verifica que los tres porcentajes sumen exactamente 100% (=1 en decimal). Sin REDONDEAR, errores de punto flotante podrían hacer que 0.4+0.35+0.25 = 0.9999999 y la validación fallaría aunque los números sean correctos.</div>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Errores comunes</div>
+            <div class="errors-block">
+              <div class="error-item"><span class="error-code">Redondear vs. formatear</span><span class="error-text">Dar formato de 2 decimales en Excel NO redondea el valor real — solo lo oculta. Si necesitás que el cálculo use el valor redondeado, debés usar REDONDEAR() explícitamente.</span></div>
+            </div>
+          </div>
+          <div class="class-tags">
+            <span class="class-tag">📚 Clase 14 · Supuestos y drivers</span>
+            <span class="class-tag">📚 Clase 20 · Escenarios</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABS -->
+      <div class="card" data-cat="matematica" data-name="ABS valor absoluto positivo">
+        <div class="card-header">
+          <span class="func-badge" style="background:rgba(0,255,157,.08);color:#00ff9d;">ABS</span>
+          <div class="card-title-group">
+            <div class="card-name">Valor Absoluto</div>
+            <div class="card-desc">Convierte cualquier número negativo en positivo, sin afectar los positivos.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="section-label">Sintaxis</div>
+            <div class="syntax-block">
+              =ABS(<span class="param">número</span>)<br>
+              <span class="comment">// ABS(-500) = 500  ·  ABS(500) = 500</span>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Cómo funciona</div>
+            <div class="explanation">Devuelve el valor absoluto (magnitud sin signo) de un número. En finanzas, muchas cuentas como Costos o Gastos se registran con signo negativo en el ERP o P&L. ABS permite usar esos valores en cálculos de ratios o de días sin que el signo contamine el resultado.</div>
+          </div>
+          <div>
+            <div class="section-label">Ejemplo del curso — Clase 17 · Balance Proyectado</div>
+            <div class="example-block">
+              <div class="example-label">Casa Palma · Balance Proyectado · Cálculo de días de inventario</div>
+              <div class="example-formula">=ABS(PL_Proyectado!B8)/30 * Supuestos!$I$41</div>
+              <div class="example-context">El Costo de Ventas en el P&L proyectado es negativo (sale plata). Para calcular el inventario promedio en el Balance (Costo Mensual × Días de Inventario) se necesita el valor en positivo. ABS convierte -$120,000 en $120,000 para que la fórmula del Balance funcione correctamente. Los días de inventario vienen de la celda fija de Supuestos.</div>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Errores comunes</div>
+            <div class="errors-block">
+              <div class="error-item"><span class="error-code">Ocultar problemas</span><span class="error-text">Si ABS se aplica a un ratio como Deuda/EBITDA donde EBITDA puede ser negativo, el resultado puede dar positivo y parecer "verde" cuando en realidad la empresa tiene EBITDA negativo — un riesgo real.</span></div>
+            </div>
+          </div>
+          <div class="class-tags">
+            <span class="class-tag">📚 Clase 17 · Balance proyectado</span>
+            <span class="class-tag">📚 Clase 9 · Liquidez</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAX -->
+      <div class="card" data-cat="matematica" data-name="MAX maximo valor mayor">
+        <div class="card-header">
+          <span class="func-badge" style="background:rgba(0,255,157,.08);color:#00ff9d;">MAX</span>
+          <div class="card-title-group">
+            <div class="card-name">Valor Máximo / Piso en Cero</div>
+            <div class="card-desc">Devuelve el valor más alto de un rango. En finanzas se usa para evitar valores negativos en impuestos.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="section-label">Sintaxis</div>
+            <div class="syntax-block">
+              =MAX(<span class="param">valor1</span>, <span class="optional">[valor2]</span>, <span class="optional">[...]</span>)<br>
+              <span class="comment">// Truco financiero: =MAX(resultado, 0) asegura que nunca sea negativo</span>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Cómo funciona</div>
+            <div class="explanation">Devuelve el mayor valor entre los argumentos. El truco financiero clave: <code style="color:var(--accent)">MAX(cálculo, 0)</code> actúa como un "piso en cero" — si el resultado es negativo devuelve 0, si es positivo devuelve el resultado. Imprescindible para el cálculo de impuestos: una empresa no puede pagar impuesto negativo si tiene pérdida.</div>
+          </div>
+          <div>
+            <div class="section-label">Ejemplo del curso — Clase 15 · P&L Proyectado</div>
+            <div class="example-block">
+              <div class="example-label">Casa Palma · P&L Proyectado · Cálculo de impuesto de renta</div>
+              <div class="example-formula">=MAX((B17-B15-B18), 0) * Supuestos!$I$38</div>
+              <div class="example-context">Calcula el impuesto de renta proyectado de Casa Palma: (EBIT - Amortización - Intereses) × tasa de impuesto. Si la base imponible es negativa (la empresa tuvo pérdida ese mes), MAX la convierte en 0, por lo que el impuesto es $0. Sin MAX, en meses de pérdida el modelo generaría un impuesto negativo, lo cual es imposible en la realidad.</div>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Errores comunes</div>
+            <div class="errors-block">
+              <div class="error-item"><span class="error-code">No usar MAX en impuestos</span><span class="error-text">Sin MAX(base, 0), en meses de pérdida el impuesto proyectado sería negativo, inflando artificialmente la utilidad neta y haciendo el modelo optimista de forma incorrecta.</span></div>
+            </div>
+          </div>
+          <div class="class-tags">
+            <span class="class-tag">📚 Clase 15 · P&L proyectado</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- MIN -->
+      <div class="card" data-cat="matematica" data-name="MIN minimo valor menor">
+        <div class="card-header">
+          <span class="func-badge" style="background:rgba(0,255,157,.08);color:#00ff9d;">MIN</span>
+          <div class="card-title-group">
+            <div class="card-name">Valor Mínimo</div>
+            <div class="card-desc">Devuelve el valor más bajo de un rango. En auditoría detecta el mes más crítico.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="section-label">Sintaxis</div>
+            <div class="syntax-block">
+              =MIN(<span class="param">rango1</span>, <span class="optional">[rango2...]</span>)<br>
+              <span class="comment">// Complemento de MAX para análisis de rangos extremos</span>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Cómo funciona</div>
+            <div class="explanation">Devuelve el menor valor del rango. En auditoría financiera se usa para detectar el mes más crítico del año (ej: el mes con menores ingresos o el mayor gasto). Combinado con MAX permite calcular la volatilidad de una variable: si la diferencia entre MAX y MIN es muy grande, la variable tiene alta variabilidad que debe explicarse.</div>
+          </div>
+          <div>
+            <div class="section-label">Ejemplo del curso — Clase 19 · Auditoría del Modelo</div>
+            <div class="example-block">
+              <div class="example-label">Casa Palma · Hoja Checks · Detección de valores mínimos y volatilidad</div>
+              <div class="example-formula">=MIN(PL_Proyectado!B4:M4)  →  mes con ingresos más bajos<br>=MAX(PL_Proyectado!B7:M7) - MIN(PL_Proyectado!B7:M7)  →  volatilidad del EBITDA</div>
+              <div class="example-context">La hoja de auditoría verifica que los ingresos proyectados nunca caigan por debajo de un umbral. La segunda fórmula mide la diferencia entre el mes de mayor y menor EBITDA — si esa diferencia es muy grande comparada con el promedio, el modelo tiene una variabilidad inusual que debe revisarse antes de presentar.</div>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Errores comunes</div>
+            <div class="errors-block">
+              <div class="error-item"><span class="error-code">Ceros en el rango</span><span class="error-text">Si hay meses futuros con 0 (aún sin proyectar), MIN devolverá 0 en vez del mínimo real. Hay que limitar el rango a los meses con datos o usar MIN con SUMAR.SI.CONJUNTO.</span></div>
+            </div>
+          </div>
+          <div class="class-tags">
+            <span class="class-tag">📚 Clase 19 · Auditoría modelo</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       CATEGORÍA 4 · FINANCIERA
+  ══════════════════════════════════════════════════ -->
+  <section class="category-section" data-cat="financiera">
+    <div class="category-header">
+      <div class="cat-icon" style="background:rgba(255,181,71,.1);">💰</div>
+      <span class="category-title">Funciones Financieras</span>
+      <span class="cat-count">2 fórmulas</span>
+    </div>
+    <div class="cards-grid">
+
+      <!-- NPV / VPN -->
+      <div class="card" data-cat="financiera" data-name="NPV VPN VAN valor presente neto inversion">
+        <div class="card-header">
+          <span class="func-badge" style="background:rgba(255,181,71,.1);color:#ffb547;">VNA / NPV</span>
+          <div class="card-title-group">
+            <div class="card-name">Valor Presente Neto</div>
+            <div class="card-desc">Calcula cuánto valen hoy los flujos de caja futuros de una inversión, descontados a una tasa.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="section-label">Sintaxis</div>
+            <div class="syntax-block">
+              =VNA(<span class="param">tasa</span>, <span class="param">flujo1</span>, <span class="optional">[flujo2...]</span>) + <span class="param">inversión_inicial</span><br>
+              <span class="comment">// En inglés: =NPV(...)  · La inversión inicial (negativa) se suma FUERA de VNA</span>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Cómo funciona</div>
+            <div class="explanation">Descuenta cada flujo de caja futuro a valor presente usando la <strong style="color:#e2e8f8">tasa</strong> (normalmente el WACC o tasa de descuento del negocio). Si el VPN es positivo, la inversión crea valor; si es negativo, destruye valor. <strong>Trampa importante:</strong> VNA en Excel asume que los flujos empiezan en el período 1, por eso la inversión inicial del período 0 se suma fuera de la función.</div>
+          </div>
+          <div>
+            <div class="section-label">Ejemplo del curso — Clase 18 · VPN y TIR con Flujos Reales</div>
+            <div class="example-block">
+              <div class="example-label">Casa Palma · Evaluación de Inversión Sucursal 4</div>
+              <div class="example-formula">=VNA(B17, C59:G59) + B59</div>
+              <div class="example-context">Evalúa si abrir la cuarta sucursal de Casa Palma es rentable. B17 es el WACC (tasa de descuento). C59:G59 son los flujos de caja libre proyectados para los años 1 al 5. B59 es la inversión inicial en el año 0 (negativa, ej: -$500,000). Si el resultado es positivo, la sucursal crea valor para los accionistas a esa tasa de descuento.</div>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Errores comunes</div>
+            <div class="errors-block">
+              <div class="error-item"><span class="error-code">Incluir año 0 en VNA</span><span class="error-text">El error más frecuente: poner la inversión inicial dentro del rango de VNA. VNA asume que el primer valor ocurre en el período 1, no 0. Si ponés B59 dentro del rango, la inversión se descuenta un período extra y el VPN es incorrecto.</span></div>
+              <div class="error-item"><span class="error-code">Tasa en porcentaje</span><span class="error-text">La tasa debe ser decimal (0.12 para 12%), no 12. Si ponés 12 en vez de 0.12, el resultado es absurdamente incorrecto.</span></div>
+            </div>
+          </div>
+          <div class="class-tags">
+            <span class="class-tag">📚 Clase 18 · VPN y TIR</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- IRR / TIR -->
+      <div class="card" data-cat="financiera" data-name="IRR TIR tasa interna retorno inversion">
+        <div class="card-header">
+          <span class="func-badge" style="background:rgba(255,181,71,.1);color:#ffb547;">TIR / IRR</span>
+          <div class="card-title-group">
+            <div class="card-name">Tasa Interna de Retorno</div>
+            <div class="card-desc">Calcula la tasa de descuento que hace que el VPN de una inversión sea exactamente cero.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="section-label">Sintaxis</div>
+            <div class="syntax-block">
+              =TIR(<span class="param">rango_flujos</span>, <span class="optional">[estimación]</span>)<br>
+              <span class="comment">// En inglés: =IRR(...)  · El rango DEBE incluir al menos un valor negativo (la inversión)</span>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Cómo funciona</div>
+            <div class="explanation">Encuentra iterativamente la tasa que iguala el valor presente de los flujos positivos con el de los negativos (VPN = 0). La regla de decisión: si TIR > WACC (o costo del capital), la inversión es rentable y se acepta. Si TIR &lt; WACC, destruye valor y se rechaza. Siempre se usa junto con VPN — la TIR complementa pero no reemplaza el VPN.</div>
+          </div>
+          <div>
+            <div class="section-label">Ejemplo del curso — Clase 18 · VPN y TIR con Flujos Reales</div>
+            <div class="example-block">
+              <div class="example-label">Casa Palma · Evaluación de Inversión Sucursal 4</div>
+              <div class="example-formula">=TIR(B59:G59)
+=SI(B64&gt;B17, "✅ IRR ("&TEXTO(B64,"0.0%")&") &gt; WACC ("&TEXTO(B17,"0.0%")&")", "❌ IRR &lt; WACC")</div>
+              <div class="example-context">B59 es el flujo año 0 (inversión negativa). B64 muestra la TIR calculada. B17 es el WACC de Casa Palma. La segunda fórmula combina TIR + TEXTO + SI para mostrar automáticamente si la inversión es viable: "✅ IRR (24.3%) > WACC (15.0%)" — el directivo ve en un vistazo si la sucursal 4 vale la pena.</div>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Errores comunes</div>
+            <div class="errors-block">
+              <div class="error-item"><span class="error-code">#NUM!</span><span class="error-text">Ocurre cuando los flujos son todos positivos (sin inversión inicial negativa) o cuando hay múltiples cambios de signo complejos. Verificá que el primer flujo sea la inversión en negativo.</span></div>
+              <div class="error-item"><span class="error-code">TIR vs. TIRM</span><span class="error-text">TIR asume que los flujos intermedios se reinvierten a la misma TIR, lo cual es poco realista. TIRM (MIRR) permite especificar tasas de reinversión distintas — más conservadora y real para proyectos de largo plazo.</span></div>
+            </div>
+          </div>
+          <div class="class-tags">
+            <span class="class-tag">📚 Clase 18 · VPN y TIR</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       CATEGORÍA 5 · TEXTO
+  ══════════════════════════════════════════════════ -->
+  <section class="category-section" data-cat="texto">
+    <div class="category-header">
+      <div class="cat-icon" style="background:rgba(255,126,179,.1);">Aa</div>
+      <span class="category-title">Manipulación de Texto</span>
+      <span class="cat-count">3 fórmulas</span>
+    </div>
+    <div class="cards-grid">
+
+      <!-- LEFT -->
+      <div class="card" data-cat="texto" data-name="LEFT IZQUIERDA extraer texto codigo">
+        <div class="card-header">
+          <span class="func-badge" style="background:rgba(255,126,179,.1);color:#ff7eb3;">IZQUIERDA</span>
+          <div class="card-title-group">
+            <div class="card-name">Extraer desde la Izquierda</div>
+            <div class="card-desc">Extrae los primeros N caracteres de una cadena de texto, empezando por la izquierda.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="section-label">Sintaxis</div>
+            <div class="syntax-block">
+              =IZQUIERDA(<span class="param">texto</span>, <span class="param">núm_caracteres</span>)<br>
+              <span class="comment">// En inglés: =LEFT(...)  · IZQUIERDA("4135", 1) = "4"</span>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Cómo funciona</div>
+            <div class="explanation">Devuelve los primeros <strong style="color:#e2e8f8">núm_caracteres</strong> del <strong style="color:#e2e8f8">texto</strong>, contando desde la izquierda. En el diccionario financiero es clave porque los códigos contables colombianos tienen una estructura donde el primer dígito indica el tipo de cuenta: 1=Activo, 2=Pasivo, 3=Patrimonio, 4=Ingresos, 5=Costos, 6-8=Gastos. IZQUIERDA extrae ese primer dígito para clasificar automáticamente.</div>
+          </div>
+          <div>
+            <div class="section-label">Ejemplo del curso — Clase 3 · Diccionario Financiero</div>
+            <div class="example-block">
+              <div class="example-label">Casa Palma · Ejercicio Diccionario · Extraer primer dígito de cuenta</div>
+              <div class="example-formula">=IZQUIERDA(A8, 1)</div>
+              <div class="example-context">La columna A tiene los códigos de cuenta contable (ej: "4135202"). IZQUIERDA extrae "4" — ese único dígito le dice a Excel que es una cuenta de Ingresos, y con un SI()+O() anidado se asigna automáticamente el rubro, subrubro y estado financiero correspondiente sin revisar cada cuenta manualmente.</div>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Errores comunes</div>
+            <div class="errors-block">
+              <div class="error-item"><span class="error-code">Código como número</span><span class="error-text">Si el código de cuenta está guardado como número en Excel, IZQUIERDA puede no funcionar. Convertilo a texto con TEXTO(A8,"0") antes de aplicar IZQUIERDA.</span></div>
+            </div>
+          </div>
+          <div class="class-tags">
+            <span class="class-tag">📚 Clase 3 · Diccionario financiero</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="card" data-cat="texto" data-name="RIGHT DERECHA extraer texto subtotal">
+        <div class="card-header">
+          <span class="func-badge" style="background:rgba(255,126,179,.1);color:#ff7eb3;">DERECHA</span>
+          <div class="card-title-group">
+            <div class="card-name">Extraer desde la Derecha</div>
+            <div class="card-desc">Extrae los últimos N caracteres de una cadena de texto, empezando por la derecha.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="section-label">Sintaxis</div>
+            <div class="syntax-block">
+              =DERECHA(<span class="param">texto</span>, <span class="param">núm_caracteres</span>)<br>
+              <span class="comment">// En inglés: =RIGHT(...)  · DERECHA("410099", 2) = "99"</span>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Cómo funciona</div>
+            <div class="explanation">Devuelve los últimos <strong style="color:#e2e8f8">núm_caracteres</strong> del texto. En los planes de cuentas contables colombianos, las cuentas que terminan en "99" son cuentas de subtotal o resumen — no deben incluirse en el cálculo porque ya incluyen el total de las subcuentas. DERECHA permite identificarlas y excluirlas automáticamente.</div>
+          </div>
+          <div>
+            <div class="section-label">Ejemplo del curso — Clase 3 · Diccionario Financiero</div>
+            <div class="example-block">
+              <div class="example-label">Casa Palma · Ejercicio Diccionario · Detección de cuentas subtotal</div>
+              <div class="example-formula">=SI(DERECHA(A8,2)="99", "Subtotal", SI(C8="4", "Ingresos", SI(C8="5", "Costo de Ventas", ...)))</div>
+              <div class="example-context">Primero verifica si la cuenta termina en "99". Si sí, la clasifica como "Subtotal" y no se suma en el P&L (evita doble conteo). Si no termina en "99", continúa con la lógica de clasificación por primer dígito. Esta verificación es el primer paso del árbol de clasificación del diccionario de Casa Palma.</div>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Errores comunes</div>
+            <div class="errors-block">
+              <div class="error-item"><span class="error-code">Mismo que IZQUIERDA</span><span class="error-text">Si el código es número, los dos últimos dígitos de "4135" como número son "35" — pero DERECHA("4135", 2) también da "35". El problema surge si el código tiene ceros al inicio (ej: "0410") que Excel puede eliminar si lo trata como número.</span></div>
+            </div>
+          </div>
+          <div class="class-tags">
+            <span class="class-tag">📚 Clase 3 · Diccionario financiero</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEXT -->
+      <div class="card" data-cat="texto" data-name="TEXT TEXTO formatear numero porcentaje">
+        <div class="card-header">
+          <span class="func-badge" style="background:rgba(255,126,179,.1);color:#ff7eb3;">TEXTO</span>
+          <div class="card-title-group">
+            <div class="card-name">Número a Texto con Formato</div>
+            <div class="card-desc">Convierte un número en texto con el formato visual que especifiques, para concatenar en etiquetas dinámicas.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="section-label">Sintaxis</div>
+            <div class="syntax-block">
+              =TEXTO(<span class="param">valor</span>, <span class="param">formato</span>)<br>
+              <span class="comment">// Formatos comunes: "0.0%" · "$#,##0" · "0.0x" · "dd/mm/yyyy"</span>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Cómo funciona</div>
+            <div class="explanation">Convierte el <strong style="color:#e2e8f8">valor</strong> numérico en texto aplicando el <strong style="color:#e2e8f8">formato</strong> que le indicás (el mismo sistema de formatos de celdas de Excel). Permite construir etiquetas dinámicas que mezclan texto fijo con valores calculados, como títulos de gráficos que se actualizan solos o celdas de diagnóstico con íconos y números.</div>
+          </div>
+          <div>
+            <div class="section-label">Ejemplo del curso — Clase 18 · Evaluación de Inversión</div>
+            <div class="example-block">
+              <div class="example-label">Casa Palma · Evaluación Sucursal 4 · Diagnóstico automático TIR vs WACC</div>
+              <div class="example-formula">=SI(B64&gt;B17, "✅ IRR ("&TEXTO(B64,"0.0%")&") &gt; WACC ("&TEXTO(B17,"0.0%")&")", "❌ IRR &lt; WACC")</div>
+              <div class="example-context">Combina SI + TEXTO + & (concatenación). Si la TIR (B64=0.243) supera el WACC (B17=0.15), muestra "✅ IRR (24.3%) > WACC (15.0%)". Sin TEXTO, concatenar 0.243 con texto daría "✅ IRR (0.243) > WACC (0.15)" — ilegible. TEXTO formatea el número como porcentaje dentro del texto para que el mensaje sea claro para el directivo.</div>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Errores comunes</div>
+            <div class="errors-block">
+              <div class="error-item"><span class="error-code">Resultado es texto</span><span class="error-text">El resultado de TEXTO es texto, no número. No puede usarse en cálculos matemáticos posteriores. Solo usarlo para etiquetas y mensajes, nunca como insumo de otra fórmula numérica.</span></div>
+            </div>
+          </div>
+          <div class="class-tags">
+            <span class="class-tag">📚 Clase 18 · VPN y TIR</span>
+            <span class="class-tag">📚 Clase 22 · Dashboard</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       CATEGORÍA 6 · FECHA
+  ══════════════════════════════════════════════════ -->
+  <section class="category-section" data-cat="fecha">
+    <div class="category-header">
+      <div class="cat-icon" style="background:rgba(255,92,108,.1);">📅</div>
+      <span class="category-title">Fecha y Tiempo</span>
+      <span class="cat-count">2 fórmulas</span>
+    </div>
+    <div class="cards-grid">
+
+      <!-- DATE -->
+      <div class="card" data-cat="fecha" data-name="DATE FECHA criterio sumifs filtro periodo">
+        <div class="card-header">
+          <span class="func-badge" style="background:rgba(255,92,108,.1);color:#ff5c6c;">FECHA</span>
+          <div class="card-title-group">
+            <div class="card-name">Construir Fechas para Filtros</div>
+            <div class="card-desc">Crea una fecha a partir de año, mes y día. Imprescindible para filtrar por períodos en SUMIFS.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="section-label">Sintaxis</div>
+            <div class="syntax-block">
+              =FECHA(<span class="param">año</span>, <span class="param">mes</span>, <span class="param">día</span>)<br>
+              <span class="comment">// En inglés: =DATE(...)  · FECHA(2024, 1, 1) = 01/01/2024</span>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Cómo funciona</div>
+            <div class="explanation">Crea una fecha válida de Excel (número serial) a partir de sus componentes. En modelos financieros se usa como criterio en SUMIFS para filtrar datos de un período específico: <code style="color:var(--accent)">"&gt;="&FECHA(2024,1,1)</code> selecciona todos los registros desde el 1° de enero de 2024. Los componentes pueden ser celdas — si el año está en B1 y el mes en B2, podés construir fechas dinámicas.</div>
+          </div>
+          <div>
+            <div class="section-label">Ejemplo del curso — Clase 22 · Dashboard KPI</div>
+            <div class="example-block">
+              <div class="example-label">Casa Palma · Dashboard KPI · Filtro por mes con SUMIFS</div>
+              <div class="example-formula">=SUMAR.SI.CONJUNTO(TablaMaestra[Monto_Ajustado], TablaMaestra[Rubro], "Ingresos", TablaMaestra[Fecha_Mes], ">="&FECHA(2024,1,1), TablaMaestra[Fecha_Mes], "<="&FECHA(2024,1,31))</div>
+              <div class="example-context">Filtra solo los registros de enero 2024 de la TablaMaestra. FECHA construye las fechas de inicio (1° de enero) y fin (31 de enero) del mes como valores que SUMIFS puede comparar. Si las fechas se pusieran como texto ("01/01/2024"), la comparación fallaría porque Excel no puede comparar texto con fechas reales.</div>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Errores comunes</div>
+            <div class="errors-block">
+              <div class="error-item"><span class="error-code">Fecha como texto</span><span class="error-text">El error más frecuente en SUMIFS: escribir la fecha directamente como texto en el criterio. =SUMAR.SI.CONJUNTO(..., ">="&"01/01/2024") no funciona. Siempre usá FECHA() o una referencia a celda con fecha.</span></div>
+            </div>
+          </div>
+          <div class="class-tags">
+            <span class="class-tag">📚 Clase 6 · Tablas dinámicas</span>
+            <span class="class-tag">📚 Clase 22 · Dashboard</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- YEAR -->
+      <div class="card" data-cat="fecha" data-name="YEAR AÑO extraer año fecha columna calculada">
+        <div class="card-header">
+          <span class="func-badge" style="background:rgba(255,92,108,.1);color:#ff5c6c;">AÑO</span>
+          <div class="card-title-group">
+            <div class="card-name">Extraer el Año de una Fecha</div>
+            <div class="card-desc">Extrae el año de una fecha como número. Útil para crear columnas auxiliares de clasificación temporal.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="section-label">Sintaxis</div>
+            <div class="syntax-block">
+              =AÑO(<span class="param">fecha</span>)<br>
+              <span class="comment">// En inglés: =YEAR(...)  · AÑO("15/03/2024") = 2024</span>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Cómo funciona</div>
+            <div class="explanation">Devuelve el componente "año" de una fecha como número entero. En el modelo de Casa Palma se usa para crear una columna auxiliar "Año" en la tabla de ventas diarias del POS, que luego sirve para segmentar los datos en tablas dinámicas por año sin necesidad de filtros manuales.</div>
+          </div>
+          <div>
+            <div class="section-label">Ejemplo del curso — Clase 21 · Tablas Dinámicas para Dashboard</div>
+            <div class="example-block">
+              <div class="example-label">Casa Palma · Ventas Diarias (POS) · Columna auxiliar Año</div>
+              <div class="example-formula">=AÑO(Ventas_Diarias[[#Esta Fila],[Fecha]])</div>
+              <div class="example-context">La tabla de ventas del POS tiene fechas individuales de cada transacción. Esta columna calculada extrae el año de cada fecha (2023, 2024, etc.) y se agrega automáticamente a todos los registros de la tabla. Cuando se crea la tabla dinámica para el dashboard, el campo "Año" permite filtrar y segmentar ventas por año con un clic.</div>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Errores comunes</div>
+            <div class="errors-block">
+              <div class="error-item"><span class="error-code">Fecha como texto</span><span class="error-text">Si las fechas del POS vienen como texto (frecuente cuando se exporta mal), AÑO devuelve #VALOR!. Primero convertir con FECHANUMERO() o Power Query.</span></div>
+            </div>
+          </div>
+          <div class="class-tags">
+            <span class="class-tag">📚 Clase 4 · Power Query</span>
+            <span class="class-tag">📚 Clase 21 · Tablas dinámicas</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       CATEGORÍA 7 · ESTADÍSTICA
+  ══════════════════════════════════════════════════ -->
+  <section class="category-section" data-cat="estadistica">
+    <div class="category-header">
+      <div class="cat-icon" style="background:rgba(56,232,176,.1);">📊</div>
+      <span class="category-title">Estadística</span>
+      <span class="cat-count">2 fórmulas</span>
+    </div>
+    <div class="cards-grid">
+
+      <!-- AVERAGE -->
+      <div class="card" data-cat="estadistica" data-name="AVERAGE PROMEDIO media estadistica">
+        <div class="card-header">
+          <span class="func-badge" style="background:rgba(56,232,176,.1);color:#38e8b0;">PROMEDIO</span>
+          <div class="card-title-group">
+            <div class="card-name">Promedio de Valores</div>
+            <div class="card-desc">Calcula la media aritmética de un rango. En auditoría detecta valores atípicos comparando contra el promedio.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="section-label">Sintaxis</div>
+            <div class="syntax-block">
+              =PROMEDIO(<span class="param">rango1</span>, <span class="optional">[rango2...]</span>)<br>
+              <span class="comment">// En inglés: =AVERAGE(...)  · Ignora celdas vacías pero incluye ceros</span>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Cómo funciona</div>
+            <div class="explanation">Suma todos los valores del rango y los divide por la cantidad de celdas con números. En el modelo de Casa Palma se usa en la hoja de Auditoría para comparar un mes específico contra el promedio de los demás — si un mes tiene un valor muy alejado del promedio, puede ser un error de entrada o un evento real que debe explicarse.</div>
+          </div>
+          <div>
+            <div class="section-label">Ejemplo del curso — Clase 19 · Auditoría del Modelo</div>
+            <div class="example-block">
+              <div class="example-label">Casa Palma · Hoja Checks · Detección de outliers en EBITDA</div>
+              <div class="example-formula">=ABS(PL_Proyectado!H10 - PROMEDIO(PL_Proyectado!B10:G10, PL_Proyectado!I10:M10))</div>
+              <div class="example-context">Mide qué tan lejos está el EBITDA de agosto (columna H) del promedio de los demás 11 meses. Si la diferencia es mayor a un umbral (ej: 20% del promedio), la celda de auditoría muestra alerta. Se excluye agosto del promedio usando dos rangos separados — si se incluyera, el outlier inflaría el promedio y reduciría la sensibilidad de la detección.</div>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Errores comunes</div>
+            <div class="errors-block">
+              <div class="error-item"><span class="error-code">Ceros vs. vacíos</span><span class="error-text">PROMEDIO incluye celdas con 0 en el denominador pero ignora vacías. Si los meses futuros tienen 0 en vez de estar vacíos, el promedio queda distorsionado hacia abajo. Usá PROMEDIO.SI para excluir ceros si es necesario.</span></div>
+            </div>
+          </div>
+          <div class="class-tags">
+            <span class="class-tag">📚 Clase 19 · Auditoría modelo</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- COUNTIF -->
+      <div class="card" data-cat="estadistica" data-name="COUNTIF CONTAR.SI contar condicion errores auditoria">
+        <div class="card-header">
+          <span class="func-badge" style="background:rgba(56,232,176,.1);color:#38e8b0;">CONTAR.SI</span>
+          <div class="card-title-group">
+            <div class="card-name">Contar con Condición</div>
+            <div class="card-desc">Cuenta cuántas celdas de un rango cumplen un criterio específico.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="section-label">Sintaxis</div>
+            <div class="syntax-block">
+              =CONTAR.SI(<span class="param">rango</span>, <span class="param">criterio</span>)<br>
+              <span class="comment">// En inglés: =COUNTIF(...)  · Criterio puede ser texto, número o comparación</span>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Cómo funciona</div>
+            <div class="explanation">Recorre el <strong style="color:#e2e8f8">rango</strong> y cuenta cuántas celdas coinciden con el <strong style="color:#e2e8f8">criterio</strong>. En el sistema de auditoría del modelo de Casa Palma, se usa para contar cuántas celdas de verificación contienen la palabra "ERROR". Si la cuenta es mayor a 0, el modelo tiene problemas.</div>
+          </div>
+          <div>
+            <div class="section-label">Ejemplo del curso — Clase 19 · Auditoría del Modelo</div>
+            <div class="example-block">
+              <div class="example-label">Casa Palma · Hoja Checks · Contador de errores por bloque</div>
+              <div class="example-formula">=SI(CONTAR.SI(C5:C7, "OK")=3, "MODELO LIMPIO ✓", "HAY ERRORES")</div>
+              <div class="example-context">La hoja de Checks tiene celdas que devuelven "OK" o "ERROR" según si el P&L, Balance y Flujo de Caja cuadran correctamente. CONTAR.SI cuenta cuántas de esas 3 celdas dicen "OK". Si son exactamente 3 (todas OK), el modelo está limpio. Si alguna dice "ERROR", el SI muestra la alerta. Este es el sistema de semáforo de auditoría del modelo final.</div>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Errores comunes</div>
+            <div class="errors-block">
+              <div class="error-item"><span class="error-code">Sensible a mayúsculas en concepto</span><span class="error-text">CONTAR.SI es insensible a mayúsculas: "error", "ERROR" y "Error" se cuentan igual. Eso está bien para auditoría, pero verificá que las celdas fuente usen consistentemente el mismo texto.</span></div>
+            </div>
+          </div>
+          <div class="class-tags">
+            <span class="class-tag">📚 Clase 19 · Auditoría modelo</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<script>
+  const searchInput = document.getElementById('searchInput');
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const cards = document.querySelectorAll('.card');
+  const sections = document.querySelectorAll('.category-section');
+  const emptyState = document.getElementById('emptyState');
+
+  let activeCat = 'all';
+  let searchTerm = '';
+
+  function applyFilters() {
+    let visible = 0;
+
+    cards.forEach(card => {
+      const cat = card.dataset.cat;
+      const name = card.dataset.name.toLowerCase();
+      const body = card.innerText.toLowerCase();
+
+      const catMatch = activeCat === 'all' || cat === activeCat;
+      const searchMatch = searchTerm === '' || name.includes(searchTerm) || body.includes(searchTerm);
+
+      if (catMatch && searchMatch) {
+        card.classList.remove('hidden');
+        visible++;
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+
+    // Hide empty sections
+    sections.forEach(section => {
+      const sectionCat = section.dataset.cat;
+      const hasVisible = Array.from(section.querySelectorAll('.card')).some(c => !c.classList.contains('hidden'));
+      section.classList.toggle('section-hidden', !hasVisible);
+    });
+
+    emptyState.style.display = visible === 0 ? 'block' : 'none';
+  }
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeCat = btn.dataset.cat;
+      applyFilters();
+    });
+  });
+
+  searchInput.addEventListener('input', e => {
+    searchTerm = e.target.value.toLowerCase().trim();
+    applyFilters();
+  });
+</script>
+</body>
+</html>
