@@ -907,6 +907,12 @@ function openSubpage(pageId,title,courseId,subpages,idx){
       content.innerHTML=await renderBlocks(blocks);
       panel.appendChild(content);
       panel.appendChild(makeNav(true));
+      if(topTtsBtn&&!ttsExtractText(content)){
+        topTtsBtn.disabled=true;
+        topTtsBtn.title='Este contenido es una tabla — la lectura en voz alta no está disponible';
+        topTtsBtn.style.opacity='0.35';
+        topTtsBtn.style.cursor='not-allowed';
+      }
     })
     .catch(function(){loading.innerHTML='<div class="empty">No se pudo cargar.</div>';});
 }
