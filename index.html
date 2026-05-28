@@ -675,7 +675,7 @@ document.getElementById('searchInput').addEventListener('input',function(e){
     border.style.removeProperty('--search-accent');
     renderCourses(allCourses.slice(0,5));
   } else {
-    var results=allCourses.filter(function(c){return c.title.toLowerCase().indexOf(q)>=0||c.desc.toLowerCase().indexOf(q)>=0;});
+    var results=allCourses.filter(function(c){return norm(c.title).indexOf(norm(q))>=0||norm(c.desc).indexOf(norm(q))>=0;});
     var catCounts={};
     results.forEach(function(c){catCounts[c.cat]=(catCounts[c.cat]||0)+1;});
     var dominantCat=Object.keys(catCounts).sort(function(a,b){return catCounts[b]-catCounts[a];})[0];
@@ -890,7 +890,7 @@ function openSubpage(pageId,title,courseId,subpages,idx){
       nextBtn.onclick=function(){ttsCancel();openSubpage(nextSp.id,nextTitle,courseId,subpages,idx+1);};
       nav.appendChild(nextBtn);
     }
-    if(!bottom){
+    if(!bottom&&window.speechSynthesis){
       var ttsButton=document.createElement('button');
       ttsButton.className='tts-btn';
       ttsButton.textContent='▶ Leer para mí';
@@ -968,7 +968,7 @@ async function renderBlocks(blocks){
       case 'callout':return '<div style="background:var(--bg3);border:0.5px solid var(--border);border-radius:8px;padding:12px;margin:8px 0;">'+applyMarkdown(txt(b.callout&&b.callout.rich_text))+'</div>';
       case 'image':
         var src=(b.image&&b.image.file&&b.image.file.url)||(b.image&&b.image.external&&b.image.external.url)||'';
-        return src?'<img src="'+src+'" loading="lazy" style="width:100%;border-radius:8px;margin:8px 0;">':'';
+        return src?'<img src="'+src+'" alt="" loading="lazy" style="width:100%;border-radius:8px;margin:8px 0;">':'';
       case 'table':
         var hasHeader=b.table&&b.table.has_column_header;
         var rowData=await fetch(WORKER+'/blocks/'+b.id.replace(/-/g,'')).then(function(r){return r.json();}).catch(function(){return{results:[]};});
@@ -1261,6 +1261,9 @@ function ttsToggle(btn){
 }
 
 function openDict(){
+  var mp=document.getElementById('miniPlayer');
+  if(mp.classList.contains('show'))mp.dataset.dictHidden='1';
+  mp.style.display='none';
   document.getElementById('dictFrame').src='herramientas/diccionario-excel.html';
   document.getElementById('dictOverlay').classList.add('open');
   document.body.style.overflow='hidden';
@@ -1269,6 +1272,9 @@ function closeDict(){
   document.getElementById('dictOverlay').classList.remove('open');
   document.body.style.overflow='';
   document.getElementById('dictFrame').src='';
+  var mp=document.getElementById('miniPlayer');
+  mp.style.display='';
+  delete mp.dataset.dictHidden;
 }
 
 function closeDetailPanel(){
@@ -1320,6 +1326,7 @@ function shareCourse(course){
 
 window.addEventListener('popstate',function(){
   ttsCancel();
+  closeDict();
   if(!new URLSearchParams(location.search).get('c')){
     var da=document.getElementById('dAudio');
     document.getElementById('detailOverlay').classList.remove('open');
