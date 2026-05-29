@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0a0a0a;--bg2:#111111;--bg3:#181818;--border:#222222;--border2:#2a2a2a;--text:#f0f0f0;--text2:#aaaaaa;--text3:#666666;--purple:#7F77DD;--purple2:#534AB7;--teal:#5DCAA5;}
+:root{--bg:#0a0a0a;--bg2:#111111;--bg3:#181818;--border:#222222;--border2:#2a2a2a;--text:#f0f0f0;--text2:#aaaaaa;--text3:#666666;--purple:#7F77DD;--purple2:#534AB7;--teal:#5DCAA5;--teal-light:#0A2018;--purple-light:#18163A;--coral:#E8795C;--coral-light:#2A1008;--amber:#E8A44A;--amber-light:#241608;--warn:#E8A44A;--warn-light:#2A1E08;--teal-bg:#0D2920;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
 header{padding:1.5rem 2rem;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(10,10,10,0.92);backdrop-filter:blur(12px);z-index:100;}
@@ -218,9 +218,6 @@ audio{display:none;}
 .dict-overlay{display:none;position:fixed;inset:0;background:var(--bg);z-index:210;flex-direction:column;}
 .dict-overlay.open{display:flex;}
 .dict-bar{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:0.5px solid var(--border);flex-shrink:0;background:rgba(10,10,10,0.95);backdrop-filter:blur(12px);}
-.guia-overlay{display:none;position:fixed;inset:0;background:var(--bg);z-index:210;flex-direction:column;}
-.guia-overlay.open{display:flex;}
-.guia-bar{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:0.5px solid var(--border);flex-shrink:0;background:rgba(10,10,10,0.95);backdrop-filter:blur(12px);}
 .about-trigger:hover{color:var(--text);border-color:var(--text3);}
 .tts-btn{background:transparent;color:var(--teal);border:0.5px solid rgba(93,202,165,0.35);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;padding:8px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:box-shadow 0.2s,border-color 0.2s;flex-shrink:0;box-shadow:0 0 8px rgba(93,202,165,0.12);}
 .tts-btn:hover{border-color:rgba(93,202,165,0.6);box-shadow:0 0 12px rgba(93,202,165,0.22);}
@@ -283,6 +280,59 @@ footer{border-top:0.5px solid var(--border);padding:3rem 2rem 2rem;margin-top:1r
   .footer-icons{justify-content:flex-start;}
   .footer-headline{font-size:18px;}
 }
+/* GUIDE CONTENT — rendered inside detailPanel */
+.guide-content{padding-bottom:0.5rem;}
+.guide-content .eyebrow{font-size:11px;font-weight:500;color:var(--teal);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;}
+.guide-content h1{font-family:'DM Serif Display',serif;font-size:26px;font-weight:400;color:var(--text);line-height:1.25;margin-bottom:0.9rem;}
+.guide-content h2{font-size:18px;font-weight:500;color:var(--text);margin:1.75rem 0 0.6rem;}
+.guide-content h3{font-size:15px;font-weight:500;color:var(--text);margin:1.35rem 0 0.4rem;}
+.guide-content h4{font-size:14px;font-weight:500;color:var(--text);margin-bottom:7px;}
+.guide-content p{font-size:14px;line-height:1.75;color:var(--text2);margin-bottom:0.85rem;}
+.guide-content strong{color:var(--text);font-weight:500;}
+.guide-content ul,.guide-content ol{padding-left:1.2rem;margin-bottom:0.9rem;}
+.guide-content li{font-size:14px;line-height:1.7;color:var(--text2);margin-bottom:3px;}
+.guide-content hr.divider{border:none;border-top:1px solid var(--border);margin:1.75rem 0;}
+.lesson{margin:1.5rem 0;}
+.lesson-label{font-size:11px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--purple);margin-bottom:5px;}
+.guide-content .card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;margin:1rem 0;}
+.card-teal{background:var(--teal-light);border-color:transparent;}.card-purple{background:var(--purple-light);border-color:transparent;}.card-coral{background:var(--coral-light);border-color:transparent;}.card-amber{background:var(--amber-light);border-color:transparent;}
+.card-label{font-size:11px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:7px;}
+.card-teal .card-label{color:var(--teal);}.card-purple .card-label{color:var(--purple);}.card-coral .card-label{color:var(--coral);}.card-amber .card-label{color:var(--amber);}
+.reading-box{background:var(--warn-light);border-radius:10px;padding:1rem 1.2rem;margin:1.35rem 0;border-left:3px solid var(--warn);}
+.reading-box .rb-label{font-size:11px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--warn);margin-bottom:7px;}
+.reading-box h4{font-size:14px;font-weight:500;color:var(--text);margin-bottom:7px;}
+.reading-box p{font-size:13px;color:var(--text2);}
+.exercise-box{background:var(--bg3);border:1.5px dashed var(--border);border-radius:10px;padding:1rem 1.2rem;margin:1.35rem 0;}
+.exercise-box .ex-label{font-size:11px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--purple);margin-bottom:7px;}
+.exercise-box h4{font-size:14px;font-weight:500;color:var(--text);margin-bottom:10px;}
+.ex-steps{list-style:none;padding:0;margin-bottom:0.9rem;}.ex-steps li{display:flex;gap:10px;align-items:flex-start;padding:5px 0;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);}.ex-steps li:last-child{border-bottom:none;}
+.ex-step-num{width:20px;height:20px;border-radius:50%;background:var(--purple);color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0;margin-top:1px;}
+.ex-meta{margin-top:9px;}.ex-meta-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:5px;font-size:12px;color:var(--text2);}.ex-meta-label{font-weight:500;color:var(--text);min-width:85px;}
+.step-list{list-style:none;padding:0;margin:0.9rem 0;}.step-list li{display:flex;gap:11px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);}.step-list li:last-child{border-bottom:none;}
+.step-badge{width:22px;height:22px;border-radius:50%;background:var(--teal);color:#0a0a0a;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0;margin-top:1px;}
+.data-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:1rem 0;}.data-cell{background:var(--bg3);border-radius:8px;padding:9px 11px;}.dc-label{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px;}.dc-val{font-size:15px;font-weight:500;color:var(--text);}.dc-desc{font-size:10px;color:var(--text3);margin-top:2px;}
+.pullquote{font-family:'DM Serif Display',serif;font-size:17px;color:var(--teal);border-left:3px solid var(--teal);padding:0.4rem 0 0.4rem 1.1rem;margin:1.5rem 0;line-height:1.5;}
+.chain{display:flex;align-items:stretch;gap:0;margin:1rem 0;}.chain-box{flex:1;padding:10px 12px;border:1px solid var(--border);font-size:12px;}.chain-box:first-child{border-radius:10px 0 0 10px;}.chain-box:last-child{border-radius:0 10px 10px 0;}
+.chain-label{font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;}.chain-title{font-size:13px;font-weight:500;margin-bottom:3px;}.chain-desc{font-size:10px;line-height:1.4;}.chain-arrow{display:flex;align-items:center;padding:0 3px;color:var(--text3);font-size:14px;}
+.chain-teal{background:var(--teal-light);border-color:rgba(93,202,165,0.25);}.chain-teal .chain-label,.chain-teal .chain-title{color:var(--teal);}
+.chain-purple{background:var(--purple-light);border-color:rgba(159,150,232,0.25);}.chain-purple .chain-label,.chain-purple .chain-title{color:var(--purple);}
+.chain-amber{background:var(--amber-light);border-color:rgba(232,164,74,0.25);}.chain-amber .chain-label,.chain-amber .chain-title{color:var(--amber);}
+.flow{display:flex;flex-direction:column;gap:7px;margin:1rem 0;}.flow-item{display:flex;align-items:flex-start;gap:11px;padding:9px 13px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);}.flow-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;margin-top:1px;}.flow-arrow{text-align:center;color:var(--text3);font-size:11px;}
+.fi-teal{background:var(--teal-light);color:var(--teal);}.fi-purple{background:var(--purple-light);color:var(--purple);}.fi-amber{background:var(--amber-light);color:var(--amber);}.fi-coral{background:var(--coral-light);color:var(--coral);}.fi-green{background:rgba(39,80,10,0.4);color:#7EC44E;}
+.url-box{background:var(--bg3);border-radius:8px;padding:9px 13px;font-family:monospace;font-size:12px;margin:9px 0;}.url-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:7px;}.url-col{font-size:11px;}.url-label{font-weight:500;margin-bottom:2px;}.url-desc{color:var(--text3);font-size:10px;}
+.shield-list{display:flex;flex-direction:column;gap:7px;margin:1rem 0;}.shield-item{display:flex;align-items:flex-start;gap:11px;padding:10px 13px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);}.shield-icon{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;margin-top:1px;}.shield-text h5{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px;}.shield-text p{font-size:12px;color:var(--text2);margin:0;}
+.route-box{background:var(--teal-bg);border-radius:10px;padding:1rem 1.2rem;margin:1.1rem 0;border:1px solid var(--teal);}.route-box h4{font-size:14px;font-weight:500;color:var(--teal);margin-bottom:9px;}.route-box p{font-size:13px;color:var(--text2);margin-bottom:0.45rem;}.route-box p:last-child{margin:0;}
+.route-btns{display:flex;flex-direction:column;gap:7px;margin-top:12px;}.route-btn{padding:9px 15px;background:var(--teal);color:#0a0a0a;border:none;border-radius:8px;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;text-align:left;transition:opacity 0.15s;}.route-btn:hover{opacity:0.85;}
+.hero-meta{display:flex;gap:7px;flex-wrap:wrap;margin:0.9rem 0 1.35rem;}.pill{font-size:11px;padding:3px 11px;border-radius:20px;background:var(--bg3);color:var(--text3);border:1px solid var(--border);}
+.module-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:1.1rem;}.module-card{padding:0.9rem 1.1rem;border-radius:10px;border:1px solid var(--border);cursor:pointer;transition:border-color 0.15s;background:var(--bg3);}.module-card:hover{border-color:var(--teal);}.mc-num{font-size:10px;font-weight:500;margin-bottom:3px;}.mc-title{font-size:13px;font-weight:500;color:var(--text);}
+.mc-01 .mc-num{color:var(--teal);}.mc-02 .mc-num{color:var(--purple);}.mc-03 .mc-num{color:var(--coral);}.mc-04 .mc-num{color:var(--amber);}
+.dict-controls{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:1.35rem;}.dict-search{flex:1;min-width:160px;padding:8px 13px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--bg3);color:var(--text);outline:none;}.dict-search:focus{border-color:var(--teal);}
+.level-btn{padding:5px 12px;border-radius:20px;border:1px solid var(--border);font-size:11px;font-weight:500;cursor:pointer;background:var(--bg3);color:var(--text2);transition:all 0.15s;font-family:'DM Sans',sans-serif;}.level-btn.active-all{background:var(--teal);color:#0a0a0a;border-color:var(--teal);}.level-btn.active-basic{background:var(--teal-light);color:var(--teal);border-color:var(--teal);}.level-btn.active-mid{background:var(--amber-light);color:var(--amber);border-color:var(--amber);}.level-btn.active-adv{background:var(--purple-light);color:var(--purple);border-color:var(--purple);}
+.dict-count{font-size:11px;color:var(--text3);margin-bottom:0.9rem;}.dict-group{margin-bottom:1.75rem;}.dict-group-title{font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;padding:5px 11px;border-radius:20px;display:inline-block;margin-bottom:10px;}.dict-group-title.basic{background:var(--teal-light);color:var(--teal);}.dict-group-title.mid{background:var(--amber-light);color:var(--amber);}.dict-group-title.adv{background:var(--purple-light);color:var(--purple);}
+.dict-item{border:1px solid var(--border);border-radius:10px;margin-bottom:7px;overflow:hidden;background:var(--bg3);}.dict-item.hidden{display:none;}.dict-trigger{width:100%;display:flex;align-items:center;justify-content:space-between;padding:11px 15px;background:none;border:none;cursor:pointer;text-align:left;gap:11px;font-family:'DM Sans',sans-serif;}.dict-trigger:hover{background:var(--bg2);}.dict-term{font-size:13px;font-weight:500;color:var(--text);}.dict-chevron{font-size:11px;color:var(--text3);flex-shrink:0;transition:transform 0.2s;}.dict-item.open .dict-chevron{transform:rotate(180deg);}
+.dict-body{display:none;padding:0 15px 13px;border-top:1px solid var(--border);}.dict-item.open .dict-body{display:block;}.dict-what{margin-top:9px;margin-bottom:7px;}.dict-what-label{font-size:9px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;}.dict-what p,.dict-example p{font-size:12px;color:var(--text2);line-height:1.6;margin:0;}.dict-example{background:var(--bg2);border-radius:7px;padding:9px 11px;margin-top:7px;}.dict-example-label{font-size:9px;font-weight:500;color:var(--teal);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;}
+.dict-no-results{text-align:center;color:var(--text3);font-size:13px;padding:1.75rem 0;display:none;}
+@media(max-width:768px){.chain{flex-direction:column;}.chain-box:first-child{border-radius:10px 10px 0 0;}.chain-box:last-child{border-radius:0 0 10px 10px;}.data-grid{grid-template-columns:1fr 1fr;}.module-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -1130,6 +1180,15 @@ function closeAbout(){
 }
 
 var GUIDES_SHEET_URL='https://script.google.com/macros/s/AKfycbzjZ-TMkXeUgTCq77gSyiC1qPKYHPNH9sOFTEMVvQAmFRhF9MwTaCu4AfCSnt2CV_ud3Q/exec';
+var GUIDE_MODULES=[
+  {id:'intro',title:'Inicio — Tu primer mapa',icon:'★'},
+  {id:'m01',title:'01 · El mundo digital en tu vida',icon:'01'},
+  {id:'m02',title:'02 · Cómo hablan las máquinas',icon:'02'},
+  {id:'m03',title:'03 · Internet: el gran sistema postal',icon:'03'},
+  {id:'m04',title:'04 · Protégete y sigue aprendiendo',icon:'04'},
+  {id:'dict',title:'Diccionario de términos',icon:'📖'},
+];
+var guideHtmlCache=null;
 var GUIDES=[
   {step:'01',name:'Antes de la IA, esto',desc:'Fundamentos de computación para que todo lo demás tenga sentido.',color:'#E89AC4',url:'guias/ruta1.html',copy:['Mucha gente salta a aprender IA sin entender cómo funciona una computadora. Es como aprender a manejar en autopista sin saber qué es el freno.','Esta guía todavía no está lista — la estoy construyendo para que no tengas que aprenderlo por las malas.']},
   {step:'02',name:'Sin miedo a la IA',desc:'Inteligencia artificial explicada sin tecnicismos.',color:'#A8D468',copy:['Todo el mundo habla de IA. La mitad no sabe bien de qué habla.','Esta guía no existe todavía — pero cuando exista, va a ser de las pocas que te explique la IA sin intentar impresionarte ni asustarte.']},
@@ -1164,7 +1223,7 @@ function getNextThanksMsg(){
   return msg;
 }
 function openGuide(guide){
-  if(guide.url){openGuiaOverlay(guide);return;}
+  if(guide.url){openGuideDetail(guide);return;}
   var content=document.getElementById('guideModalContent');
   var copyHtml=guide.copy.map(function(p){return '<p class="guide-modal-copy">'+esc(p)+'</p>';}).join('');
   content.innerHTML='<div class="guide-modal-eyebrow">En construcción</div><div class="guide-modal-title">'+esc(guide.name)+'</div>'+copyHtml+'<div class="guide-modal-label">¿Te aviso cuando esté lista?</div><div class="guide-email-row"><input type="email" class="guide-email-input" id="guideEmailInput" placeholder="tu@correo.com"><button class="guide-email-btn" id="guideEmailBtn">Avísame cuando esté lista</button></div><div class="guide-thanks" id="guideThanks"></div>';
@@ -1194,29 +1253,146 @@ function closeGuide(){
   document.getElementById('guideOverlay').classList.remove('open');
   document.body.style.overflow='';
 }
-function openGuiaOverlay(guide){
-  var mp=document.getElementById('miniPlayer');
-  if(mp.classList.contains('show'))mp.dataset.guiaHidden='1';
-  mp.style.display='none';
-  document.getElementById('guiaTitleBar').textContent=guide.name;
-  document.getElementById('guiaFrame').src=guide.url;
-  document.getElementById('guiaOverlay').classList.add('open');
-  document.body.style.overflow='hidden';
-  history.pushState({},'',location.pathname);
-}
-function closeGuiaOverlay(){
-  document.getElementById('guiaOverlay').classList.remove('open');
-  document.body.style.overflow='';
-  document.getElementById('guiaFrame').src='';
-  var mp=document.getElementById('miniPlayer');
-  mp.style.display='';
-  delete mp.dataset.guiaHidden;
-}
 function openCourseByTitle(q){
   var match=allCourses.find(function(c){return norm(c.title).indexOf(norm(q))>=0;});
   if(!match)return;
-  closeGuiaOverlay();
+  closeDetailPanel();
   setTimeout(function(){openDetail(match);},80);
+}
+function openGuideDetail(guide){
+  var panel=document.getElementById('detailPanel');
+  var overlay=document.getElementById('detailOverlay');
+  currentCourse=null;
+  panel.innerHTML='';
+  var closeBtn=document.createElement('button');
+  closeBtn.className='detail-close';
+  closeBtn.textContent='← Volver';
+  closeBtn.onclick=closeDetailPanel;
+  panel.appendChild(closeBtn);
+  var eyebrow=document.createElement('div');
+  eyebrow.className='detail-cat';
+  eyebrow.style.color=guide.color;
+  eyebrow.textContent='Guía '+guide.step+' · ¿No sabes por dónde empezar?';
+  panel.appendChild(eyebrow);
+  var titleEl=document.createElement('div');
+  titleEl.className='detail-title';
+  titleEl.textContent=guide.name;
+  panel.appendChild(titleEl);
+  var descEl=document.createElement('div');
+  descEl.className='detail-desc';
+  descEl.textContent=guide.desc;
+  panel.appendChild(descEl);
+  var secTitle=document.createElement('div');
+  secTitle.className='detail-section-title';
+  secTitle.innerHTML='módulos de la guía<span style="text-transform:none;letter-spacing:normal;font-size:11px;background:'+guide.color+'20;border:0.5px solid '+guide.color+'60;color:'+guide.color+';border-radius:20px;padding:2px 9px;font-weight:500;">⏱ ~30 min</span>';
+  panel.appendChild(secTitle);
+  var list=document.createElement('div');
+  list.className='subpage-list';
+  GUIDE_MODULES.forEach(function(mod,idx){
+    var item=document.createElement('div');
+    item.className='subpage-item';
+    item.innerHTML='<span style="min-width:22px;text-align:center;font-size:13px;">'+mod.icon+'</span><div class="subpage-title">'+esc(mod.title)+'</div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>';
+    (function(i){item.onclick=function(){openGuideSection(guide,i);};})(idx);
+    list.appendChild(item);
+  });
+  panel.appendChild(list);
+  overlay.classList.add('open');
+  document.body.style.overflow='hidden';
+  history.pushState({},'',location.pathname);
+}
+function makeGuideNav(guide,moduleIdx,bottom){
+  var nav=document.createElement('div');
+  nav.style.cssText='display:flex;gap:8px;flex-wrap:wrap;align-items:center;'+(bottom?'margin-top:2.5rem;':'margin-bottom:1.5rem;');
+  var back=document.createElement('button');
+  back.className='detail-close';
+  back.style.margin='0';
+  back.textContent='← Volver a la guía';
+  back.onclick=function(){openGuideDetail(guide);};
+  nav.appendChild(back);
+  if(moduleIdx>0){
+    var prev=document.createElement('button');
+    prev.className='detail-close';
+    prev.style.margin='0';
+    prev.textContent='← Anterior';
+    prev.onclick=function(){openGuideSection(guide,moduleIdx-1);};
+    nav.appendChild(prev);
+  }
+  if(moduleIdx<GUIDE_MODULES.length-1){
+    var next=document.createElement('button');
+    next.className='detail-close';
+    next.style.cssText='margin:0;color:var(--purple);border-color:var(--purple2);';
+    next.textContent='Siguiente →';
+    next.onclick=function(){openGuideSection(guide,moduleIdx+1);};
+    nav.appendChild(next);
+  }
+  return nav;
+}
+function openGuideSection(guide,moduleIdx){
+  var mod=GUIDE_MODULES[moduleIdx];
+  var panel=document.getElementById('detailPanel');
+  var overlay=document.getElementById('detailOverlay');
+  panel.innerHTML='';
+  panel.appendChild(makeGuideNav(guide,moduleIdx,false));
+  var loading=document.createElement('div');
+  loading.className='loading';
+  loading.innerHTML='<div class="spinner"></div><div class="loading-text">Cargando...</div>';
+  panel.appendChild(loading);
+  overlay.scrollTop=0;
+  function renderSection(html){
+    loading.remove();
+    var parser=new DOMParser();
+    var doc=parser.parseFromString(html,'text/html');
+    var section=doc.getElementById(mod.id);
+    if(!section){panel.appendChild(makeGuideNav(guide,moduleIdx,true));return;}
+    var content=document.createElement('div');
+    content.className='guide-content';
+    content.innerHTML=section.innerHTML;
+    content.querySelectorAll('.module-nav').forEach(function(el){el.remove();});
+    content.querySelectorAll('[onclick*="showSection"]').forEach(function(el){
+      var m=(el.getAttribute('onclick')||'').match(/showSection\('(\w+)'\)/);
+      if(m){var si=GUIDE_MODULES.findIndex(function(gm){return gm.id===m[1];});
+        if(si>=0){el.removeAttribute('onclick');(function(i){el.onclick=function(){openGuideSection(guide,i);};})(si);}}
+    });
+    content.querySelectorAll('[onclick*="openCourseByTitle"],[onclick*="window.parent"]').forEach(function(el){
+      var m=(el.getAttribute('onclick')||'').match(/openCourseByTitle\('([^']+)'\)/);
+      if(m){var title=m[1];el.removeAttribute('onclick');el.onclick=function(){openCourseByTitle(title);};}
+    });
+    panel.appendChild(content);
+    panel.appendChild(makeGuideNav(guide,moduleIdx,true));
+    overlay.scrollTop=0;
+  }
+  if(guideHtmlCache){renderSection(guideHtmlCache);}
+  else{
+    fetch('guias/ruta1.html')
+      .then(function(r){return r.text();})
+      .then(function(html){guideHtmlCache=html;renderSection(html);})
+      .catch(function(){loading.innerHTML='<p style="color:var(--text3);padding:2rem 0;">No se pudo cargar el contenido.</p>';});
+  }
+}
+var dictCurrentLevel='all';
+function toggleDict(btn){var item=btn.closest('.dict-item');item.classList.toggle('open');}
+function normStr(s){return(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');}
+function setLevel(level){
+  dictCurrentLevel=level;
+  document.querySelectorAll('.level-btn').forEach(function(b){b.className='level-btn';});
+  var a=document.getElementById('btn-'+level);
+  if(a)a.classList.add('active-'+level);
+  filterDict();
+}
+function filterDict(){
+  var inp=document.getElementById('dictSearch');
+  var q=normStr(inp?inp.value:'');
+  var items=document.querySelectorAll('.dict-item');
+  var vis=0;
+  items.forEach(function(item){
+    var lm=dictCurrentLevel==='all'||item.dataset.level===dictCurrentLevel;
+    var sm=!q||normStr(item.dataset.term||'').includes(q)||normStr((item.querySelector('.dict-term')||{}).textContent||'').includes(q);
+    if(lm&&sm){item.classList.remove('hidden');vis++;}else{item.classList.add('hidden');}
+  });
+  var cnt=document.getElementById('dictCount');
+  if(cnt)cnt.textContent=vis+' término'+(vis===1?'':'s');
+  var nr=document.getElementById('dictNoResults');
+  if(nr)nr.style.display=vis===0?'block':'none';
 }
 renderGuides();
 function ttsExtractText(container){
@@ -1362,7 +1538,6 @@ function shareCourse(course){
 window.addEventListener('popstate',function(){
   ttsCancel();
   closeDict();
-  closeGuiaOverlay();
   if(!new URLSearchParams(location.search).get('c')){
     var da=document.getElementById('dAudio');
     document.getElementById('detailOverlay').classList.remove('open');
@@ -1449,13 +1624,6 @@ initStatsMobile();
     <span style="font-size:13px;color:var(--text3);">Diccionario de Fórmulas Excel para Análisis Financiero</span>
   </div>
   <iframe id="dictFrame" src="" style="width:100%;flex:1;border:none;"></iframe>
-</div>
-<div class="guia-overlay" id="guiaOverlay">
-  <div class="guia-bar">
-    <button class="detail-close" style="margin:0;" onclick="closeGuiaOverlay()">← Volver a MindStack</button>
-    <span id="guiaTitleBar" style="font-size:13px;color:var(--text3);"></span>
-  </div>
-  <iframe id="guiaFrame" src="" style="width:100%;flex:1;border:none;"></iframe>
 </div>
 <div class="toast" id="toast"></div>
 <footer>
