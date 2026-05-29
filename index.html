@@ -564,6 +564,7 @@ function fetchCourses(){
       if(cParam){
         var target=allCourses.find(function(c){return toSlug(c.title)===cParam||c.id===decodeURIComponent(cParam);});
         if(target)openDetail(target);
+        else showToast('El curso ya no está disponible.');
       }
     })
     .catch(function(){showErrorState();});
@@ -812,6 +813,7 @@ function openDetail(course,autoplay){
   fetch(WORKER+'/blocks/'+cid.replace(/-/g,''))
     .then(function(r){return r.json();})
     .then(function(data){
+      if(!document.body.contains(subWrap))return;
       var subpages=(data.results||[]).filter(function(b){return b.type==='child_page';});
       if(subpages.length){
         var list=document.createElement('div');
@@ -968,7 +970,8 @@ async function renderBlocks(blocks){
       case 'callout':return '<div style="background:var(--bg3);border:0.5px solid var(--border);border-radius:8px;padding:12px;margin:8px 0;">'+applyMarkdown(txt(b.callout&&b.callout.rich_text))+'</div>';
       case 'image':
         var src=(b.image&&b.image.file&&b.image.file.url)||(b.image&&b.image.external&&b.image.external.url)||'';
-        return src?'<img src="'+src+'" alt="" loading="lazy" style="width:100%;border-radius:8px;margin:8px 0;">':'';
+        if(src&&!/^https?:\/\//i.test(src))src='';
+        return src?'<img src="'+src.replace(/"/g,'&quot;')+'" alt="" loading="lazy" style="width:100%;border-radius:8px;margin:8px 0;">':'';
       case 'table':
         var hasHeader=b.table&&b.table.has_column_header;
         var rowData=await fetch(WORKER+'/blocks/'+b.id.replace(/-/g,'')).then(function(r){return r.json();}).catch(function(){return{results:[]};});
@@ -1149,6 +1152,7 @@ var THANKS_POOL=[
 ];
 function getNextThanksMsg(){
   var idx=parseInt(localStorage.getItem('guide_thanks_idx')||'0');
+  if(isNaN(idx)||idx<0)idx=0;
   var msg=THANKS_POOL[idx%THANKS_POOL.length];
   localStorage.setItem('guide_thanks_idx',(idx+1)%THANKS_POOL.length);
   return msg;
@@ -1295,6 +1299,7 @@ function closeDetailPanel(){
 }
 
 function openPlatziModal(courseUrl){
+  if(!courseUrl||!/^https?:\/\//i.test(courseUrl))return;
   document.getElementById('platziDirectBtn').href=courseUrl;
   document.getElementById('platziOverlay').classList.add('open');
 }
