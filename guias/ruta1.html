@@ -47,6 +47,11 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 }
 .sb-btn.active .sb-num { background: var(--accent); color: white; }
 .sb-footer { padding: 1rem 1.25rem; border-top: 1px solid var(--border); font-size: 12px; color: var(--text3); }
+.sb-back { display: block; font-size: 11px; color: var(--text3); text-decoration: none; margin-bottom: 10px; transition: color 0.15s; }
+.sb-back:hover { color: var(--accent); }
+#mobileTopBar { display: none; position: fixed; top: 0; left: 0; right: 0; background: var(--surface); border-bottom: 1px solid var(--border); padding: 10px 16px; z-index: 150; }
+.mtb-back { font-size: 13px; color: var(--text3); text-decoration: none; }
+.mtb-back:hover { color: var(--accent); }
 
 /* MAIN */
 #main { margin-left: var(--sidebar-w); flex: 1; min-height: 100vh; }
@@ -220,7 +225,7 @@ strong { color: var(--text); font-weight: 500; }
 .route-box p { font-size: 14px; color: var(--text2); margin-bottom: 0.5rem; }
 .route-box p:last-child { margin: 0; }
 .route-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
-.route-btn { padding: 10px 16px; background: var(--accent); color: #0a0a0a; border: none; border-radius: 8px; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; text-align: left; transition: opacity 0.15s; }
+.route-btn { display: block; padding: 10px 16px; background: var(--accent); color: #0a0a0a; border: none; border-radius: 8px; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; text-align: left; text-decoration: none; transition: opacity 0.15s; }
 .route-btn:hover { opacity: 0.85; }
 
 #mobileNav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); z-index: 200; padding: 6px 0 max(6px, env(safe-area-inset-bottom)); }
@@ -232,7 +237,8 @@ strong { color: var(--text); font-weight: 500; }
 @media (max-width: 768px) {
   #sidebar { transform: translateX(-100%); }
   #mobileNav { display: block; }
-  #main { margin-left: 0; padding-bottom: 72px; }
+  #mobileTopBar { display: block; }
+  #main { margin-left: 0; padding-top: 41px; padding-bottom: 72px; }
   .section { padding: 1.75rem 1.25rem; }
   .module-grid { grid-template-columns: 1fr; }
   .data-grid { grid-template-columns: 1fr 1fr; }
@@ -244,9 +250,14 @@ strong { color: var(--text); font-weight: 500; }
 </head>
 <body>
 
+<nav id="mobileTopBar" aria-label="Navegación móvil superior">
+  <a href="../index.html" class="mtb-back">← MindStack</a>
+</nav>
+
 <nav id="sidebar" aria-label="Navegación del curso">
   <div class="sb-header">
-    <p class="sb-eyebrow">MindStack · Ruta 1</p>
+    <a href="../index.html" class="sb-back">← MindStack</a>
+    <p class="sb-eyebrow">Ruta 1</p>
     <p class="sb-title">Tu primer mapa del mundo digital</p>
   </div>
   <div class="sb-nav">
@@ -719,8 +730,8 @@ strong { color: var(--text); font-weight: 500; }
       <p><strong>Después:</strong> Curso de Fundamentos de Ingeniería de Software de Platzi — va más abajo todavía: circuitos electrónicos, organización de archivos, bases de datos, inteligencia artificial. El mapa técnico completo del mundo digital.</p>
       <p>Con este curso de entrada, ambos cursos de Platzi van a tener mucho más sentido. Ya no empiezas desde cero — empiezas con contexto.</p>
       <div class="route-btns">
-        <button class="route-btn" onclick="window.parent.openCourseByTitle('Fundamentos de Computación e Informática')">Ver resumen en MindStack: Fundamentos de Computación →</button>
-        <button class="route-btn" onclick="window.parent.openCourseByTitle('Fundamentos de Ingeniería de Software')">Ver resumen en MindStack: Fundamentos de Ingeniería de Software →</button>
+        <a class="route-btn" href="../index.html?c=fundamentos-de-computacion-e-informatica">Ver resumen en MindStack: Fundamentos de Computación →</a>
+        <a class="route-btn" href="../index.html?c=fundamentos-de-ingenieria-de-software">Ver resumen en MindStack: Fundamentos de Ingeniería de Software →</a>
       </div>
     </div>
   </div>
