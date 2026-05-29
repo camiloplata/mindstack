@@ -218,6 +218,9 @@ audio{display:none;}
 .dict-overlay{display:none;position:fixed;inset:0;background:var(--bg);z-index:210;flex-direction:column;}
 .dict-overlay.open{display:flex;}
 .dict-bar{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:0.5px solid var(--border);flex-shrink:0;background:rgba(10,10,10,0.95);backdrop-filter:blur(12px);}
+.guia-overlay{display:none;position:fixed;inset:0;background:var(--bg);z-index:210;flex-direction:column;}
+.guia-overlay.open{display:flex;}
+.guia-bar{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:0.5px solid var(--border);flex-shrink:0;background:rgba(10,10,10,0.95);backdrop-filter:blur(12px);}
 .about-trigger:hover{color:var(--text);border-color:var(--text3);}
 .tts-btn{background:transparent;color:var(--teal);border:0.5px solid rgba(93,202,165,0.35);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;padding:8px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:box-shadow 0.2s,border-color 0.2s;flex-shrink:0;box-shadow:0 0 8px rgba(93,202,165,0.12);}
 .tts-btn:hover{border-color:rgba(93,202,165,0.6);box-shadow:0 0 12px rgba(93,202,165,0.22);}
@@ -1161,7 +1164,7 @@ function getNextThanksMsg(){
   return msg;
 }
 function openGuide(guide){
-  if(guide.url){location.href=guide.url;return;}
+  if(guide.url){openGuiaOverlay(guide);return;}
   var content=document.getElementById('guideModalContent');
   var copyHtml=guide.copy.map(function(p){return '<p class="guide-modal-copy">'+esc(p)+'</p>';}).join('');
   content.innerHTML='<div class="guide-modal-eyebrow">En construcción</div><div class="guide-modal-title">'+esc(guide.name)+'</div>'+copyHtml+'<div class="guide-modal-label">¿Te aviso cuando esté lista?</div><div class="guide-email-row"><input type="email" class="guide-email-input" id="guideEmailInput" placeholder="tu@correo.com"><button class="guide-email-btn" id="guideEmailBtn">Avísame cuando esté lista</button></div><div class="guide-thanks" id="guideThanks"></div>';
@@ -1190,6 +1193,30 @@ function openGuide(guide){
 function closeGuide(){
   document.getElementById('guideOverlay').classList.remove('open');
   document.body.style.overflow='';
+}
+function openGuiaOverlay(guide){
+  var mp=document.getElementById('miniPlayer');
+  if(mp.classList.contains('show'))mp.dataset.guiaHidden='1';
+  mp.style.display='none';
+  document.getElementById('guiaTitleBar').textContent=guide.name;
+  document.getElementById('guiaFrame').src=guide.url;
+  document.getElementById('guiaOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+  history.pushState({},'',location.pathname);
+}
+function closeGuiaOverlay(){
+  document.getElementById('guiaOverlay').classList.remove('open');
+  document.body.style.overflow='';
+  document.getElementById('guiaFrame').src='';
+  var mp=document.getElementById('miniPlayer');
+  mp.style.display='';
+  delete mp.dataset.guiaHidden;
+}
+function openCourseByTitle(q){
+  var match=allCourses.find(function(c){return norm(c.title).indexOf(norm(q))>=0;});
+  if(!match)return;
+  closeGuiaOverlay();
+  setTimeout(function(){openDetail(match);},80);
 }
 renderGuides();
 function ttsExtractText(container){
@@ -1335,6 +1362,7 @@ function shareCourse(course){
 window.addEventListener('popstate',function(){
   ttsCancel();
   closeDict();
+  closeGuiaOverlay();
   if(!new URLSearchParams(location.search).get('c')){
     var da=document.getElementById('dAudio');
     document.getElementById('detailOverlay').classList.remove('open');
@@ -1421,6 +1449,13 @@ initStatsMobile();
     <span style="font-size:13px;color:var(--text3);">Diccionario de Fórmulas Excel para Análisis Financiero</span>
   </div>
   <iframe id="dictFrame" src="" style="width:100%;flex:1;border:none;"></iframe>
+</div>
+<div class="guia-overlay" id="guiaOverlay">
+  <div class="guia-bar">
+    <button class="detail-close" style="margin:0;" onclick="closeGuiaOverlay()">← Volver a MindStack</button>
+    <span id="guiaTitleBar" style="font-size:13px;color:var(--text3);"></span>
+  </div>
+  <iframe id="guiaFrame" src="" style="width:100%;flex:1;border:none;"></iframe>
 </div>
 <div class="toast" id="toast"></div>
 <footer>
