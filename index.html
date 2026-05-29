@@ -1180,17 +1180,8 @@ function closeAbout(){
 }
 
 var GUIDES_SHEET_URL='https://script.google.com/macros/s/AKfycbzjZ-TMkXeUgTCq77gSyiC1qPKYHPNH9sOFTEMVvQAmFRhF9MwTaCu4AfCSnt2CV_ud3Q/exec';
-var GUIDE_MODULES=[
-  {id:'intro',title:'Inicio — Tu primer mapa',icon:'★'},
-  {id:'m01',title:'01 · El mundo digital en tu vida',icon:'01'},
-  {id:'m02',title:'02 · Cómo hablan las máquinas',icon:'02'},
-  {id:'m03',title:'03 · Internet: el gran sistema postal',icon:'03'},
-  {id:'m04',title:'04 · Protégete y sigue aprendiendo',icon:'04'},
-  {id:'dict',title:'Diccionario de términos',icon:'📖'},
-];
-var guideHtmlCache=null;
 var GUIDES=[
-  {step:'01',name:'Antes de la IA, esto',desc:'Fundamentos de computación para que todo lo demás tenga sentido.',color:'#E89AC4',url:'guias/ruta1.html',copy:['Mucha gente salta a aprender IA sin entender cómo funciona una computadora. Es como aprender a manejar en autopista sin saber qué es el freno.','Esta guía todavía no está lista — la estoy construyendo para que no tengas que aprenderlo por las malas.']},
+  {step:'01',name:'Antes de la IA, esto',desc:'Fundamentos de computación para que todo lo demás tenga sentido.',color:'#E89AC4',url:'guias/ruta1.html',courses:['Fundamentos de Computación e Informática','Fundamentos de Ingeniería de Software'],copy:['Mucha gente salta a aprender IA sin entender cómo funciona una computadora. Es como aprender a manejar en autopista sin saber qué es el freno.','Esta guía todavía no está lista — la estoy construyendo para que no tengas que aprenderlo por las malas.']},
   {step:'02',name:'Sin miedo a la IA',desc:'Inteligencia artificial explicada sin tecnicismos.',color:'#A8D468',copy:['Todo el mundo habla de IA. La mitad no sabe bien de qué habla.','Esta guía no existe todavía — pero cuando exista, va a ser de las pocas que te explique la IA sin intentar impresionarte ni asustarte.']},
   {step:'03',name:'Las herramientas que tienes y no estás usando',desc:'Microsoft 365 y automatizaciones para trabajar mejor.',color:'#5BB8D4',copy:['¿Cuántas veces cerraste Teams o SharePoint pensando "esto no es para mí"? Eso tiene solución.','Esta guía no está lista todavía. Pero cuando lo esté, va a ser práctica, rápida y sin el dolor de cabeza habitual.']}
 ];
@@ -1282,117 +1273,34 @@ function openGuideDetail(guide){
   descEl.className='detail-desc';
   descEl.textContent=guide.desc;
   panel.appendChild(descEl);
-  var secTitle=document.createElement('div');
-  secTitle.className='detail-section-title';
-  secTitle.innerHTML='módulos de la guía<span style="text-transform:none;letter-spacing:normal;font-size:11px;background:'+guide.color+'20;border:0.5px solid '+guide.color+'60;color:'+guide.color+';border-radius:20px;padding:2px 9px;font-weight:500;">⏱ ~30 min</span>';
-  panel.appendChild(secTitle);
-  var list=document.createElement('div');
-  list.className='subpage-list';
-  GUIDE_MODULES.forEach(function(mod,idx){
-    var item=document.createElement('div');
-    item.className='subpage-item';
-    item.innerHTML='<span style="min-width:22px;text-align:center;font-size:13px;">'+mod.icon+'</span><div class="subpage-title">'+esc(mod.title)+'</div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>';
-    (function(i){item.onclick=function(){openGuideSection(guide,i);};})(idx);
-    list.appendChild(item);
-  });
-  panel.appendChild(list);
+  var readLink=document.createElement('a');
+  readLink.href=guide.url;
+  readLink.target='_blank';
+  readLink.rel='noopener';
+  readLink.style.cssText='display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:'+guide.color+';color:#0a0a0a;border-radius:10px;font-size:13px;font-weight:500;text-decoration:none;margin-bottom:2rem;transition:opacity 0.15s;font-family:"DM Sans",sans-serif;';
+  readLink.innerHTML='Leer la guía completa <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
+  readLink.onmouseenter=function(){this.style.opacity='0.82';};
+  readLink.onmouseleave=function(){this.style.opacity='1';};
+  panel.appendChild(readLink);
+  if(guide.courses&&guide.courses.length){
+    var secTitle=document.createElement('div');
+    secTitle.className='detail-section-title';
+    secTitle.textContent='resúmenes en esta ruta';
+    panel.appendChild(secTitle);
+    var list=document.createElement('div');
+    list.className='subpage-list';
+    guide.courses.forEach(function(courseTitle){
+      var item=document.createElement('div');
+      item.className='subpage-item';
+      item.innerHTML='<span>📄</span><div class="subpage-title">'+esc(courseTitle)+'</div><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>';
+      item.onclick=function(){openCourseByTitle(courseTitle);};
+      list.appendChild(item);
+    });
+    panel.appendChild(list);
+  }
   overlay.classList.add('open');
   document.body.style.overflow='hidden';
   history.pushState({},'',location.pathname);
-}
-function makeGuideNav(guide,moduleIdx,bottom){
-  var nav=document.createElement('div');
-  nav.style.cssText='display:flex;gap:8px;flex-wrap:wrap;align-items:center;'+(bottom?'margin-top:2.5rem;':'margin-bottom:1.5rem;');
-  var back=document.createElement('button');
-  back.className='detail-close';
-  back.style.margin='0';
-  back.textContent='← Volver a la guía';
-  back.onclick=function(){openGuideDetail(guide);};
-  nav.appendChild(back);
-  if(moduleIdx>0){
-    var prev=document.createElement('button');
-    prev.className='detail-close';
-    prev.style.margin='0';
-    prev.textContent='← Anterior';
-    prev.onclick=function(){openGuideSection(guide,moduleIdx-1);};
-    nav.appendChild(prev);
-  }
-  if(moduleIdx<GUIDE_MODULES.length-1){
-    var next=document.createElement('button');
-    next.className='detail-close';
-    next.style.cssText='margin:0;color:var(--purple);border-color:var(--purple2);';
-    next.textContent='Siguiente →';
-    next.onclick=function(){openGuideSection(guide,moduleIdx+1);};
-    nav.appendChild(next);
-  }
-  return nav;
-}
-function openGuideSection(guide,moduleIdx){
-  var mod=GUIDE_MODULES[moduleIdx];
-  var panel=document.getElementById('detailPanel');
-  var overlay=document.getElementById('detailOverlay');
-  panel.innerHTML='';
-  panel.appendChild(makeGuideNav(guide,moduleIdx,false));
-  var loading=document.createElement('div');
-  loading.className='loading';
-  loading.innerHTML='<div class="spinner"></div><div class="loading-text">Cargando...</div>';
-  panel.appendChild(loading);
-  overlay.scrollTop=0;
-  function renderSection(html){
-    loading.remove();
-    var parser=new DOMParser();
-    var doc=parser.parseFromString(html,'text/html');
-    var section=doc.getElementById(mod.id);
-    if(!section){panel.appendChild(makeGuideNav(guide,moduleIdx,true));return;}
-    var content=document.createElement('div');
-    content.className='guide-content';
-    content.innerHTML=section.innerHTML;
-    content.querySelectorAll('.module-nav').forEach(function(el){el.remove();});
-    content.querySelectorAll('[onclick*="showSection"]').forEach(function(el){
-      var m=(el.getAttribute('onclick')||'').match(/showSection\('(\w+)'\)/);
-      if(m){var si=GUIDE_MODULES.findIndex(function(gm){return gm.id===m[1];});
-        if(si>=0){el.removeAttribute('onclick');(function(i){el.onclick=function(){openGuideSection(guide,i);};})(si);}}
-    });
-    content.querySelectorAll('[onclick*="openCourseByTitle"],[onclick*="window.parent"]').forEach(function(el){
-      var m=(el.getAttribute('onclick')||'').match(/openCourseByTitle\('([^']+)'\)/);
-      if(m){var title=m[1];el.removeAttribute('onclick');el.onclick=function(){openCourseByTitle(title);};}
-    });
-    panel.appendChild(content);
-    panel.appendChild(makeGuideNav(guide,moduleIdx,true));
-    overlay.scrollTop=0;
-  }
-  if(guideHtmlCache){renderSection(guideHtmlCache);}
-  else{
-    fetch('guias/ruta1.html')
-      .then(function(r){return r.text();})
-      .then(function(html){guideHtmlCache=html;renderSection(html);})
-      .catch(function(){loading.innerHTML='<p style="color:var(--text3);padding:2rem 0;">No se pudo cargar el contenido.</p>';});
-  }
-}
-var dictCurrentLevel='all';
-function toggleDict(btn){var item=btn.closest('.dict-item');item.classList.toggle('open');}
-function normStr(s){return(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');}
-function setLevel(level){
-  dictCurrentLevel=level;
-  document.querySelectorAll('.level-btn').forEach(function(b){b.className='level-btn';});
-  var a=document.getElementById('btn-'+level);
-  if(a)a.classList.add('active-'+level);
-  filterDict();
-}
-function filterDict(){
-  var inp=document.getElementById('dictSearch');
-  var q=normStr(inp?inp.value:'');
-  var items=document.querySelectorAll('.dict-item');
-  var vis=0;
-  items.forEach(function(item){
-    var lm=dictCurrentLevel==='all'||item.dataset.level===dictCurrentLevel;
-    var sm=!q||normStr(item.dataset.term||'').includes(q)||normStr((item.querySelector('.dict-term')||{}).textContent||'').includes(q);
-    if(lm&&sm){item.classList.remove('hidden');vis++;}else{item.classList.add('hidden');}
-  });
-  var cnt=document.getElementById('dictCount');
-  if(cnt)cnt.textContent=vis+' término'+(vis===1?'':'s');
-  var nr=document.getElementById('dictNoResults');
-  if(nr)nr.style.display=vis===0?'block':'none';
 }
 renderGuides();
 function ttsExtractText(container){
