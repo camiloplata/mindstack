@@ -1291,6 +1291,17 @@ function closeGuide(){
   document.body.style.overflow='';
 }
 renderGuides();
+var ttsWakeLock=null;
+function ttsRequestWakeLock(){
+  if(!('wakeLock' in navigator))return;
+  navigator.wakeLock.request('screen').then(function(wl){ttsWakeLock=wl;}).catch(function(){});
+}
+function ttsReleaseWakeLock(){
+  if(ttsWakeLock){ttsWakeLock.release();ttsWakeLock=null;}
+}
+document.addEventListener('visibilitychange',function(){
+  if(ttsBtn&&document.visibilityState==='visible')ttsRequestWakeLock();
+});
 function ttsExtractText(container){
   var parts=[];
   function walk(node){
@@ -1337,6 +1348,7 @@ function ttsSpeakChunks(chunks,idx,btn){
 function ttsResetBtn(btn){
   if(btn){btn.textContent='▶ Leer para mí';btn.classList.remove('tts-active');}
   ttsBtn=null;
+  ttsReleaseWakeLock();
 }
 function ttsCancel(){
   window.speechSynthesis.cancel();
@@ -1364,6 +1376,7 @@ function ttsToggle(btn){
   ttsBtn=btn;
   btn.textContent='⏸ Pausar';
   btn.classList.add('tts-active');
+  ttsRequestWakeLock();
   ttsSpeakChunks(ttsChunkText(text),0,btn);
 }
 
