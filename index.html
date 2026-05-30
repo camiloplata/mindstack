@@ -23,10 +23,10 @@
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
 header{padding:1.5rem 2rem;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(10,10,10,0.92);backdrop-filter:blur(12px);z-index:100;}
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
-.logo-icon{width:34px;height:34px;background:var(--purple);border-radius:8px;display:flex;align-items:center;justify-content:center;}
-.logo-icon svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2;}
-.logo-name{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--text);}
-.logo-sub{font-size:11px;color:var(--text3);margin-top:1px;}
+.logo-icon{width:40px;height:40px;background:var(--purple);border-radius:9px;display:flex;align-items:center;justify-content:center;}
+.logo-icon svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:2;}
+.logo-name{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--text);}
+.logo-sub{font-size:11px;color:var(--text3);margin-top:2px;}
 .header-center{flex:1;text-align:center;padding:0 1.5rem;}
 .slogan{font-size:12px;margin-top:3px;letter-spacing:0.5px;font-family:'Syne',sans-serif;font-weight:700;color:var(--text);opacity:0;animation:sloganIn 0.8s ease 0.3s forwards;}
 @keyframes sloganIn{to{opacity:1;}}
@@ -298,7 +298,7 @@ footer{border-top:0.5px solid var(--border);padding:3rem 2rem 2rem;margin-top:1r
 <body>
 <header>
   <a class="logo" href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">
-    <div class="logo-icon" style="background:none;padding:0;overflow:hidden;"><img src="logo.png" style="width:34px;height:34px;object-fit:cover;border-radius:8px;display:block;"></div>
+    <div class="logo-icon" style="background:none;padding:0;overflow:hidden;"><img src="logo.png" style="width:40px;height:40px;object-fit:cover;border-radius:9px;display:block;"></div>
     <div><div class="logo-name">MindStack</div><div class="logo-sub">Resúmenes de lo que aprendo</div></div>
   </a>
   <div class="header-center">
