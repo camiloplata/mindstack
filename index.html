@@ -162,9 +162,8 @@ audio{display:none;}
 .guides-subtitle{font-size:13px;color:var(--text3);}
 .guides-grid{display:flex;gap:12px;overflow-x:auto;padding-bottom:0.5rem;scrollbar-width:none;}
 .guides-grid::-webkit-scrollbar{display:none;}
-.guide-unit{flex:0 0 240px;border-radius:14px;border:0.5px solid transparent;transition:border-color 0.45s cubic-bezier(0.4,0,0.2,1),background 0.45s cubic-bezier(0.4,0,0.2,1);overflow:hidden;}
-.guide-unit.active{border-color:var(--gu-color,#E89AC460);background:var(--gu-bg,transparent);}
-.guide-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:14px;padding:1.25rem;cursor:pointer;transition:border-color 0.2s,opacity 0.2s;opacity:0.6;position:relative;overflow:hidden;}
+.guide-unit{flex:0 0 240px;}
+.guide-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:14px;padding:1.25rem;cursor:pointer;transition:border-color 0.4s,background 0.4s,opacity 0.2s;opacity:0.6;position:relative;overflow:hidden;}
 .guide-card:hover{opacity:0.85;border-color:var(--border2);}
 .guide-card::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 5px,rgba(255,255,255,0.012) 5px,rgba(255,255,255,0.012) 10px);}
 .guide-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;}
@@ -175,12 +174,12 @@ audio{display:none;}
 .guide-lock{font-size:16px;margin-top:0.75rem;}
 .guide-card--live{opacity:1!important;}
 .guide-card--live:hover{opacity:1!important;border-color:var(--border2)!important;}
-.guide-card.active{opacity:1!important;border-color:var(--border2)!important;}
+.guide-card.active{opacity:1!important;}
 .guide-badge--live{background:transparent!important;}
 .guide-cta{font-size:12px;font-weight:600;margin-top:0.85rem;letter-spacing:0.3px;display:flex;align-items:center;gap:5px;}
 .guide-cta-arrow{display:inline-block;transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);}
 .guide-card.active .guide-cta-arrow{transform:rotate(180deg);}
-.guide-accordion{max-height:0;overflow:hidden;transition:max-height 0.55s cubic-bezier(0.4,0,0.2,1),opacity 0.35s ease;opacity:0;pointer-events:none;}
+.guide-accordion{max-height:0;overflow:hidden;transition:max-height 0.55s cubic-bezier(0.4,0,0.2,1),opacity 0.35s ease,border-color 0.4s,background 0.4s;opacity:0;pointer-events:none;border:0.5px solid transparent;border-radius:12px;margin-top:8px;}
 .guide-accordion.open{max-height:340px;opacity:1;pointer-events:auto;}
 .guide-course-row{display:flex;gap:0;padding:1.25rem 0 0.75rem;overflow-x:auto;scrollbar-width:none;align-items:stretch;}
 .guide-course-row::-webkit-scrollbar{display:none;}
@@ -247,7 +246,7 @@ audio{display:none;}
   .stat-num{font-size:27px;}
   .stat-label{font-size:13px;}
   .guides-section{padding:1rem 1rem 0;}
-  .guide-unit{flex:0 0 210px;}
+  .guide-unit{flex:0 0 210px;}.guide-card{flex:0 0 auto;}
   .cat-cards-section{padding:1rem;}
   .cat-card{min-width:110px;padding:0.875rem 0.75rem;}
   .courses-wrap{padding:0 1rem 3rem;}
@@ -344,6 +343,7 @@ footer{border-top:0.5px solid var(--border);padding:3rem 2rem 2rem;margin-top:1r
     <div class="guides-subtitle">Estoy armando guías paso a paso para que no tengas que adivinar el orden.</div>
   </div>
   <div class="guides-grid" id="guidesGrid"></div>
+  <div class="guide-accordion" id="guideAccordion"></div>
 </div>
 <div id="catCardsSection"></div>
 <div class="search-feedback" id="searchFeedback"></div>
@@ -1156,22 +1156,21 @@ var detailSource=null;
 var savedScrollY=0;
 var activeGuideUnit=null;
 
-function toggleGuideAccordion(guide,unitEl,accEl){
-  var isOpen=accEl.classList.contains('open');
+function toggleGuideAccordion(guide,unitEl){
+  var acc=document.getElementById('guideAccordion');
   var cardEl=unitEl.querySelector('.guide-card');
-  if(activeGuideUnit===unitEl&&isOpen){
-    accEl.classList.remove('open');
-    unitEl.classList.remove('active');
-    if(cardEl)cardEl.classList.remove('active');
+  var isOpen=acc.classList.contains('open')&&activeGuideUnit===unitEl;
+  if(isOpen){
+    acc.classList.remove('open');
+    acc.style.borderColor='transparent';
+    acc.style.background='';
+    if(cardEl){cardEl.classList.remove('active');cardEl.style.borderColor='';cardEl.style.background='';}
     activeGuideUnit=null;
     return;
   }
   if(activeGuideUnit){
-    var prevAcc=activeGuideUnit.querySelector('.guide-accordion');
     var prevCard=activeGuideUnit.querySelector('.guide-card');
-    if(prevAcc)prevAcc.classList.remove('open');
-    activeGuideUnit.classList.remove('active');
-    if(prevCard)prevCard.classList.remove('active');
+    if(prevCard){prevCard.classList.remove('active');prevCard.style.borderColor='';prevCard.style.background='';}
   }
   var courses=(guide.courses||[]).map(function(title){
     return allCourses.find(function(c){return c.title===title;});
@@ -1196,14 +1195,17 @@ function toggleGuideAccordion(guide,unitEl,accEl){
       row.appendChild(conn);
     }
   });
-  accEl.innerHTML='';
-  accEl.appendChild(row);
-  unitEl.style.setProperty('--gu-color',guide.color+'60');
-  unitEl.style.setProperty('--gu-bg','linear-gradient(160deg,'+guide.color+'0d 0%,transparent 70%)');
-  unitEl.classList.add('active');
-  if(cardEl)cardEl.classList.add('active');
+  acc.innerHTML='';
+  acc.appendChild(row);
+  if(cardEl){
+    cardEl.classList.add('active');
+    cardEl.style.borderColor=guide.color+'90';
+    cardEl.style.background='linear-gradient(145deg,'+guide.color+'14 0%,var(--bg2) 60%)';
+  }
+  acc.style.borderColor=guide.color+'40';
+  acc.style.background='linear-gradient(180deg,'+guide.color+'0a 0%,transparent 85%)';
   activeGuideUnit=unitEl;
-  accEl.classList.add('open');
+  acc.classList.add('open');
   setTimeout(function(){
     document.getElementById('guidesSection').scrollIntoView({behavior:'smooth',block:'start'});
   },80);
@@ -1219,11 +1221,8 @@ function renderGuides(){
     card.className='guide-card'+(live?' guide-card--live':'');
     if(live){
       card.innerHTML='<div class="guide-card-top"><span class="guide-step" style="color:'+g.color+'">'+g.step+'</span></div><div class="guide-name">'+esc(g.name)+'</div><div class="guide-desc">'+esc(g.desc)+'</div><div class="guide-cta" style="color:'+g.color+'">Ver cursos <span class="guide-cta-arrow">↓</span></div>';
-      var acc=document.createElement('div');
-      acc.className='guide-accordion';
-      (function(guide,u,a){card.onclick=function(){toggleGuideAccordion(guide,u,a);};})(g,unit,acc);
+      (function(guide,u){card.onclick=function(){toggleGuideAccordion(guide,u);};})(g,unit);
       unit.appendChild(card);
-      unit.appendChild(acc);
     } else {
       card.innerHTML='<div class="guide-card-top"><span class="guide-step" style="color:'+g.color+'">'+g.step+'</span><span class="guide-badge">Próximamente</span></div><div class="guide-name">'+esc(g.name)+'</div><div class="guide-desc">'+esc(g.desc)+'</div><div class="guide-lock">🔒</div>';
       (function(guide){card.onclick=function(){openGuide(guide);};})(g);
