@@ -160,32 +160,30 @@ audio{display:none;}
 .guides-header{margin-bottom:1.25rem;}
 .guides-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px;}
 .guides-subtitle{font-size:13px;color:var(--text3);}
-.guides-grid{display:flex;gap:12px;overflow-x:auto;padding-bottom:0.5rem;scrollbar-width:none;}
-.guides-grid::-webkit-scrollbar{display:none;}
-.guide-unit{flex:0 0 240px;}
-.guide-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:14px;padding:1.25rem;cursor:pointer;transition:border-color 0.4s,background 0.4s,opacity 0.2s;opacity:0.6;position:relative;overflow:hidden;}
-.guide-card:hover{opacity:0.85;border-color:var(--border2);}
+.guides-grid{display:flex;flex-direction:column;gap:8px;}
+.guide-unit{border:0.5px solid var(--border);border-radius:14px;overflow:hidden;background:var(--bg2);transition:border-color 0.45s cubic-bezier(0.4,0,0.2,1),background 0.45s cubic-bezier(0.4,0,0.2,1);}
+.guide-unit.active{border-color:var(--gu-color,rgba(232,154,196,0.5));background:var(--gu-bg,var(--bg2));}
+.guide-card{display:flex;align-items:center;justify-content:space-between;padding:1.25rem;cursor:pointer;transition:opacity 0.2s;opacity:0.6;position:relative;overflow:hidden;}
+.guide-card:hover{opacity:0.85;}
 .guide-card::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 5px,rgba(255,255,255,0.012) 5px,rgba(255,255,255,0.012) 10px);}
-.guide-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;}
-.guide-step{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;letter-spacing:1px;}
+.guide-step{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;letter-spacing:1px;flex-shrink:0;margin-right:1rem;}
 .guide-badge{font-size:10px;padding:2px 8px;border-radius:20px;background:var(--bg3);border:0.5px solid var(--border2);color:var(--text3);letter-spacing:0.5px;}
-.guide-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text);line-height:1.35;margin-bottom:6px;}
+.guide-info{min-width:0;flex:1;}
+.guide-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text);line-height:1.35;margin-bottom:4px;}
 .guide-desc{font-size:12px;color:var(--text3);line-height:1.5;}
-.guide-lock{font-size:16px;margin-top:0.75rem;}
 .guide-card--live{opacity:1!important;}
-.guide-card--live:hover{opacity:1!important;border-color:var(--border2)!important;}
+.guide-card--live:hover{opacity:1!important;}
 .guide-card.active{opacity:1!important;}
-.guide-badge--live{background:transparent!important;}
-.guide-cta{font-size:12px;font-weight:600;margin-top:0.85rem;letter-spacing:0.3px;display:flex;align-items:center;gap:5px;}
+.guide-cta{font-size:12px;font-weight:600;letter-spacing:0.3px;display:flex;align-items:center;gap:5px;flex-shrink:0;margin-left:1.25rem;}
 .guide-cta-arrow{display:inline-block;transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);}
 .guide-card.active .guide-cta-arrow{transform:rotate(180deg);}
-.guide-accordion{max-height:0;overflow:hidden;transition:max-height 0.55s cubic-bezier(0.4,0,0.2,1),opacity 0.35s ease,border-color 0.4s,background 0.4s;opacity:0;pointer-events:none;border:0.5px solid transparent;border-radius:12px;margin-top:8px;}
-.guide-accordion.open{max-height:340px;opacity:1;pointer-events:auto;}
-.guide-course-row{display:flex;gap:0;padding:1.25rem 0 0.75rem;overflow-x:auto;scrollbar-width:none;align-items:stretch;}
+.guide-accordion{max-height:0;overflow:hidden;transition:max-height 0.6s cubic-bezier(0.4,0,0.2,1),opacity 0.35s ease;opacity:0;pointer-events:none;}
+.guide-accordion.open{max-height:320px;opacity:1;pointer-events:auto;}
+.guide-course-row{display:flex;gap:0;padding:0 1.25rem 1.25rem;overflow-x:auto;scrollbar-width:none;align-items:stretch;border-top:0.5px solid var(--border);padding-top:1.25rem;}
 .guide-course-row::-webkit-scrollbar{display:none;}
-.guide-course-mini{flex:0 0 200px;background:var(--bg2);border:none;border-radius:12px;padding:1.1rem;cursor:pointer;transition:transform 0.15s;display:flex;flex-direction:column;position:relative;overflow:hidden;}
+.guide-course-mini{flex:1;min-width:160px;max-width:260px;background:var(--bg3);border:none;border-radius:12px;padding:1.1rem;cursor:pointer;transition:transform 0.15s,background 0.15s;display:flex;flex-direction:column;position:relative;overflow:hidden;}
 .guide-course-mini::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 5px,rgba(255,255,255,0.012) 5px,rgba(255,255,255,0.012) 10px);}
-.guide-course-mini:hover{transform:translateY(-2px);}
+.guide-course-mini:hover{transform:translateY(-2px);background:var(--bg2);}
 .guide-course-num{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:0.3px;line-height:1;}
 .guide-course-connector{flex-shrink:0;align-self:center;padding:0 10px;color:var(--border2);font-size:14px;}
 .guide-modal-eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:8px;}
@@ -246,7 +244,7 @@ audio{display:none;}
   .stat-num{font-size:27px;}
   .stat-label{font-size:13px;}
   .guides-section{padding:1rem 1rem 0;}
-  .guide-unit{flex:0 0 210px;}.guide-card{flex:0 0 auto;}
+  .guide-course-mini{min-width:140px;}
   .cat-cards-section{padding:1rem;}
   .cat-card{min-width:110px;padding:0.875rem 0.75rem;}
   .courses-wrap{padding:0 1rem 3rem;}
@@ -343,7 +341,6 @@ footer{border-top:0.5px solid var(--border);padding:3rem 2rem 2rem;margin-top:1r
     <div class="guides-subtitle">Estoy armando guías paso a paso para que no tengas que adivinar el orden.</div>
   </div>
   <div class="guides-grid" id="guidesGrid"></div>
-  <div class="guide-accordion" id="guideAccordion"></div>
 </div>
 <div id="catCardsSection"></div>
 <div class="search-feedback" id="searchFeedback"></div>
@@ -1157,20 +1154,22 @@ var savedScrollY=0;
 var activeGuideUnit=null;
 
 function toggleGuideAccordion(guide,unitEl){
-  var acc=document.getElementById('guideAccordion');
+  var accEl=unitEl.querySelector('.guide-accordion');
   var cardEl=unitEl.querySelector('.guide-card');
-  var isOpen=acc.classList.contains('open')&&activeGuideUnit===unitEl;
+  var isOpen=accEl.classList.contains('open')&&activeGuideUnit===unitEl;
   if(isOpen){
-    acc.classList.remove('open');
-    acc.style.borderColor='transparent';
-    acc.style.background='';
-    if(cardEl){cardEl.classList.remove('active');cardEl.style.borderColor='';cardEl.style.background='';}
+    accEl.classList.remove('open');
+    unitEl.classList.remove('active');
+    if(cardEl)cardEl.classList.remove('active');
     activeGuideUnit=null;
     return;
   }
   if(activeGuideUnit){
+    var prevAcc=activeGuideUnit.querySelector('.guide-accordion');
     var prevCard=activeGuideUnit.querySelector('.guide-card');
-    if(prevCard){prevCard.classList.remove('active');prevCard.style.borderColor='';prevCard.style.background='';}
+    if(prevAcc)prevAcc.classList.remove('open');
+    activeGuideUnit.classList.remove('active');
+    if(prevCard)prevCard.classList.remove('active');
   }
   var courses=(guide.courses||[]).map(function(title){
     return allCourses.find(function(c){return c.title===title;});
@@ -1182,7 +1181,6 @@ function toggleGuideAccordion(guide,unitEl){
     var color=cat?cat.color:'#7F77DD';
     var mini=document.createElement('div');
     mini.className='guide-course-mini';
-    mini.style.setProperty('--hover-color',guide.color);
     mini.innerHTML='<div class="card-top"><span class="guide-course-num" style="color:'+guide.color+'">'+(idx+1)+'</span></div>'
       +'<div class="card-title">'+esc(course.title)+'</div>'
       +'<div class="card-footer" style="margin-top:auto;"><span class="card-cta">ver resumen</span></div>';
@@ -1195,17 +1193,14 @@ function toggleGuideAccordion(guide,unitEl){
       row.appendChild(conn);
     }
   });
-  acc.innerHTML='';
-  acc.appendChild(row);
-  if(cardEl){
-    cardEl.classList.add('active');
-    cardEl.style.borderColor=guide.color+'90';
-    cardEl.style.background='linear-gradient(145deg,'+guide.color+'14 0%,var(--bg2) 60%)';
-  }
-  acc.style.borderColor=guide.color+'40';
-  acc.style.background='linear-gradient(180deg,'+guide.color+'0a 0%,transparent 85%)';
+  accEl.innerHTML='';
+  accEl.appendChild(row);
+  unitEl.style.setProperty('--gu-color',guide.color+'70');
+  unitEl.style.setProperty('--gu-bg','linear-gradient(180deg,'+guide.color+'10 0%,var(--bg2) 55%)');
+  unitEl.classList.add('active');
+  if(cardEl)cardEl.classList.add('active');
   activeGuideUnit=unitEl;
-  acc.classList.add('open');
+  accEl.classList.add('open');
   setTimeout(function(){
     document.getElementById('guidesSection').scrollIntoView({behavior:'smooth',block:'start'});
   },80);
@@ -1220,11 +1215,18 @@ function renderGuides(){
     var live=!!(g.courses&&g.courses.length);
     card.className='guide-card'+(live?' guide-card--live':'');
     if(live){
-      card.innerHTML='<div class="guide-card-top"><span class="guide-step" style="color:'+g.color+'">'+g.step+'</span></div><div class="guide-name">'+esc(g.name)+'</div><div class="guide-desc">'+esc(g.desc)+'</div><div class="guide-cta" style="color:'+g.color+'">Ver cursos <span class="guide-cta-arrow">↓</span></div>';
+      card.innerHTML='<span class="guide-step" style="color:'+g.color+'">'+g.step+'</span>'
+        +'<div class="guide-info"><div class="guide-name">'+esc(g.name)+'</div><div class="guide-desc">'+esc(g.desc)+'</div></div>'
+        +'<div class="guide-cta" style="color:'+g.color+'">Ver cursos <span class="guide-cta-arrow">↓</span></div>';
+      var acc=document.createElement('div');
+      acc.className='guide-accordion';
       (function(guide,u){card.onclick=function(){toggleGuideAccordion(guide,u);};})(g,unit);
       unit.appendChild(card);
+      unit.appendChild(acc);
     } else {
-      card.innerHTML='<div class="guide-card-top"><span class="guide-step" style="color:'+g.color+'">'+g.step+'</span><span class="guide-badge">Próximamente</span></div><div class="guide-name">'+esc(g.name)+'</div><div class="guide-desc">'+esc(g.desc)+'</div><div class="guide-lock">🔒</div>';
+      card.innerHTML='<span class="guide-step" style="color:'+g.color+'">'+g.step+'</span>'
+        +'<div class="guide-info"><div class="guide-name">'+esc(g.name)+'</div><div class="guide-desc">'+esc(g.desc)+'</div></div>'
+        +'<div style="display:flex;align-items:center;gap:0.5rem;flex-shrink:0;margin-left:1.25rem;"><span class="guide-badge">Próximamente</span><span style="font-size:16px">🔒</span></div>';
       (function(guide){card.onclick=function(){openGuide(guide);};})(g);
       unit.appendChild(card);
     }
