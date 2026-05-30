@@ -320,7 +320,7 @@ footer{border-top:0.5px solid var(--border);padding:3rem 2rem 2rem;margin-top:1r
   <div class="stat-mobile-label" id="statMobileLabel">invertidas en aprender</div>
 </div>
 <div class="podcast-hint">
-  <span>Lo estudié, lo resumí, ahora es tuyo. Escucha el <button class="badge badge-audio badge-play" onclick="goToFirstPodcast()">▶ podcast</button> o léelo cuando quieras — sin registro, gratis.</span>
+  <span>Lo estudié, lo resumí, ahora es tuyo. Escucha el <span class="badge badge-audio" style="pointer-events:none;">▶ podcast</span> o léelo cuando quieras — sin registro, gratis.</span>
 </div>
 <div class="search-wrap">
   <div class="search-container">
@@ -1506,10 +1506,6 @@ function initStatsMobile(){
       lblEl.classList.remove('fade');
     },350);
   },3000);
-}
-function goToFirstPodcast(){
-  var course=allCourses.find(function(c){return c.podcast;});
-  if(course)openDetail(course,true);
 }
 fetchCourses();
 initStatsMobile();
