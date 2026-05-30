@@ -182,7 +182,8 @@ audio{display:none;}
 .guide-accordion.open{max-height:340px;opacity:1;pointer-events:auto;}
 .guide-course-row{display:flex;gap:0;padding:1.25rem 0 0.75rem;overflow-x:auto;scrollbar-width:none;align-items:stretch;}
 .guide-course-row::-webkit-scrollbar{display:none;}
-.guide-course-mini{flex:0 0 200px;background:var(--bg2);border:none;border-radius:12px;padding:1.1rem;cursor:pointer;transition:transform 0.15s;display:flex;flex-direction:column;}
+.guide-course-mini{flex:0 0 200px;background:var(--bg2);border:none;border-radius:12px;padding:1.1rem;cursor:pointer;transition:transform 0.15s;display:flex;flex-direction:column;position:relative;overflow:hidden;}
+.guide-course-mini::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 5px,rgba(255,255,255,0.012) 5px,rgba(255,255,255,0.012) 10px);}
 .guide-course-mini:hover{transform:translateY(-2px);}
 .guide-course-num{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:0.3px;line-height:1;}
 .guide-course-connector{flex-shrink:0;align-self:center;padding:0 10px;color:var(--border2);font-size:14px;}
