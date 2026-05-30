@@ -417,7 +417,7 @@ var CATS={
   pro:{label:'Desarrollo profesional',icon:'💼',color:'#F0997B',kw:['linkedin','posicionamiento','profesional','optimizacion']},
   tech:{label:'Tecnología y datos',icon:'💻',color:'#E89AC4',kw:['estadistica','ingenieria de software','pensamiento logico','fundamentos']}
 };
-var allCourses=[],currentAudio=null,currentCourse=null,miniPlayerCourse=null,ttsBtn=null;
+var allCourses=[],currentAudio=null,currentCourse=null,miniPlayerCourse=null,ttsBtn=null,activeCatKey='new';
 
 var ICON_MAP=[
   ['chatgpt','💬'],['gemini','♊'],['claude','✨'],['perplexity','🔍'],['grok','🔮'],
@@ -595,6 +595,7 @@ function renderCategoryCards(){
   section.innerHTML='<div class="cat-divider">explorar por tema</div><div class="cat-cards" id="catCards"></div>';
   var cards=document.getElementById('catCards');
   function setActive(key,cardEl){
+    activeCatKey=key;
     document.querySelectorAll('.cat-card').forEach(function(c){
       c.classList.remove('active');
       c.style.borderColor='';
@@ -683,6 +684,9 @@ function showSuggestions(q){
   });
   box.classList.add('show');
 }
+function renderActiveCat(){
+  renderCourses(activeCatKey==='new'?allCourses.slice(0,5):allCourses.filter(function(c){return c.cat===activeCatKey;}));
+}
 document.getElementById('searchInput').addEventListener('input',function(e){
   var q=e.target.value.toLowerCase().trim();
   var clearBtn=document.getElementById('searchClear');
@@ -694,7 +698,7 @@ document.getElementById('searchInput').addEventListener('input',function(e){
     feedback.style.display='none';
     border.classList.remove('solid');
     border.style.removeProperty('--search-accent');
-    renderCourses(allCourses.slice(0,5));
+    renderActiveCat();
   } else {
     var results=allCourses.filter(function(c){return norm(c.title).indexOf(norm(q))>=0||norm(c.desc).indexOf(norm(q))>=0;});
     var catCounts={};
@@ -723,8 +727,7 @@ document.getElementById('searchClear').addEventListener('click',function(){
   border.classList.remove('solid');
   border.style.removeProperty('--search-accent');
   inp.focus();
-  renderCategoryCards();
-  renderCourses(allCourses.slice(0,5));
+  renderActiveCat();
 });
 
 function openDetail(course,autoplay,source){
