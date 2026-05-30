@@ -575,6 +575,11 @@ function fetchCourses(){
       STATS_MOBILE[1].num=allCourses.length;
       renderCategoryCards();
       renderCourses(allCourses.slice(0,5));
+      if(activeGuideUnit&&activeGuide&&activeGuideUnit.querySelector('[data-loading]')){
+        var gu=activeGuideUnit,g=activeGuide;
+        activeGuideUnit=null;activeGuide=null;
+        toggleGuideAccordion(g,gu);
+      }
       var cParam=new URLSearchParams(location.search).get('c');
       if(cParam){
         var target=allCourses.find(function(c){return toSlug(c.title)===cParam||c.id===decodeURIComponent(cParam);});
@@ -1151,7 +1156,7 @@ var GUIDES=[
 ];
 var detailSource=null;
 var savedScrollY=0;
-var activeGuideUnit=null;
+var activeGuideUnit=null,activeGuide=null;
 
 function toggleGuideAccordion(guide,unitEl){
   var accEl=unitEl.querySelector('.guide-accordion');
@@ -1161,7 +1166,7 @@ function toggleGuideAccordion(guide,unitEl){
     accEl.classList.remove('open');
     unitEl.classList.remove('active');
     if(cardEl)cardEl.classList.remove('active');
-    activeGuideUnit=null;
+    activeGuideUnit=null;activeGuide=null;
     return;
   }
   if(activeGuideUnit){
@@ -1177,7 +1182,7 @@ function toggleGuideAccordion(guide,unitEl){
   var row=document.createElement('div');
   row.className='guide-course-row';
   if(!courses.length){
-    row.innerHTML='<div style="padding:0.5rem 0;font-size:13px;color:var(--text3);">Cargando cursos...</div>';
+    row.innerHTML='<div data-loading style="padding:0.5rem 0;font-size:13px;color:var(--text3);">Cargando cursos...</div>';
     accEl.innerHTML='';
     accEl.appendChild(row);
     unitEl.style.setProperty('--gu-color',guide.color+'70');
@@ -1185,7 +1190,7 @@ function toggleGuideAccordion(guide,unitEl){
     unitEl.style.setProperty('--gu-bg','linear-gradient(180deg,'+guide.color+'35 0%,var(--bg2) 60%)');
     unitEl.classList.add('active');
     if(cardEl)cardEl.classList.add('active');
-    activeGuideUnit=unitEl;
+    activeGuideUnit=unitEl;activeGuide=guide;
     accEl.classList.add('open');
     return;
   }
@@ -1211,7 +1216,7 @@ function toggleGuideAccordion(guide,unitEl){
   unitEl.style.setProperty('--gu-bg','linear-gradient(180deg,'+guide.color+'35 0%,var(--bg2) 60%)');
   unitEl.classList.add('active');
   if(cardEl)cardEl.classList.add('active');
-  activeGuideUnit=unitEl;
+  activeGuideUnit=unitEl;activeGuide=guide;
   accEl.classList.add('open');
   setTimeout(function(){
     document.getElementById('guidesSection').scrollIntoView({behavior:'smooth',block:'start'});
