@@ -1274,21 +1274,33 @@ function getNextThanksMsg(){
 function openGuide(guide){
   var content=document.getElementById('guideModalContent');
   var copyHtml=guide.copy.map(function(p){return '<p class="guide-modal-copy">'+esc(p)+'</p>';}).join('');
-  content.innerHTML='<div class="guide-modal-eyebrow">En construcción</div><div class="guide-modal-title">'+esc(guide.name)+'</div>'+copyHtml+'<div class="guide-modal-label">¿Te aviso cuando esté lista?</div><div class="guide-email-row"><input type="email" class="guide-email-input" id="guideEmailInput" placeholder="tu@correo.com"><button class="guide-email-btn" id="guideEmailBtn">Avísame cuando esté lista</button></div><div class="guide-thanks" id="guideThanks"></div>';
+  content.innerHTML='<div class="guide-modal-eyebrow">En construcción</div><div class="guide-modal-title">'+esc(guide.name)+'</div>'+copyHtml+'<div class="guide-modal-label">¿Te aviso cuando esté lista?</div><div class="guide-email-row"><input type="email" class="guide-email-input" id="guideEmailInput" placeholder="tu@correo.com"><button class="guide-email-btn" id="guideEmailBtn">Avísame cuando esté lista</button></div><div id="guideEmailError" style="display:none;font-size:12px;color:#E87070;margin-top:6px;"></div><div class="guide-thanks" id="guideThanks"></div>';
   document.getElementById('guidePanel').style.borderColor=guide.color+'AA';
   var emailBtn=document.getElementById('guideEmailBtn');
   emailBtn.style.background=guide.color+'25';
   emailBtn.style.borderColor=guide.color+'AA';
   emailBtn.style.color=guide.color;
+  var emailInput=document.getElementById('guideEmailInput');
+  var emailError=document.getElementById('guideEmailError');
+  emailInput.addEventListener('input',function(){
+    emailInput.style.borderColor='';
+    emailError.style.display='none';
+  });
   emailBtn.onclick=function(){
-    var email=document.getElementById('guideEmailInput').value.trim();
-    if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return;
+    var email=emailInput.value.trim();
+    if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      emailInput.style.borderColor='#E87070';
+      emailError.textContent='Ingresa un correo válido, ej: tu@correo.com';
+      emailError.style.display='block';
+      emailInput.focus();
+      return;
+    }
     var btn=this;
     btn.disabled=true;
     btn.textContent='Enviando...';
     if(GUIDES_SHEET_URL){fetch(GUIDES_SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,guide:guide.name,fecha:new Date().toISOString()})});}
     document.querySelector('#guideModalContent .guide-modal-label').style.display='none';
-    document.getElementById('guideEmailInput').style.display='none';
+    emailInput.style.display='none';
     btn.style.display='none';
     var thanks=document.getElementById('guideThanks');
     thanks.textContent=getNextThanksMsg();
