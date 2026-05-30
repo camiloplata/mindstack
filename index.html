@@ -180,13 +180,12 @@ audio{display:none;}
 .guide-card.active .guide-cta-arrow{transform:rotate(180deg);}
 .guide-accordion{max-height:0;overflow:hidden;transition:max-height 0.55s cubic-bezier(0.4,0,0.2,1),opacity 0.35s ease;opacity:0;pointer-events:none;}
 .guide-accordion.open{max-height:260px;opacity:1;pointer-events:auto;}
-.guide-course-row{display:flex;gap:10px;padding:1.25rem 0 0.75rem;overflow-x:auto;scrollbar-width:none;align-items:flex-start;}
+.guide-course-row{display:flex;gap:0;padding:1.25rem 0 0.75rem;overflow-x:auto;scrollbar-width:none;align-items:stretch;}
 .guide-course-row::-webkit-scrollbar{display:none;}
-.guide-course-mini{flex:0 0 160px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:12px;padding:1.1rem;cursor:pointer;transition:border-color 0.2s,transform 0.2s cubic-bezier(0.34,1.56,0.64,1),background 0.2s;position:relative;display:flex;flex-direction:column;}
+.guide-course-mini{flex:0 0 158px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:12px;padding:1rem;cursor:pointer;transition:border-color 0.2s,transform 0.2s cubic-bezier(0.34,1.56,0.64,1),background 0.2s;display:flex;flex-direction:column;}
 .guide-course-mini:hover{border-color:var(--border);background:var(--bg3);transform:translateY(-2px);}
-.guide-course-num{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;line-height:1;margin-bottom:0.65rem;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1.5px solid currentColor;flex-shrink:0;}
-.guide-course-connector{flex-shrink:0;align-self:flex-start;width:20px;height:1.5px;background:var(--border2);margin-top:calc(1.1rem + 18px);opacity:0.7;}
-.guide-course-icon{font-size:18px;margin-bottom:0.4rem;}
+.guide-course-num{font-family:'Syne',sans-serif;font-size:11px;font-weight:800;letter-spacing:0.5px;margin-bottom:0.55rem;}
+.guide-course-connector{flex-shrink:0;align-self:center;padding:0 8px;color:var(--border2);font-size:14px;}
 .guide-course-title{font-size:12px;color:var(--text);line-height:1.45;font-weight:500;flex:1;}
 .guide-course-footer{display:flex;align-items:center;justify-content:space-between;margin-top:0.75rem;}
 .guide-course-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
@@ -1181,7 +1180,6 @@ function toggleGuideAccordion(guide,cardEl){
     var mini=document.createElement('div');
     mini.className='guide-course-mini';
     mini.innerHTML='<div class="guide-course-num" style="color:'+guide.color+'">'+(idx+1)+'</div>'
-      +(course.icon?'<div class="guide-course-icon">'+course.icon+'</div>':'')
       +'<div class="guide-course-title">'+esc(course.title)+'</div>'
       +'<div class="guide-course-footer"><div class="guide-course-dot" style="background:'+color+'"></div><span class="guide-course-cta">Ver resumen →</span></div>';
     (function(c){mini.onclick=function(){openDetail(c,false,'guide');};})(course);
@@ -1189,6 +1187,7 @@ function toggleGuideAccordion(guide,cardEl){
     if(idx<courses.length-1){
       var conn=document.createElement('div');
       conn.className='guide-course-connector';
+      conn.textContent='→';
       row.appendChild(conn);
     }
   });
