@@ -909,7 +909,7 @@ function openSubpage(pageId,title,courseId,subpages,idx){
       var nextTitle=(nextSp.child_page&&nextSp.child_page.title)||'Sin titulo';
       var nextBtn=document.createElement('button');
       nextBtn.className='detail-close';
-      nextBtn.style.cssText='margin:0;color:var(--purple);border-color:var(--purple2);';
+      nextBtn.style.cssText='margin:0;';
       nextBtn.textContent='Siguiente →';
       nextBtn.onclick=function(){ttsCancel();openSubpage(nextSp.id,nextTitle,courseId,subpages,idx+1);};
       nav.appendChild(nextBtn);
