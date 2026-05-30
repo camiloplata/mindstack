@@ -922,6 +922,12 @@ function openSubpage(pageId,title,courseId,subpages,idx){
       nav.appendChild(ttsButton);
       topTtsBtn=ttsButton;
     }
+    if(subpages&&subpages.length>1){
+      var prog=document.createElement('span');
+      prog.style.cssText='margin-left:auto;font-size:11px;color:var(--text3);white-space:nowrap;';
+      prog.textContent=(idx+1)+' de '+subpages.length;
+      nav.appendChild(prog);
+    }
     return nav;
   }
 
