@@ -968,7 +968,7 @@ async function renderBlocks(blocks){
         if(r.annotations&&r.annotations.bold)t='<strong>'+t+'</strong>';
         if(r.annotations&&r.annotations.italic)t='<em>'+t+'</em>';
         if(r.annotations&&r.annotations.code)t='<code style="background:var(--bg3);padding:1px 5px;border-radius:4px;font-size:12px;">'+t+'</code>';
-        if(r.href&&/^https?:\/\//i.test(r.href))t='<a href="'+r.href+'" target="_blank" rel="noopener noreferrer" style="color:var(--purple);">'+t+'</a>';
+        if(r.href&&/^https?:\/\//i.test(r.href))t='<a href="'+r.href.replace(/"/g,'&quot;')+'" target="_blank" rel="noopener noreferrer" style="color:var(--purple);">'+t+'</a>';
         return t;
       }).join('');
     }
@@ -1176,9 +1176,20 @@ function toggleGuideAccordion(guide,unitEl){
   }).filter(Boolean);
   var row=document.createElement('div');
   row.className='guide-course-row';
+  if(!courses.length){
+    row.innerHTML='<div style="padding:0.5rem 0;font-size:13px;color:var(--text3);">Cargando cursos...</div>';
+    accEl.innerHTML='';
+    accEl.appendChild(row);
+    unitEl.style.setProperty('--gu-color',guide.color+'70');
+    unitEl.style.setProperty('--gu-raw',guide.color);
+    unitEl.style.setProperty('--gu-bg','linear-gradient(180deg,'+guide.color+'35 0%,var(--bg2) 60%)');
+    unitEl.classList.add('active');
+    if(cardEl)cardEl.classList.add('active');
+    activeGuideUnit=unitEl;
+    accEl.classList.add('open');
+    return;
+  }
   courses.forEach(function(course,idx){
-    var cat=CATS[course.cat];
-    var color=cat?cat.color:'#7F77DD';
     var mini=document.createElement('div');
     mini.className='guide-course-mini';
     mini.innerHTML='<div class="card-top"><span class="guide-course-num" style="color:'+guide.color+'">'+(idx+1)+'</span></div>'
@@ -1260,7 +1271,7 @@ function openGuide(guide){
   emailBtn.style.color=guide.color;
   emailBtn.onclick=function(){
     var email=document.getElementById('guideEmailInput').value.trim();
-    if(!email||!email.includes('@'))return;
+    if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return;
     var btn=this;
     btn.disabled=true;
     btn.textContent='Enviando...';
@@ -1373,27 +1384,29 @@ function closeDict(){
   delete mp.dataset.dictHidden;
 }
 
-function closeDetailPanel(){
-  ttsCancel();
+function handleDetailClose(){
   var da=document.getElementById('dAudio');
-  document.getElementById('detailOverlay').classList.remove('open');
-  document.body.style.overflow='';
   if(da&&!da.paused&&currentCourse&&currentCourse.podcast){
     if(!miniPlayerCourse||miniPlayerCourse.id===currentCourse.id){
-      var cat=CATS[currentCourse.cat];
-      showMiniPlayer(currentCourse,cat.color||'#7F77DD');
+      showMiniPlayer(currentCourse,(CATS[currentCourse.cat]||{}).color||'#7F77DD');
     }
   } else if(!miniPlayerCourse){
     if(currentAudio){currentAudio.pause();}
     currentAudio=null;
   }
-  history.pushState({},'',location.pathname);
   if(detailSource==='guide'){
     setTimeout(function(){document.getElementById('guidesSection').scrollIntoView({behavior:'smooth',block:'start'});},80);
   } else if(savedScrollY>0){
     setTimeout(function(){window.scrollTo({top:savedScrollY,behavior:'smooth'});},80);
   }
   detailSource=null;
+}
+function closeDetailPanel(){
+  ttsCancel();
+  document.getElementById('detailOverlay').classList.remove('open');
+  document.body.style.overflow='';
+  history.pushState({},'',location.pathname);
+  handleDetailClose();
 }
 
 function openPlatziModal(courseUrl){
@@ -1431,24 +1444,9 @@ window.addEventListener('popstate',function(){
   ttsCancel();
   closeDict();
   if(!new URLSearchParams(location.search).get('c')){
-    var da=document.getElementById('dAudio');
     document.getElementById('detailOverlay').classList.remove('open');
     document.body.style.overflow='';
-    if(da&&!da.paused&&currentCourse&&currentCourse.podcast){
-      if(!miniPlayerCourse||miniPlayerCourse.id===currentCourse.id){
-        var cat=CATS[currentCourse.cat];
-        showMiniPlayer(currentCourse,cat.color||'#7F77DD');
-      }
-    } else if(!miniPlayerCourse){
-      if(currentAudio){currentAudio.pause();}
-      currentAudio=null;
-    }
-    if(detailSource==='guide'){
-      setTimeout(function(){document.getElementById('guidesSection').scrollIntoView({behavior:'smooth',block:'start'});},80);
-    } else if(savedScrollY>0){
-      setTimeout(function(){window.scrollTo({top:savedScrollY,behavior:'smooth'});},80);
-    }
-    detailSource=null;
+    handleDetailClose();
   }
 });
 
