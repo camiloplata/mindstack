@@ -1501,6 +1501,7 @@ function initStatsMobile(){
   var numEl=document.getElementById('statMobileNum');
   var lblEl=document.getElementById('statMobileLabel');
   if(!numEl||!lblEl)return;
+  if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   var idx=0;
   setInterval(function(){
     numEl.classList.add('fade');
