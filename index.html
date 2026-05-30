@@ -1203,7 +1203,7 @@ function renderGuides(){
     var live=!!(g.courses&&g.courses.length);
     card.className='guide-card'+(live?' guide-card--live':'');
     if(live){
-      card.innerHTML='<div class="guide-card-top"><span class="guide-step" style="color:'+g.color+'">'+g.step+'</span><span class="guide-badge guide-badge--live" style="border-color:'+g.color+'44;color:'+g.color+'">Lista</span></div><div class="guide-name">'+esc(g.name)+'</div><div class="guide-desc">'+esc(g.desc)+'</div><div class="guide-cta" style="color:'+g.color+'">Ver cursos <span class="guide-cta-arrow">↓</span></div>';
+      card.innerHTML='<div class="guide-card-top"><span class="guide-step" style="color:'+g.color+'">'+g.step+'</span></div><div class="guide-name">'+esc(g.name)+'</div><div class="guide-desc">'+esc(g.desc)+'</div><div class="guide-cta" style="color:'+g.color+'">Ver cursos <span class="guide-cta-arrow">↓</span></div>';
       (function(guide,cardEl){card.onclick=function(){toggleGuideAccordion(guide,cardEl);};})(g,card);
     } else {
       card.innerHTML='<div class="guide-card-top"><span class="guide-step" style="color:'+g.color+'">'+g.step+'</span><span class="guide-badge">Próximamente</span></div><div class="guide-name">'+esc(g.name)+'</div><div class="guide-desc">'+esc(g.desc)+'</div><div class="guide-lock">🔒</div>';
