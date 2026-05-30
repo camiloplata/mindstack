@@ -171,17 +171,26 @@ audio{display:none;}
 .guide-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text);line-height:1.35;margin-bottom:6px;}
 .guide-desc{font-size:12px;color:var(--text3);line-height:1.5;}
 .guide-lock{font-size:16px;margin-top:0.75rem;}
+.guide-card--live{opacity:1!important;}
+.guide-card--live:hover{opacity:1!important;border-color:var(--border2)!important;}
 .guide-card.active{opacity:1!important;border-color:var(--border2)!important;}
+.guide-badge--live{background:transparent!important;}
+.guide-cta{font-size:12px;font-weight:600;margin-top:0.85rem;letter-spacing:0.3px;display:flex;align-items:center;gap:5px;}
+.guide-cta-arrow{display:inline-block;transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);}
+.guide-card.active .guide-cta-arrow{transform:rotate(180deg);}
 .guide-accordion{max-height:0;overflow:hidden;transition:max-height 0.55s cubic-bezier(0.4,0,0.2,1),opacity 0.35s ease;opacity:0;pointer-events:none;}
-.guide-accordion.open{max-height:240px;opacity:1;pointer-events:auto;}
-.guide-course-row{display:flex;gap:10px;padding:1.25rem 0 0.5rem;overflow-x:auto;scrollbar-width:none;}
+.guide-accordion.open{max-height:260px;opacity:1;pointer-events:auto;}
+.guide-course-row{display:flex;gap:10px;padding:1.25rem 0 0.75rem;overflow-x:auto;scrollbar-width:none;}
 .guide-course-row::-webkit-scrollbar{display:none;}
-.guide-course-mini{flex:0 0 152px;background:var(--bg2);border:0.5px solid var(--border);border-radius:12px;padding:1rem;cursor:pointer;transition:border-color 0.2s,transform 0.2s cubic-bezier(0.34,1.56,0.64,1);position:relative;}
-.guide-course-mini:hover{border-color:var(--border2);transform:translateY(-2px);}
-.guide-course-num{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;line-height:1;margin-bottom:0.5rem;opacity:0.95;}
-.guide-course-icon{font-size:17px;margin-bottom:0.35rem;}
-.guide-course-title{font-size:11.5px;color:var(--text);line-height:1.4;font-weight:500;padding-right:4px;}
-.guide-course-dot{position:absolute;bottom:9px;right:9px;width:6px;height:6px;border-radius:50%;}
+.guide-course-mini{flex:0 0 160px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:12px;padding:1.1rem;cursor:pointer;transition:border-color 0.2s,transform 0.2s cubic-bezier(0.34,1.56,0.64,1),background 0.2s;position:relative;display:flex;flex-direction:column;}
+.guide-course-mini:hover{border-color:var(--border);background:var(--bg3);transform:translateY(-2px);}
+.guide-course-num{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;line-height:1;margin-bottom:0.55rem;opacity:0.95;}
+.guide-course-icon{font-size:18px;margin-bottom:0.4rem;}
+.guide-course-title{font-size:12px;color:var(--text);line-height:1.45;font-weight:500;flex:1;}
+.guide-course-footer{display:flex;align-items:center;justify-content:space-between;margin-top:0.75rem;}
+.guide-course-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.guide-course-cta{font-size:10.5px;color:var(--text3);letter-spacing:0.2px;}
+.guide-course-mini:hover .guide-course-cta{color:var(--text2);}
 .guide-modal-eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:8px;}
 .guide-modal-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--text);line-height:1.3;margin-bottom:1.25rem;}
 .guide-modal-copy{font-size:15px;color:var(--text2);line-height:1.7;margin-bottom:0.75rem;}
@@ -1173,7 +1182,7 @@ function toggleGuideAccordion(guide,cardEl){
     mini.innerHTML='<div class="guide-course-num" style="color:'+guide.color+'">'+(idx+1)+'</div>'
       +(course.icon?'<div class="guide-course-icon">'+course.icon+'</div>':'')
       +'<div class="guide-course-title">'+esc(course.title)+'</div>'
-      +'<div class="guide-course-dot" style="background:'+color+'"></div>';
+      +'<div class="guide-course-footer"><div class="guide-course-dot" style="background:'+color+'"></div><span class="guide-course-cta">Ver resumen →</span></div>';
     (function(c){mini.onclick=function(){openDetail(c,false,'guide');};})(course);
     row.appendChild(mini);
   });
@@ -1191,11 +1200,13 @@ function renderGuides(){
   var grid=document.getElementById('guidesGrid');
   GUIDES.forEach(function(g){
     var card=document.createElement('div');
-    card.className='guide-card';
-    card.innerHTML='<div class="guide-card-top"><span class="guide-step" style="color:'+g.color+'">'+g.step+'</span><span class="guide-badge">Próximamente</span></div><div class="guide-name">'+esc(g.name)+'</div><div class="guide-desc">'+esc(g.desc)+'</div><div class="guide-lock">🔒</div>';
-    if(g.courses&&g.courses.length){
+    var live=!!(g.courses&&g.courses.length);
+    card.className='guide-card'+(live?' guide-card--live':'');
+    if(live){
+      card.innerHTML='<div class="guide-card-top"><span class="guide-step" style="color:'+g.color+'">'+g.step+'</span><span class="guide-badge guide-badge--live" style="border-color:'+g.color+'44;color:'+g.color+'">Lista</span></div><div class="guide-name">'+esc(g.name)+'</div><div class="guide-desc">'+esc(g.desc)+'</div><div class="guide-cta" style="color:'+g.color+'">Ver cursos <span class="guide-cta-arrow">↓</span></div>';
       (function(guide,cardEl){card.onclick=function(){toggleGuideAccordion(guide,cardEl);};})(g,card);
     } else {
+      card.innerHTML='<div class="guide-card-top"><span class="guide-step" style="color:'+g.color+'">'+g.step+'</span><span class="guide-badge">Próximamente</span></div><div class="guide-name">'+esc(g.name)+'</div><div class="guide-desc">'+esc(g.desc)+'</div><div class="guide-lock">🔒</div>';
       (function(guide){card.onclick=function(){openGuide(guide);};})(g);
     }
     grid.appendChild(card);
