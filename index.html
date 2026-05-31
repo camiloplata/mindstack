@@ -179,6 +179,9 @@ audio{display:none;}
 .guide-card.active .guide-cta-arrow{transform:rotate(180deg);}
 .guide-accordion{max-height:0;overflow:hidden;transition:max-height 0.6s cubic-bezier(0.4,0,0.2,1),opacity 0.35s ease;opacity:0;pointer-events:none;}
 .guide-accordion.open{max-height:600px;opacity:1;pointer-events:auto;}
+.guide-share-footer{display:flex;justify-content:flex-end;padding:0 1.25rem 1rem;}
+.guide-share-btn{background:none;border:0.5px solid var(--border2);border-radius:8px;padding:6px 14px;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--text3);cursor:pointer;display:flex;align-items:center;gap:6px;transition:color 0.15s,border-color 0.15s;}
+.guide-share-btn:hover{color:var(--text2);border-color:var(--border);}
 .guide-course-row{display:flex;gap:0;padding:0 1.25rem 1.25rem;overflow-x:auto;scrollbar-width:none;align-items:stretch;border-top:0.5px solid var(--border);padding-top:1.25rem;}
 .guide-course-row::-webkit-scrollbar{display:none;}
 .guide-course-mini{flex:1;min-width:160px;max-width:260px;background:var(--bg3);border:none;border-radius:12px;padding:1.1rem;cursor:pointer;transition:transform 0.15s,background 0.15s;display:flex;flex-direction:column;position:relative;overflow:hidden;}
@@ -1168,6 +1171,24 @@ var detailSource=null;
 var savedScrollY=0;
 var activeGuideUnit=null,activeGuide=null;
 
+function shareGuide(guide){
+  var url=location.origin+location.pathname+'?guia='+guide.step;
+  if(navigator.share){
+    navigator.share({title:guide.name+' — MindStack',text:guide.desc,url:url}).catch(function(){});
+  } else {
+    navigator.clipboard.writeText(url).then(function(){showToast('Link copiado');}).catch(function(){showToast('Copia este link: '+url);});
+  }
+}
+function makeGuideShareFooter(guide){
+  var footer=document.createElement('div');
+  footer.className='guide-share-footer';
+  var btn=document.createElement('button');
+  btn.className='guide-share-btn';
+  btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Compartir guía';
+  btn.onclick=function(e){e.stopPropagation();shareGuide(guide);};
+  footer.appendChild(btn);
+  return footer;
+}
 function toggleGuideAccordion(guide,unitEl){
   var accEl=unitEl.querySelector('.guide-accordion');
   var cardEl=unitEl.querySelector('.guide-card');
@@ -1195,6 +1216,7 @@ function toggleGuideAccordion(guide,unitEl){
     row.innerHTML='<div data-loading style="padding:0.5rem 0;font-size:13px;color:var(--text3);">Cargando cursos...</div>';
     accEl.innerHTML='';
     accEl.appendChild(row);
+    accEl.appendChild(makeGuideShareFooter(guide));
     unitEl.style.setProperty('--gu-color',guide.color+'70');
     unitEl.style.setProperty('--gu-raw',guide.color);
     unitEl.style.setProperty('--gu-bg','linear-gradient(180deg,'+guide.color+'35 0%,var(--bg2) 60%)');
@@ -1221,6 +1243,7 @@ function toggleGuideAccordion(guide,unitEl){
   });
   accEl.innerHTML='';
   accEl.appendChild(row);
+  accEl.appendChild(makeGuideShareFooter(guide));
   unitEl.style.setProperty('--gu-color',guide.color+'70');
   unitEl.style.setProperty('--gu-raw',guide.color);
   unitEl.style.setProperty('--gu-bg','linear-gradient(180deg,'+guide.color+'35 0%,var(--bg2) 60%)');
@@ -1318,6 +1341,16 @@ function closeGuide(){
   document.body.style.overflow='';
 }
 renderGuides();
+(function(){
+  var guiaParam=new URLSearchParams(location.search).get('guia');
+  if(!guiaParam)return;
+  var units=document.querySelectorAll('.guide-unit');
+  GUIDES.forEach(function(g,idx){
+    if(g.step===guiaParam&&g.courses&&g.courses.length){
+      if(units[idx]){var card=units[idx].querySelector('.guide-card--live');if(card)card.click();}
+    }
+  });
+})();
 var ttsWakeLock=null;
 function ttsRequestWakeLock(){
   if(!('wakeLock' in navigator))return;
