@@ -1371,7 +1371,7 @@ renderGuides();
     }
   });
 })();
-var ttsWakeLock=null;
+var ttsWakeLock=null,ttsCurrentChunks=null,ttsCurrentIdx=0;
 function ttsRequestWakeLock(){
   if(!('wakeLock' in navigator))return;
   navigator.wakeLock.request('screen').then(function(wl){ttsWakeLock=wl;}).catch(function(){});
@@ -1380,7 +1380,16 @@ function ttsReleaseWakeLock(){
   if(ttsWakeLock){ttsWakeLock.release();ttsWakeLock=null;}
 }
 document.addEventListener('visibilitychange',function(){
-  if(ttsBtn&&document.visibilityState==='visible')ttsRequestWakeLock();
+  if(document.visibilityState==='visible'&&ttsBtn){
+    ttsRequestWakeLock();
+    window.speechSynthesis.resume();
+    setTimeout(function(){
+      if(ttsBtn&&!window.speechSynthesis.speaking&&ttsCurrentChunks){
+        window.speechSynthesis.cancel();
+        ttsSpeakChunks(ttsCurrentChunks,ttsCurrentIdx,ttsBtn);
+      }
+    },300);
+  }
 });
 function ttsExtractText(container){
   var parts=[];
@@ -1418,6 +1427,8 @@ function ttsGetVoice(){
 }
 function ttsSpeakChunks(chunks,idx,btn){
   if(idx>=chunks.length){ttsResetBtn(btn);return;}
+  ttsCurrentChunks=chunks;
+  ttsCurrentIdx=idx;
   var u=new SpeechSynthesisUtterance(chunks[idx]);
   u.lang='es-MX';u.rate=1.0;u.pitch=1.0;
   var v=ttsGetVoice();if(v)u.voice=v;
@@ -1428,6 +1439,8 @@ function ttsSpeakChunks(chunks,idx,btn){
 function ttsResetBtn(btn){
   if(btn){btn.textContent='▶ Leer para mí';btn.classList.remove('tts-active');}
   ttsBtn=null;
+  ttsCurrentChunks=null;
+  ttsCurrentIdx=0;
   ttsReleaseWakeLock();
 }
 function ttsCancel(){
