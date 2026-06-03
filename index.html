@@ -684,7 +684,7 @@ function showSuggestions(q){
     var item=document.createElement('a');
     item.className='suggestion-item';
     item.href='?c='+slug;
-    item.innerHTML='<div class="suggestion-icon" style="background:'+cat.color+'22;">'+(course.icon||getIcon(course.title,cat.icon))+'</div><div class="suggestion-content"><div class="suggestion-title">'+esc(course.title)+'</div><div class="suggestion-url">mindstack · ?c='+slug+'</div></div>';
+    item.innerHTML='<div class="suggestion-icon" style="background:'+cat.color+'22;">'+(course.icon||getIcon(course.title,cat.icon))+'</div><div class="suggestion-content"><div class="suggestion-title">'+esc(course.title)+'</div><div class="suggestion-url">mindstack · '+esc(cat.name)+'</div></div>';
     (function(c){item.addEventListener('mousedown',function(e){e.preventDefault();openDetail(c);box.classList.remove('show');box.innerHTML='';document.getElementById('searchInput').value='';document.getElementById('searchClear').style.display='none';document.getElementById('searchFeedback').style.display='none';document.getElementById('searchBorder').classList.remove('solid');document.getElementById('searchBorder').style.removeProperty('--search-accent');renderCourses(allCourses.slice(0,5));});})(course);
     box.appendChild(item);
   });
