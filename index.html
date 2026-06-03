@@ -558,40 +558,55 @@ function retryFetch(){
   fetchCourses();
 }
 
+var CACHE_KEY='ms_courses_v1';
+var CACHE_TTL=30*60*1000;
+
+function applyCoursesData(data){
+  allCourses=(data.results||[])
+    .filter(function(p){return p.properties&&p.properties.Name&&p.properties.Name.title&&p.properties.Name.title.length>0;})
+    .map(function(p){
+      var pr=p.properties;
+      return{
+        id:p.id,
+        title:(pr.Name.title[0]&&pr.Name.title[0].plain_text)||'Sin titulo',
+        desc:(pr.Description&&pr.Description.rich_text&&pr.Description.rich_text[0]&&pr.Description.rich_text[0].plain_text)||'',
+        podcast:(pr.Podcast&&pr.Podcast.url)||null,
+        curso:(pr.Curso&&pr.Curso.url)||null,
+        status:(pr.Status&&pr.Status.status&&pr.Status.status.name)||'',
+        icon:(p.icon&&p.icon.type==='emoji'&&p.icon.emoji)||null,
+        cat:getCat((pr.Name.title[0]&&pr.Name.title[0].plain_text)||'')
+      };
+    });
+  document.getElementById('totalCourses').textContent=allCourses.length;
+  STATS_MOBILE[1].num=allCourses.length;
+  renderCategoryCards();
+  renderCourses(allCourses.slice(0,5));
+  if(activeGuideUnit&&activeGuide&&activeGuideUnit.querySelector('[data-loading]')){
+    var gu=activeGuideUnit,g=activeGuide;
+    activeGuideUnit=null;activeGuide=null;
+    toggleGuideAccordion(g,gu);
+  }
+  var cParam=new URLSearchParams(location.search).get('c');
+  if(cParam){
+    var target=allCourses.find(function(c){return toSlug(c.title)===cParam||c.id===decodeURIComponent(cParam);});
+    if(target)openDetail(target);
+    else showToast('El curso ya no está disponible.');
+  }
+}
+
 function fetchCourses(){
+  try{
+    var cached=JSON.parse(localStorage.getItem(CACHE_KEY)||'null');
+    if(cached&&cached.ts&&(Date.now()-cached.ts)<CACHE_TTL&&cached.data){
+      applyCoursesData(cached.data);
+      return;
+    }
+  }catch(e){}
   var timeout=new Promise(function(_,reject){setTimeout(function(){reject(new Error('timeout'));},10000);});
   Promise.race([fetch(WORKER+'/courses').then(function(r){return r.json();}),timeout])
     .then(function(data){
-      allCourses=(data.results||[])
-        .filter(function(p){return p.properties&&p.properties.Name&&p.properties.Name.title&&p.properties.Name.title.length>0;})
-        .map(function(p){
-          var pr=p.properties;
-          return{
-            id:p.id,
-            title:(pr.Name.title[0]&&pr.Name.title[0].plain_text)||'Sin titulo',
-            desc:(pr.Description&&pr.Description.rich_text&&pr.Description.rich_text[0]&&pr.Description.rich_text[0].plain_text)||'',
-            podcast:(pr.Podcast&&pr.Podcast.url)||null,
-            curso:(pr.Curso&&pr.Curso.url)||null,
-            status:(pr.Status&&pr.Status.status&&pr.Status.status.name)||'',
-            icon:(p.icon&&p.icon.type==='emoji'&&p.icon.emoji)||null,
-            cat:getCat((pr.Name.title[0]&&pr.Name.title[0].plain_text)||'')
-          };
-        });
-      document.getElementById('totalCourses').textContent=allCourses.length;
-      STATS_MOBILE[1].num=allCourses.length;
-      renderCategoryCards();
-      renderCourses(allCourses.slice(0,5));
-      if(activeGuideUnit&&activeGuide&&activeGuideUnit.querySelector('[data-loading]')){
-        var gu=activeGuideUnit,g=activeGuide;
-        activeGuideUnit=null;activeGuide=null;
-        toggleGuideAccordion(g,gu);
-      }
-      var cParam=new URLSearchParams(location.search).get('c');
-      if(cParam){
-        var target=allCourses.find(function(c){return toSlug(c.title)===cParam||c.id===decodeURIComponent(cParam);});
-        if(target)openDetail(target);
-        else showToast('El curso ya no está disponible.');
-      }
+      try{localStorage.setItem(CACHE_KEY,JSON.stringify({ts:Date.now(),data:data}));}catch(e){}
+      applyCoursesData(data);
     })
     .catch(function(){showErrorState();});
 }
