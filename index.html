@@ -686,6 +686,7 @@ function renderCourses(courses){
     sec.appendChild(grid);
     wrap.appendChild(sec);
   });
+  if(!wrap.children.length){wrap.innerHTML='<div class="empty">No se encontraron cursos.</div>';}
 }
 
 function showSuggestions(q){
@@ -700,7 +701,7 @@ function showSuggestions(q){
     var item=document.createElement('a');
     item.className='suggestion-item';
     item.href='?c='+slug;
-    item.innerHTML='<div class="suggestion-icon" style="background:'+cat.color+'22;">'+(course.icon||getIcon(course.title,cat.icon))+'</div><div class="suggestion-content"><div class="suggestion-title">'+esc(course.title)+'</div><div class="suggestion-url">mindstack · '+esc(cat.name)+'</div></div>';
+    item.innerHTML='<div class="suggestion-icon" style="background:'+cat.color+'22;">'+(course.icon||getIcon(course.title,cat.icon))+'</div><div class="suggestion-content"><div class="suggestion-title">'+esc(course.title)+'</div><div class="suggestion-url">mindstack · '+esc(cat.label)+'</div></div>';
     (function(c){item.addEventListener('mousedown',function(e){e.preventDefault();openDetail(c);box.classList.remove('show');box.innerHTML='';document.getElementById('searchInput').value='';document.getElementById('searchClear').style.display='none';document.getElementById('searchFeedback').style.display='none';document.getElementById('searchBorder').classList.remove('solid');document.getElementById('searchBorder').style.removeProperty('--search-accent');renderCourses(allCourses.slice(0,5));});})(course);
     box.appendChild(item);
   });
@@ -972,6 +973,7 @@ function openSubpage(pageId,title,courseId,subpages,idx){
   fetch(WORKER+'/blocks/'+pageId.replace(/-/g,''))
     .then(function(r){return r.json();})
     .then(async function(data){
+      if(!document.body.contains(loading))return;
       loading.remove();
       var blocks=data.results||[];
       var content=document.createElement('div');
@@ -979,7 +981,7 @@ function openSubpage(pageId,title,courseId,subpages,idx){
       content.innerHTML=await renderBlocks(blocks);
       panel.appendChild(content);
       panel.appendChild(makeNav(true));
-      if(topTtsBtn&&!ttsExtractText(content)){
+      if(topTtsBtn&&!ttsExtractSegments(content).length){
         topTtsBtn.disabled=true;
         topTtsBtn.title='Este contenido es una tabla — la lectura en voz alta no está disponible';
         topTtsBtn.style.opacity='0.35';
@@ -1392,25 +1394,6 @@ document.addEventListener('visibilitychange',function(){
     },300);
   }
 });
-function ttsExtractText(container){
-  var parts=[];
-  function walk(node){
-    if(node.nodeType!==1)return;
-    var tag=node.tagName.toLowerCase();
-    if(tag==='table')return;
-    if(/^h[1-6]$/.test(tag)||tag==='p'||tag==='li'||tag==='blockquote'){
-      var t=(node.innerText||node.textContent||'').trim();
-      if(t){
-        if((/^h[1-6]$/.test(tag)||tag==='li')&&!/[.!?:,;]$/.test(t))t+='.';
-        parts.push(t);
-      }
-      return;
-    }
-    Array.from(node.children).forEach(walk);
-  }
-  Array.from(container.children).forEach(walk);
-  return parts.join(' ');
-}
 function ttsExtractSegments(container){
   var segments=[];
   function walk(node){
@@ -1466,17 +1449,6 @@ function ttsGetVoice(){
   var voices=window.speechSynthesis.getVoices();
   return voices.find(function(v){return v.lang==='es-MX';})||
          voices.find(function(v){return v.lang.startsWith('es');})||null;
-}
-function ttsSpeakChunks(chunks,idx,btn){
-  if(idx>=chunks.length){ttsResetBtn(btn);return;}
-  ttsCurrentChunks=chunks;
-  ttsCurrentIdx=idx;
-  var u=new SpeechSynthesisUtterance(chunks[idx]);
-  u.lang='es-MX';u.rate=1.0;u.pitch=1.0;
-  var v=ttsGetVoice();if(v)u.voice=v;
-  u.onend=function(){ttsSpeakChunks(chunks,idx+1,btn);};
-  u.onerror=function(){ttsResetBtn(btn);};
-  window.speechSynthesis.speak(u);
 }
 function ttsResetBtn(btn){
   if(btn){btn.textContent='▶ Leer para mí';btn.classList.remove('tts-active');}
