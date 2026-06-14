@@ -1475,12 +1475,18 @@ function ttsCancel(){
 function ttsToggle(btn){
   if(window.speechSynthesis.speaking&&!window.speechSynthesis.paused){
     window.speechSynthesis.pause();
-    btn.innerHTML='⏸ Pausar';
+    btn.innerHTML='▶ Continuar';
     return;
   }
   if(window.speechSynthesis.paused){
     window.speechSynthesis.resume();
     btn.innerHTML='⏸ Pausar';
+    setTimeout(function(){
+      if(ttsBtn&&!window.speechSynthesis.speaking&&ttsCurrentChunks){
+        window.speechSynthesis.cancel();
+        ttsSpeakSegments(ttsCurrentChunks,ttsCurrentIdx,ttsBtn);
+      }
+    },300);
     return;
   }
   window.speechSynthesis.cancel();
