@@ -236,9 +236,11 @@ audio{display:none;}
 .dict-overlay.open{display:flex;}
 .dict-bar{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:0.5px solid var(--border);flex-shrink:0;background:rgba(10,10,10,0.95);backdrop-filter:blur(12px);}
 .about-trigger:hover{color:var(--text);border-color:var(--text3);}
-.tts-btn{background:transparent;color:var(--teal);border:0.5px solid rgba(93,202,165,0.35);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;padding:8px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:box-shadow 0.2s,border-color 0.2s;flex-shrink:0;box-shadow:0 0 8px rgba(93,202,165,0.12);}
-.tts-btn:hover{border-color:rgba(93,202,165,0.6);box-shadow:0 0 12px rgba(93,202,165,0.22);}
-.tts-btn.tts-active{border-color:rgba(93,202,165,0.7);box-shadow:0 0 0 1px rgba(93,202,165,0.15),0 0 14px rgba(93,202,165,0.28);}
+.tts-btn{background:rgba(93,202,165,0.08);color:var(--teal);border:1px solid rgba(93,202,165,0.5);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;padding:8px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:box-shadow 0.2s,border-color 0.2s,background 0.2s;flex-shrink:0;box-shadow:0 0 10px rgba(93,202,165,0.18);}
+.tts-btn:hover{background:rgba(93,202,165,0.14);border-color:rgba(93,202,165,0.7);box-shadow:0 0 16px rgba(93,202,165,0.28);}
+.tts-btn.tts-active{background:rgba(93,202,165,0.12);border-color:rgba(93,202,165,0.75);box-shadow:0 0 0 1px rgba(93,202,165,0.2),0 0 18px rgba(93,202,165,0.32);}
+@keyframes ttsPulse{0%{box-shadow:0 0 0 0 rgba(93,202,165,0.55),0 0 10px rgba(93,202,165,0.18);}70%{box-shadow:0 0 0 9px rgba(93,202,165,0),0 0 10px rgba(93,202,165,0.18);}100%{box-shadow:0 0 0 0 rgba(93,202,165,0),0 0 10px rgba(93,202,165,0.18);}}
+.tts-btn-discover{animation:ttsPulse 1.1s ease-out 3;}
 .tts-highlight{background:rgba(93,202,165,0.1);outline:1.5px solid rgba(93,202,165,0.3);border-radius:4px;transition:background 0.25s,outline 0.25s;}
 @media(max-width:600px){
   .mini-player{left:1rem;right:1rem;width:auto;}
@@ -943,10 +945,17 @@ function openSubpage(pageId,title,courseId,subpages,idx){
     if(!bottom&&window.speechSynthesis){
       var ttsButton=document.createElement('button');
       ttsButton.className='tts-btn';
-      ttsButton.textContent='▶ Leer para mí';
+      ttsButton.innerHTML=TTS_BTN_LABEL;
       ttsButton.onclick=function(){ttsToggle(ttsButton);};
       nav.appendChild(ttsButton);
       topTtsBtn=ttsButton;
+      if(!localStorage.getItem('tts_seen')){
+        ttsButton.classList.add('tts-btn-discover');
+        ttsButton.addEventListener('animationend',function(){
+          ttsButton.classList.remove('tts-btn-discover');
+          localStorage.setItem('tts_seen','1');
+        },{once:true});
+      }
     }
     if(subpages&&subpages.length>1){
       var prog=document.createElement('span');
@@ -1374,6 +1383,7 @@ renderGuides();
     }
   });
 })();
+var TTS_BTN_LABEL='<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;opacity:0.85"><rect x="2" y="10" width="3" height="4" rx="1"/><rect x="7" y="7" width="3" height="10" rx="1"/><rect x="12" y="4" width="3" height="16" rx="1"/><rect x="17" y="7" width="3" height="10" rx="1"/></svg> Leer para mí';
 var ttsWakeLock=null,ttsCurrentChunks=null,ttsCurrentIdx=0;
 function ttsRequestWakeLock(){
   if(!('wakeLock' in navigator))return;
@@ -1451,7 +1461,7 @@ function ttsGetVoice(){
          voices.find(function(v){return v.lang.startsWith('es');})||null;
 }
 function ttsResetBtn(btn){
-  if(btn){btn.textContent='▶ Leer para mí';btn.classList.remove('tts-active');}
+  if(btn){btn.innerHTML=TTS_BTN_LABEL;btn.classList.remove('tts-active');}
   ttsBtn=null;
   ttsCurrentChunks=null;
   ttsCurrentIdx=0;
@@ -1465,12 +1475,12 @@ function ttsCancel(){
 function ttsToggle(btn){
   if(window.speechSynthesis.speaking&&!window.speechSynthesis.paused){
     window.speechSynthesis.pause();
-    btn.textContent='▶ Continuar';
+    btn.innerHTML='⏸ Pausar';
     return;
   }
   if(window.speechSynthesis.paused){
     window.speechSynthesis.resume();
-    btn.textContent='⏸ Pausar';
+    btn.innerHTML='⏸ Pausar';
     return;
   }
   window.speechSynthesis.cancel();
@@ -1481,7 +1491,7 @@ function ttsToggle(btn){
   var da=document.getElementById('dAudio');
   if(da&&!da.paused)da.pause();
   ttsBtn=btn;
-  btn.textContent='⏸ Pausar';
+  btn.innerHTML='⏸ Pausar';
   btn.classList.add('tts-active');
   ttsRequestWakeLock();
   ttsSpeakSegments(segments,0,btn);
