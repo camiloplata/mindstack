@@ -63,7 +63,7 @@ header{padding:1.5rem 2rem;border-bottom:0.5px solid var(--border);display:flex;
 .stat-mobile-label{font-size:15px;color:var(--text3);margin-top:4px;transition:opacity 0.35s;}
 .stat-mobile-num.fade,.stat-mobile-label.fade{opacity:0;}
 .podcast-hint{padding:1.25rem 2rem;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;gap:10px;font-size:15px;color:var(--text2);}
-.cat-cards-section{padding:2rem 2rem 1.5rem;border-bottom:0.5px solid var(--border);}
+.cat-cards-section{padding:2rem 2rem 1.5rem;border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);}
 .cat-section-hdr{margin-bottom:1.25rem;}.cat-section-hdr-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--text);margin-top:4px;}
 .cat-cards{display:flex;gap:10px;overflow-x:auto;overflow-y:visible;padding-top:6px;margin-top:-6px;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
 .cat-cards::-webkit-scrollbar{display:none;}
@@ -351,7 +351,7 @@ footer{border-top:0.5px solid var(--border);padding:3rem 2rem 2rem;margin-top:1r
   </div>
   <div class="guides-grid" id="guidesGrid"></div>
 </div>
-<div id="catCardsSection"></div>
+<div id="catCardsSection" class="cat-cards-section"></div>
 <div class="search-feedback" id="searchFeedback"></div>
 <div class="courses-wrap" id="coursesWrap">
   <div class="loading"><div class="spinner"></div><div class="loading-text">Cargando cursos...</div></div>
