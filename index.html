@@ -693,7 +693,7 @@ function renderCourses(courses){
       card.style.setProperty('--hover-color',cat.color);
       var badges='';
       if(c.podcast)badges+='<button class="badge badge-audio badge-play">▶ podcast</button>';
-      card.innerHTML='<div class="card-top"><div class="card-icon" style="background:'+cat.color+'22;">'+(c.icon||getIcon(c.title,cat.icon))+'</div><div class="card-badges">'+badges+'</div></div><div class="card-title">'+esc(c.title)+'</div><div class="card-desc">'+esc(c.desc||'Ver contenido')+'</div><div class="card-footer"><span class="card-cta">ver resumen</span><div style="display:flex;align-items:center;gap:8px;"><button class="card-link card-share" title="Compartir"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button></div></div>';
+      card.innerHTML='<div class="card-top"><div class="card-icon" style="background:'+cat.color+'22;">'+(esc(c.icon)||getIcon(c.title,cat.icon))+'</div><div class="card-badges">'+badges+'</div></div><div class="card-title">'+esc(c.title)+'</div><div class="card-desc">'+esc(c.desc||'Ver contenido')+'</div><div class="card-footer"><span class="card-cta">ver resumen</span><div style="display:flex;align-items:center;gap:8px;"><button class="card-link card-share" title="Compartir"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button></div></div>';
       (function(course){
         card.onclick=function(){openDetail(course);};
         card.querySelector('.card-share').onclick=function(e){e.stopPropagation();shareCourse(course);};
@@ -720,7 +720,7 @@ function showSuggestions(q){
     var item=document.createElement('a');
     item.className='suggestion-item';
     item.href='?c='+slug;
-    item.innerHTML='<div class="suggestion-icon" style="background:'+cat.color+'22;">'+(course.icon||getIcon(course.title,cat.icon))+'</div><div class="suggestion-content"><div class="suggestion-title">'+esc(course.title)+'</div><div class="suggestion-url">mindstack · '+esc(cat.label)+'</div></div>';
+    item.innerHTML='<div class="suggestion-icon" style="background:'+cat.color+'22;">'+(esc(course.icon)||getIcon(course.title,cat.icon))+'</div><div class="suggestion-content"><div class="suggestion-title">'+esc(course.title)+'</div><div class="suggestion-url">mindstack · '+esc(cat.label)+'</div></div>';
     (function(c){item.addEventListener('mousedown',function(e){e.preventDefault();openDetail(c);box.classList.remove('show');box.innerHTML='';document.getElementById('searchInput').value='';document.getElementById('searchClear').style.display='none';document.getElementById('searchFeedback').style.display='none';document.getElementById('searchBorder').classList.remove('solid');document.getElementById('searchBorder').style.removeProperty('--search-accent');renderCourses(allCourses.slice(0,5));});})(course);
     box.appendChild(item);
   });
@@ -763,7 +763,7 @@ document.getElementById('searchInput').addEventListener('focus',function(){
 document.getElementById('searchInput').addEventListener('blur',function(){
   searchFocused=false;
   setTimeout(function(){var box=document.getElementById('searchSuggestions');box.classList.remove('show');box.innerHTML='';},150);
-  if(!this.value){searchPlaceholderTimer=setTimeout(cycleSearchPlaceholder,2000);}
+  if(!this.value){clearTimeout(searchPlaceholderTimer);searchPlaceholderTimer=setTimeout(cycleSearchPlaceholder,2000);}
 });
 document.getElementById('searchClear').addEventListener('click',function(){
   var inp=document.getElementById('searchInput');
