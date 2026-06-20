@@ -844,9 +844,9 @@ function openDetail(course,autoplay,source){
       document.getElementById('dPlayBtn').onclick=function(){
         hideMiniPlayer(true);
         da.src=newSrc;
-        da.play().catch(function(){da.addEventListener('canplay',function(){da.play().catch(function(){});},{once:true});});
         currentAudio=da;
         setupPlayer(da,document.getElementById('dPlayBtn'),document.getElementById('dPlayIcon'),document.getElementById('dBar'),document.getElementById('dProg'),document.getElementById('dTime'),document.getElementById('dSpeedBtn'),document.getElementById('dVolBtn'),document.getElementById('dVolSlider'));
+        da.play().catch(function(){da.addEventListener('canplay',function(){da.play().catch(function(){});},{once:true});});
       };
     } else {
       da.src=driveUrl(course.podcast);
@@ -910,6 +910,7 @@ function openDetail(course,autoplay,source){
       }
     })
     .then(function(){
+      if(!document.body.contains(subWrap))return;
       if(norm(course.title).indexOf('analisis financiero')>=0&&norm(course.title).indexOf('excel')>=0){
         var toolWrap=document.createElement('div');
         toolWrap.style.marginTop='1.5rem';
@@ -1062,6 +1063,7 @@ async function renderBlocks(blocks){
         return src?'<img src="'+src.replace(/"/g,'&quot;')+'" alt="" loading="lazy" style="width:100%;border-radius:8px;margin:8px 0;">':'';
       case 'table':
         var hasHeader=b.table&&b.table.has_column_header;
+        if(!b.id)return '';
         var rowData=await fetch(WORKER+'/blocks/'+b.id.replace(/-/g,'')).then(function(r){return r.json();}).catch(function(){return{results:[]};});
         var thtml='<table style="width:100%;border-collapse:collapse;margin:8px 0;">';
         (rowData.results||[]).forEach(function(row,idx){
