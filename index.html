@@ -421,6 +421,7 @@ footer{border-top:0.5px solid var(--border);padding:3rem 2rem 2rem;margin-top:1r
 </div>
 <script>
 var WORKER='https://mindstack-api.skmiloplata.workers.dev';
+var IS_IOS=/iPhone|iPad|iPod/i.test(navigator.userAgent);
 var CATS={
   auto:{label:'Automatizaciones',icon:'⚡',color:'#5BB8D4',kw:['n8n','copilot studio','automatizacion','automatizaciones','workflow automation','power apps','power automate']},
   ia:{label:'Inteligencia artificial',icon:'🤖',color:'#A8D468',kw:['inteligencia artificial','claude','chatgpt','gemini','prompt','copilot','tips','trucos','pensamiento critico','perplexity','grok','llm','gpt','midjourney','dall-e','stable diffusion','cursor','notebooklm','openai','chatbot','machine learning','vibe coding']},
@@ -489,9 +490,8 @@ function setupPlayer(audio,playBtn,iconEl,bar,prog,timeEl,speedBtn,volBtn,volSli
   playBtn.onclick=function(){
     if(currentAudio&&currentAudio!==audio)currentAudio.pause();
     if(audio.paused){
-      audio.play().catch(function(e){
+      audio.play().catch(function(){
         timeEl.textContent='No disponible';
-        console.log('Audio error:',e);
       });
     } else {
       audio.pause();
@@ -534,9 +534,8 @@ function setupPlayer(audio,playBtn,iconEl,bar,prog,timeEl,speedBtn,volBtn,volSli
     if(v===0){ic.innerHTML='<polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>';}
     else{ic.innerHTML='<polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><path d="M15.54,8.46a5,5,0,0,1,0,7.07"/>';}
   }
-  var isIOS=/iPhone|iPad|iPod/i.test(navigator.userAgent);
   if(volBtn&&volSlider){
-    if(isIOS){
+    if(IS_IOS){
       volBtn.closest('.vol-wrap').style.display='none';
     } else {
       volSlider.value=audio.volume;
@@ -829,8 +828,7 @@ function openDetail(course,autoplay,source){
     playerEl.style.border='1px solid '+catColor;
     playerEl.style.boxShadow='0 0 0 1px '+catColor+'40, 0 0 24px '+catColor+'55';
     panel.appendChild(pw);
-    var isIOSp=/iPhone|iPad|iPod/i.test(navigator.userAgent);
-    if(!isIOSp){var s=document.getElementById('dVolSlider');if(s){s.style.background='linear-gradient(to right,'+catColor+' 100%,var(--border2) 100%)';}}
+    if(!IS_IOS){var s=document.getElementById('dVolSlider');if(s){s.style.background='linear-gradient(to right,'+catColor+' 100%,var(--border2) 100%)';}}
     if(resuming){
       setupPlayer(da,document.getElementById('dPlayBtn'),document.getElementById('dPlayIcon'),document.getElementById('dBar'),document.getElementById('dProg'),document.getElementById('dTime'),document.getElementById('dSpeedBtn'),document.getElementById('dVolBtn'),document.getElementById('dVolSlider'));
       document.getElementById('dPlayIcon').innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
@@ -1148,8 +1146,7 @@ function showMiniPlayer(course,catColor){
     if(v===0){ic.innerHTML='<polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>';}
     else{ic.innerHTML='<polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><path d="M15.54,8.46a5,5,0,0,1,0,7.07"/>';}
   }
-  var isIOS=/iPhone|iPad|iPod/i.test(navigator.userAgent);
-  if(isIOS){
+  if(IS_IOS){
     document.getElementById('miniVolWrap').style.display='none';
   } else {
     document.getElementById('miniVolWrap').style.display='';
@@ -1383,7 +1380,7 @@ function openGuide(guide){
     var btn=this;
     btn.disabled=true;
     btn.textContent='Enviando...';
-    if(GUIDES_SHEET_URL){fetch(GUIDES_SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,guide:guide.name,fecha:new Date().toISOString()})});}
+    fetch(GUIDES_SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,guide:guide.name,fecha:new Date().toISOString()})});
     document.querySelector('#guideModalContent .guide-modal-label').style.display='none';
     emailInput.style.display='none';
     btn.style.display='none';
