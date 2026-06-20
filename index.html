@@ -159,6 +159,7 @@ audio{display:none;}
 .about-footer{text-align:center;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text);letter-spacing:3px;padding:1.5rem 0 0.5rem;border-top:0.5px solid var(--border2);margin-top:2rem;}
 .guides-section{padding:1.5rem 2rem 0;}
 .guides-eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--text3);display:block;margin-bottom:6px;}
+.search-eyebrow{margin-bottom:10px;}
 .guides-header{margin-bottom:1.25rem;}
 .guides-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px;}
 .guides-subtitle{font-size:13px;color:var(--text3);}
@@ -332,6 +333,7 @@ footer{border-top:0.5px solid var(--border);padding:3rem 2rem 2rem;margin-top:1r
   <span>Cada resumen trae un podcast para entender el tema rápido. Escúchalo como intro — luego el detalle está en el texto. Sin registro, gratis.</span>
 </div>
 <div class="search-wrap">
+  <span class="guides-eyebrow search-eyebrow" id="searchEyebrow">Busca resúmenes</span>
   <div class="search-container">
     <div class="search-border" id="searchBorder">
       <div class="search-box">
@@ -427,6 +429,16 @@ var CATS={
   tech:{label:'Tecnología y datos',icon:'💻',color:'#E89AC4',kw:['estadistica','ingenieria de software','pensamiento logico','fundamentos']}
 };
 var allCourses=[],currentAudio=null,currentCourse=null,miniPlayerCourse=null,ttsBtn=null,activeCatKey='new';
+var searchPlaceholders=['¿Qué quieres aprender hoy?','Busca "Python"...','Busca "automatización"...','Busca "inteligencia artificial"...','Busca "Make"...'];
+var searchPlaceholderIdx=0,searchPlaceholderTimer=null,searchFocused=false;
+function cycleSearchPlaceholder(){
+  if(searchFocused)return;
+  var inp=document.getElementById('searchInput');
+  if(!inp||inp.value)return;
+  searchPlaceholderIdx=(searchPlaceholderIdx+1)%searchPlaceholders.length;
+  inp.placeholder=searchPlaceholders[searchPlaceholderIdx];
+  searchPlaceholderTimer=setTimeout(cycleSearchPlaceholder,3200);
+}
 
 var ICON_MAP=[
   ['chatgpt','💬'],['gemini','♊'],['claude','✨'],['perplexity','🔍'],['grok','🔮'],
@@ -582,6 +594,10 @@ function applyCoursesData(data){
     });
   document.getElementById('totalCourses').textContent=allCourses.length;
   STATS_MOBILE[1].num=allCourses.length;
+  var ey=document.getElementById('searchEyebrow');
+  if(ey)ey.textContent='Busca entre '+allCourses.length+' resúmenes';
+  clearTimeout(searchPlaceholderTimer);
+  searchPlaceholderTimer=setTimeout(cycleSearchPlaceholder,3200);
   renderCategoryCards();
   renderCourses(allCourses.slice(0,5));
   if(activeGuideUnit&&activeGuide&&activeGuideUnit.querySelector('[data-loading]')){
@@ -738,8 +754,15 @@ document.getElementById('searchInput').addEventListener('input',function(e){
     renderCourses(results);
   }
 });
+document.getElementById('searchInput').addEventListener('focus',function(){
+  searchFocused=true;
+  clearTimeout(searchPlaceholderTimer);
+  this.placeholder='¿Qué quieres aprender hoy?';
+});
 document.getElementById('searchInput').addEventListener('blur',function(){
+  searchFocused=false;
   setTimeout(function(){var box=document.getElementById('searchSuggestions');box.classList.remove('show');box.innerHTML='';},150);
+  if(!this.value){searchPlaceholderTimer=setTimeout(cycleSearchPlaceholder,2000);}
 });
 document.getElementById('searchClear').addEventListener('click',function(){
   var inp=document.getElementById('searchInput');
