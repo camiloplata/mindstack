@@ -1027,8 +1027,8 @@ function openSubpage(pageId,title,courseId,subpages,idx){
 
 function applyMarkdown(s){
   return s
-    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/\*\*([^<>*]+)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*([^<>*]+)\*/g,'<em>$1</em>')
     .replace(/`([^`]+)`/g,'<code style="background:var(--bg3);padding:1px 5px;border-radius:4px;font-size:12px;">$1</code>');
 }
 
