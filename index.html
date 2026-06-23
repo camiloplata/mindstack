@@ -647,7 +647,7 @@ function renderNewSection(){
   if(!section)return;
   var courses=allCourses.slice(0,8);
   if(!courses.length){section.style.display='none';return;}
-  section.innerHTML='<div class="cat-section-hdr"><span class="guides-eyebrow">Recién agregado</span><div class="cat-section-hdr-title">Lo último que subí</div></div><div class="new-carousel" id="newCarousel"></div>';
+  section.innerHTML='<div class="cat-section-hdr"><span class="guides-eyebrow">Recién agregado</span><div class="cat-section-hdr-title">Esto acabo de subir</div></div><div class="new-carousel" id="newCarousel"></div>';
   var carousel=document.getElementById('newCarousel');
   courses.forEach(function(c){
     var cat=CATS[c.cat]||CATS.tech;
