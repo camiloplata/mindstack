@@ -610,7 +610,7 @@ function applyCoursesData(data){
   searchPlaceholderTimer=setTimeout(cycleSearchPlaceholder,3200);
   renderCategoryCards();
   renderNewSection();
-  renderCourses(allCourses);
+  filterByCategory('ia');
   if(activeGuideUnit&&activeGuide&&activeGuideUnit.querySelector('[data-loading]')){
     var gu=activeGuideUnit,g=activeGuide;
     activeGuideUnit=null;activeGuide=null;
