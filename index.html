@@ -64,8 +64,11 @@ header{padding:1.5rem 2rem;border-bottom:0.5px solid var(--border);display:flex;
 .stat-mobile-num.fade,.stat-mobile-label.fade{opacity:0;}
 .podcast-hint{padding:1.25rem 2rem;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;gap:10px;font-size:15px;color:var(--text2);}
 .new-section{padding:1.5rem 2rem 0.5rem;}
-.new-carousel{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-top:6px;margin-top:-6px;padding-bottom:10px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
-.new-carousel::-webkit-scrollbar{display:none;}
+.new-carousel{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-top:6px;margin-top:-6px;padding-bottom:14px;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;}
+.new-carousel::-webkit-scrollbar{height:4px;}
+.new-carousel::-webkit-scrollbar-track{background:transparent;}
+.new-carousel::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.new-carousel::-webkit-scrollbar-thumb:hover{background:var(--text3);}
 .new-card{scroll-snap-align:start;flex-shrink:0;width:220px;}
 .new-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;color:#7F77DD;background:#7F77DD15;border:0.5px solid #7F77DD35;border-radius:20px;padding:2px 8px;letter-spacing:0.3px;}
 .cat-cards-section{padding:2rem 2rem 1.5rem;border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);}
