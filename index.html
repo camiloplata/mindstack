@@ -63,6 +63,14 @@ header{padding:1.5rem 2rem;border-bottom:0.5px solid var(--border);display:flex;
 .stat-mobile-label{font-size:15px;color:var(--text3);margin-top:4px;transition:opacity 0.35s;}
 .stat-mobile-num.fade,.stat-mobile-label.fade{opacity:0;}
 .podcast-hint{padding:1.25rem 2rem;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;gap:10px;font-size:15px;color:var(--text2);}
+.new-section{padding:1.5rem 2rem 0.5rem;}
+.new-carousel{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.new-carousel::-webkit-scrollbar{display:none;}
+.new-card{scroll-snap-align:start;flex-shrink:0;width:190px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:12px;padding:1rem;cursor:pointer;transition:border-color 0.15s,transform 0.15s;}
+.new-card:hover{border-color:var(--hover-color,var(--purple));transform:translateY(-2px);}
+.new-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;color:#7F77DD;background:#7F77DD15;border:0.5px solid #7F77DD35;border-radius:20px;padding:2px 8px;margin-bottom:8px;letter-spacing:0.3px;}
+.new-card-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:8px;}
+.new-card-title{font-size:13px;font-weight:500;color:var(--text);line-height:1.35;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
 .cat-cards-section{padding:2rem 2rem 1.5rem;border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);}
 .cat-section-hdr{margin-bottom:1.25rem;}.cat-section-hdr-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--text);margin-top:4px;}
 .cat-cards{display:flex;gap:10px;overflow-x:auto;overflow-y:visible;padding-top:6px;margin-top:-6px;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
@@ -255,6 +263,8 @@ audio{display:none;}
   .stat-label{font-size:13px;}
   .guides-section{padding:1rem 1rem 0;}
   .guide-course-mini{min-width:140px;}
+  .new-section{padding:1rem 1rem 0.25rem;}
+  .new-card{width:160px;}
   .cat-cards-section{padding:1rem;}
   .cat-card{min-width:110px;padding:0.875rem 0.75rem;}
   .courses-wrap{padding:0 1rem 3rem;}
@@ -353,6 +363,7 @@ footer{border-top:0.5px solid var(--border);padding:3rem 2rem 2rem;margin-top:1r
   </div>
   <div class="guides-grid" id="guidesGrid"></div>
 </div>
+<div id="newSection" class="new-section"></div>
 <div id="catCardsSection" class="cat-cards-section"></div>
 <div class="search-feedback" id="searchFeedback"></div>
 <div class="courses-wrap" id="coursesWrap">
@@ -429,7 +440,7 @@ var CATS={
   pro:{label:'Desarrollo profesional',icon:'💼',color:'#F0997B',kw:['linkedin','posicionamiento','profesional','optimizacion','cultura organizacional','liderazgo','recursos humanos','gestion de personas','trabajo en equipo','comunicacion']},
   tech:{label:'Tecnología y datos',icon:'💻',color:'#E89AC4',kw:['estadistica','ingenieria de software','pensamiento logico','fundamentos']}
 };
-var allCourses=[],currentAudio=null,currentCourse=null,miniPlayerCourse=null,ttsBtn=null,activeCatKey='new';
+var allCourses=[],currentAudio=null,currentCourse=null,miniPlayerCourse=null,ttsBtn=null,activeCatKey='all';
 var searchPlaceholders=['¿Qué quieres aprender hoy?','Busca "Python"...','Busca "automatización"...','Busca "inteligencia artificial"...','Busca "Make"...'];
 var searchPlaceholderIdx=0,searchPlaceholderTimer=null,searchFocused=false;
 function cycleSearchPlaceholder(){
@@ -598,7 +609,8 @@ function applyCoursesData(data){
   clearTimeout(searchPlaceholderTimer);
   searchPlaceholderTimer=setTimeout(cycleSearchPlaceholder,3200);
   renderCategoryCards();
-  renderCourses(allCourses.slice(0,5));
+  renderNewSection();
+  renderCourses(allCourses);
   if(activeGuideUnit&&activeGuide&&activeGuideUnit.querySelector('[data-loading]')){
     var gu=activeGuideUnit,g=activeGuide;
     activeGuideUnit=null;activeGuide=null;
@@ -630,6 +642,24 @@ function fetchCourses(){
     .catch(function(){showErrorState();});
 }
 
+function renderNewSection(){
+  var section=document.getElementById('newSection');
+  if(!section)return;
+  var courses=allCourses.slice(0,8);
+  if(!courses.length){section.style.display='none';return;}
+  section.innerHTML='<div class="cat-section-hdr"><span class="guides-eyebrow">Recién agregado</span><div class="cat-section-hdr-title">Lo último que subí</div></div><div class="new-carousel" id="newCarousel"></div>';
+  var carousel=document.getElementById('newCarousel');
+  courses.forEach(function(c){
+    var cat=CATS[c.cat]||CATS.tech;
+    var card=document.createElement('div');
+    card.className='new-card';
+    card.style.setProperty('--hover-color',cat.color);
+    card.innerHTML='<div class="new-badge">✨ Nuevo</div><div class="new-card-icon" style="background:'+cat.color+'22;">'+(esc(c.icon)||getIcon(c.title,cat.icon))+'</div><div class="new-card-title">'+esc(c.title)+'</div>';
+    card.onclick=function(){openDetail(c);};
+    carousel.appendChild(card);
+  });
+}
+
 function renderCategoryCards(){
   var section=document.getElementById('catCardsSection');
   section.innerHTML='<div class="cat-section-hdr"><span class="guides-eyebrow">Explorar por tema</span><div class="cat-section-hdr-title">¿Qué área te interesa?</div></div><div class="cat-cards" id="catCards"></div>';
@@ -642,21 +672,12 @@ function renderCategoryCards(){
       c.style.background='';
     });
     cardEl.classList.add('active');
-    var color=key==='new'?'#7F77DD':(CATS[key]&&CATS[key].color)||'#7F77DD';
+    var color=(CATS[key]&&CATS[key].color)||'#7F77DD';
     cardEl.style.borderColor=color;
     cardEl.style.background=color+'18';
-    renderCourses(key==='new'?allCourses.slice(0,5):allCourses.filter(function(c){return c.cat===key;}));
+    renderCourses(allCourses.filter(function(c){return c.cat===key;}));
     setTimeout(function(){var sec=document.getElementById('catCardsSection');if(sec){var hdr=document.querySelector('header');var offset=hdr?hdr.offsetHeight:0;window.scrollTo({top:Math.max(0,sec.offsetTop-offset),behavior:'smooth'});}},50);
   }
-  var allCard=document.createElement('div');
-  allCard.className='cat-card active';
-  allCard.style.borderColor='#7F77DD';
-  allCard.style.setProperty('--hover-color','#7F77DD');
-  allCard.style.background='#7F77DD18';
-  var newCount=Math.min(5,allCourses.length);
-  allCard.innerHTML='<div class="cat-card-icon">✨</div><div class="cat-card-name">Lo nuevo</div><div class="cat-card-count">'+newCount+' curso'+(newCount===1?'':'s')+'</div>';
-  allCard.onclick=function(){setActive('new',allCard);};
-  cards.appendChild(allCard);
   ['ia','auto','tools','pro','tech'].forEach(function(key){
     var cat=CATS[key];
     var count=allCourses.filter(function(c){return c.cat===key;}).length;
@@ -720,13 +741,13 @@ function showSuggestions(q){
     item.className='suggestion-item';
     item.href='?c='+slug;
     item.innerHTML='<div class="suggestion-icon" style="background:'+cat.color+'22;">'+(esc(course.icon)||getIcon(course.title,cat.icon))+'</div><div class="suggestion-content"><div class="suggestion-title">'+esc(course.title)+'</div><div class="suggestion-url">mindstack · '+esc(cat.label)+'</div></div>';
-    (function(c){item.addEventListener('mousedown',function(e){e.preventDefault();openDetail(c);box.classList.remove('show');box.innerHTML='';document.getElementById('searchInput').value='';document.getElementById('searchClear').style.display='none';document.getElementById('searchFeedback').style.display='none';document.getElementById('searchBorder').classList.remove('solid');document.getElementById('searchBorder').style.removeProperty('--search-accent');renderCourses(allCourses.slice(0,5));});})(course);
+    (function(c){item.addEventListener('mousedown',function(e){e.preventDefault();openDetail(c);box.classList.remove('show');box.innerHTML='';document.getElementById('searchInput').value='';document.getElementById('searchClear').style.display='none';document.getElementById('searchFeedback').style.display='none';document.getElementById('searchBorder').classList.remove('solid');document.getElementById('searchBorder').style.removeProperty('--search-accent');renderCourses(allCourses);});})(course);
     box.appendChild(item);
   });
   box.classList.add('show');
 }
 function renderActiveCat(){
-  renderCourses(activeCatKey==='new'?allCourses.slice(0,5):allCourses.filter(function(c){return c.cat===activeCatKey;}));
+  renderCourses(activeCatKey==='all'?allCourses:allCourses.filter(function(c){return c.cat===activeCatKey;}));
 }
 document.getElementById('searchInput').addEventListener('input',function(e){
   var q=e.target.value.toLowerCase().trim();
@@ -1183,7 +1204,7 @@ function hideMiniPlayer(stop){
 }
 
 function filterByCategory(key){
-  var order=['new','ia','auto','tools','pro','tech'];
+  var order=['ia','auto','tools','pro','tech'];
   var cards=document.querySelectorAll('.cat-card');
   var idx=order.indexOf(key);
   if(idx>=0&&cards[idx])cards[idx].click();
@@ -1191,9 +1212,7 @@ function filterByCategory(key){
 function openAbout(){
   var topics=document.getElementById('aboutTopics');
   if(!topics.children.length){
-    var all=[{key:'new',icon:'✨',label:'Lo nuevo',color:'#7F77DD'}].concat(
-      Object.keys(CATS).map(function(k){return{key:k,icon:CATS[k].icon,label:CATS[k].label,color:CATS[k].color};})
-    );
+    var all=Object.keys(CATS).map(function(k){return{key:k,icon:CATS[k].icon,label:CATS[k].label,color:CATS[k].color};});
     all.forEach(function(item){
       var t=document.createElement('span');
       t.className='about-topic';
