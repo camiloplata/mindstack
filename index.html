@@ -70,7 +70,7 @@ header{padding:1.5rem 2rem;border-bottom:0.5px solid var(--border);display:flex;
 .new-carousel::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
 .new-carousel::-webkit-scrollbar-thumb:hover{background:var(--text3);}
 .new-card{scroll-snap-align:start;flex-shrink:0;width:220px;}
-.new-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;color:#7F77DD;background:#7F77DD15;border:0.5px solid #7F77DD35;border-radius:20px;padding:2px 8px;letter-spacing:0.3px;}
+.new-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;color:var(--purple);background:#7F77DD15;border:0.5px solid #7F77DD35;border-radius:20px;padding:2px 8px;letter-spacing:0.3px;}
 .cat-cards-section{padding:2rem 2rem 1.5rem;border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);}
 .cat-section-hdr{margin-bottom:1.25rem;}.cat-section-hdr-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--text);margin-top:4px;}
 .cat-cards{display:flex;gap:10px;overflow-x:auto;overflow-y:visible;padding-top:6px;margin-top:-6px;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
@@ -612,6 +612,7 @@ function applyCoursesData(data){
   renderNewSection();
   suppressNextScroll=true;
   filterByCategory('ia');
+  if(activeCatKey==='all')suppressNextScroll=false;
   if(activeGuideUnit&&activeGuide&&activeGuideUnit.querySelector('[data-loading]')){
     var gu=activeGuideUnit,g=activeGuide;
     activeGuideUnit=null;activeGuide=null;
@@ -749,7 +750,7 @@ function showSuggestions(q){
     item.className='suggestion-item';
     item.href='?c='+slug;
     item.innerHTML='<div class="suggestion-icon" style="background:'+cat.color+'22;">'+(esc(course.icon)||getIcon(course.title,cat.icon))+'</div><div class="suggestion-content"><div class="suggestion-title">'+esc(course.title)+'</div><div class="suggestion-url">mindstack · '+esc(cat.label)+'</div></div>';
-    (function(c){item.addEventListener('mousedown',function(e){e.preventDefault();openDetail(c);box.classList.remove('show');box.innerHTML='';document.getElementById('searchInput').value='';document.getElementById('searchClear').style.display='none';document.getElementById('searchFeedback').style.display='none';document.getElementById('searchBorder').classList.remove('solid');document.getElementById('searchBorder').style.removeProperty('--search-accent');renderCourses(allCourses);});})(course);
+    (function(c){item.addEventListener('mousedown',function(e){e.preventDefault();openDetail(c);box.classList.remove('show');box.innerHTML='';document.getElementById('searchInput').value='';document.getElementById('searchClear').style.display='none';document.getElementById('searchFeedback').style.display='none';document.getElementById('searchBorder').classList.remove('solid');document.getElementById('searchBorder').style.removeProperty('--search-accent');activeCatKey='all';document.querySelectorAll('.cat-card').forEach(function(card){card.classList.remove('active');card.style.borderColor='';card.style.background='';});renderCourses(allCourses);});})(course);
     box.appendChild(item);
   });
   box.classList.add('show');
