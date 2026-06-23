@@ -437,7 +437,7 @@ var CATS={
   pro:{label:'Desarrollo profesional',icon:'💼',color:'#F0997B',kw:['linkedin','posicionamiento','profesional','optimizacion','cultura organizacional','liderazgo','recursos humanos','gestion de personas','trabajo en equipo','comunicacion']},
   tech:{label:'Tecnología y datos',icon:'💻',color:'#E89AC4',kw:['estadistica','ingenieria de software','pensamiento logico','fundamentos']}
 };
-var allCourses=[],currentAudio=null,currentCourse=null,miniPlayerCourse=null,ttsBtn=null,activeCatKey='all';
+var allCourses=[],currentAudio=null,currentCourse=null,miniPlayerCourse=null,ttsBtn=null,activeCatKey='all',suppressNextScroll=false;
 var searchPlaceholders=['¿Qué quieres aprender hoy?','Busca "Python"...','Busca "automatización"...','Busca "inteligencia artificial"...','Busca "Make"...'];
 var searchPlaceholderIdx=0,searchPlaceholderTimer=null,searchFocused=false;
 function cycleSearchPlaceholder(){
@@ -607,6 +607,7 @@ function applyCoursesData(data){
   searchPlaceholderTimer=setTimeout(cycleSearchPlaceholder,3200);
   renderCategoryCards();
   renderNewSection();
+  suppressNextScroll=true;
   filterByCategory('ia');
   if(activeGuideUnit&&activeGuide&&activeGuideUnit.querySelector('[data-loading]')){
     var gu=activeGuideUnit,g=activeGuide;
@@ -680,7 +681,7 @@ function renderCategoryCards(){
     cardEl.style.borderColor=color;
     cardEl.style.background=color+'18';
     renderCourses(allCourses.filter(function(c){return c.cat===key;}));
-    setTimeout(function(){var sec=document.getElementById('catCardsSection');if(sec){var hdr=document.querySelector('header');var offset=hdr?hdr.offsetHeight:0;window.scrollTo({top:Math.max(0,sec.offsetTop-offset),behavior:'smooth'});}},50);
+    setTimeout(function(){if(suppressNextScroll){suppressNextScroll=false;return;}var sec=document.getElementById('catCardsSection');if(sec){var hdr=document.querySelector('header');var offset=hdr?hdr.offsetHeight:0;window.scrollTo({top:Math.max(0,sec.offsetTop-offset),behavior:'smooth'});}},50);
   }
   ['ia','auto','tools','pro','tech'].forEach(function(key){
     var cat=CATS[key];
