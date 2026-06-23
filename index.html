@@ -66,11 +66,8 @@ header{padding:1.5rem 2rem;border-bottom:0.5px solid var(--border);display:flex;
 .new-section{padding:1.5rem 2rem 0.5rem;}
 .new-carousel{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-top:6px;margin-top:-6px;padding-bottom:10px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
 .new-carousel::-webkit-scrollbar{display:none;}
-.new-card{scroll-snap-align:start;flex-shrink:0;width:190px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:12px;padding:1rem;cursor:pointer;transition:border-color 0.15s,transform 0.15s;}
-.new-card:hover{border-color:var(--hover-color,var(--purple));transform:translateY(-2px);}
-.new-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;color:#7F77DD;background:#7F77DD15;border:0.5px solid #7F77DD35;border-radius:20px;padding:2px 8px;margin-bottom:8px;letter-spacing:0.3px;}
-.new-card-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:8px;}
-.new-card-title{font-size:13px;font-weight:500;color:var(--text);line-height:1.35;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.new-card{scroll-snap-align:start;flex-shrink:0;width:220px;}
+.new-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;color:#7F77DD;background:#7F77DD15;border:0.5px solid #7F77DD35;border-radius:20px;padding:2px 8px;letter-spacing:0.3px;}
 .cat-cards-section{padding:2rem 2rem 1.5rem;border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);}
 .cat-section-hdr{margin-bottom:1.25rem;}.cat-section-hdr-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--text);margin-top:4px;}
 .cat-cards{display:flex;gap:10px;overflow-x:auto;overflow-y:visible;padding-top:6px;margin-top:-6px;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
@@ -264,7 +261,7 @@ audio{display:none;}
   .guides-section{padding:1rem 1rem 0;}
   .guide-course-mini{min-width:140px;}
   .new-section{padding:1rem 1rem 0.25rem;}
-  .new-card{width:160px;}
+  .new-card{width:200px;}
   .cat-cards-section{padding:1rem;}
   .cat-card{min-width:110px;padding:0.875rem 0.75rem;}
   .courses-wrap{padding:0 1rem 3rem;}
@@ -652,10 +649,17 @@ function renderNewSection(){
   courses.forEach(function(c){
     var cat=CATS[c.cat]||CATS.tech;
     var card=document.createElement('div');
-    card.className='new-card';
+    card.className='course-card new-card';
     card.style.setProperty('--hover-color',cat.color);
-    card.innerHTML='<div class="new-badge">✨ Nuevo</div><div class="new-card-icon" style="background:'+cat.color+'22;">'+(esc(c.icon)||getIcon(c.title,cat.icon))+'</div><div class="new-card-title">'+esc(c.title)+'</div>';
-    card.onclick=function(){openDetail(c);};
+    var badges='<span class="new-badge">✨ Nuevo</span>';
+    if(c.podcast)badges+='<button class="badge badge-audio badge-play">▶ podcast</button>';
+    card.innerHTML='<div class="card-top"><div class="card-icon" style="background:'+cat.color+'22;">'+(esc(c.icon)||getIcon(c.title,cat.icon))+'</div><div class="card-badges">'+badges+'</div></div><div class="card-title">'+esc(c.title)+'</div><div class="card-desc">'+esc(c.desc||'Ver contenido')+'</div><div class="card-footer"><span class="card-cta">ver resumen</span><div style="display:flex;align-items:center;gap:8px;"><button class="card-link card-share" title="Compartir"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button></div></div>';
+    (function(course){
+      card.onclick=function(){openDetail(course);};
+      card.querySelector('.card-share').onclick=function(e){e.stopPropagation();shareCourse(course);};
+      var badgePlay=card.querySelector('.badge-play');
+      if(badgePlay){badgePlay.onclick=function(e){e.stopPropagation();openDetail(course,true);};}
+    })(c);
     carousel.appendChild(card);
   });
 }
